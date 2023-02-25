@@ -1,7 +1,8 @@
+import Canvas from "components/canvas";
 export default function Home() {
   return (
     <main>
-      <p className="text-red-600">hello world</p>
+      <Canvas grid={Array.from(Array(10), () => Array(10).fill(0))}></Canvas>
     </main>
   );
 }
