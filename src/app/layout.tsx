@@ -1,5 +1,12 @@
 import "./globals.css";
 
+export const metadata = {
+  title: {
+    default: "Nonogram",
+    template: "%s | Nonogram",
+  },
+};
+
 export default function RootLayout({
   children,
 }: {
