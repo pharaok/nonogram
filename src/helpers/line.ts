@@ -1,7 +1,7 @@
 type Vector2D = [number, number];
 
 // bresenham's line drawing algorithm
-export const line = (
+export const plotLine = (
   from: Vector2D,
   to: Vector2D,
   callback: (coords: Vector2D) => void
