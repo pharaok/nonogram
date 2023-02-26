@@ -27,6 +27,7 @@ export default ({
   };
 
   const paint = (...points: [number, number][]) => {
+    prevCell.current = points[0];
     setGrid((prevGrid: NonogramGrid) =>
       produce(prevGrid, (draft) => {
         for (let i = 0; i + 1 < points.length; i++) {
