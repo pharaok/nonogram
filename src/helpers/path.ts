@@ -1,4 +1,6 @@
-export const gridToPath = (grid: Array<Array<number>>) => {
+import { NonogramGrid } from "types";
+
+export const gridToPath = (grid: NonogramGrid) => {
   let path = "";
   grid.forEach((row, y) => {
     row.forEach((cell, x) => {
