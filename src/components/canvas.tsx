@@ -1,8 +1,9 @@
 "use client";
 
 import { clamp, gridToPath } from "helpers";
+import { line } from "helpers/line";
 import produce from "immer";
-import { PointerEvent, useRef } from "react";
+import { Dispatch, PointerEvent, SetStateAction, useRef } from "react";
 import { NonogramGrid } from "types";
 
 export default ({
@@ -10,10 +11,10 @@ export default ({
   setGrid,
 }: {
   grid: NonogramGrid;
-  setGrid: (grid: NonogramGrid) => void;
+  setGrid: Dispatch<SetStateAction<NonogramGrid>>;
 }) => {
   const painting = useRef(false);
-  const prevCell = useRef([0, 0]);
+  const prevCell = useRef<[number, number]>([0, 0]);
   const width = grid[0].length;
   const height = grid.length;
 
@@ -25,13 +26,17 @@ export default ({
     return [cellX, cellY];
   };
 
-  const paintCell = (x: number, y: number) => {
-    setGrid(
-      produce(grid, (draft) => {
-        draft[y][x] = 1;
+  const paint = (...points: [number, number][]) => {
+    setGrid((prevGrid: NonogramGrid) =>
+      produce(prevGrid, (draft) => {
+        for (let i = 0; i + 1 < points.length; i++) {
+          line(points[i], points[i + 1], ([x, y]) => {
+            draft[y][x] = 1;
+          });
+          prevCell.current = points[i + 1];
+        }
       })
     );
-    prevCell.current = [x, y];
   };
 
   return (
@@ -39,11 +44,10 @@ export default ({
       viewBox={`0 0 ${width} ${height}`}
       onPointerDown={(e) => {
         e.currentTarget.setPointerCapture(e.pointerId);
+        paint(eventToCoords(e));
         painting.current = true;
-        paintCell(...eventToCoords(e));
       }}
       onPointerMove={(e) => {
-        // TODO: fill in the gaps when events aren't fast enough
         const coords = eventToCoords(e);
         if (
           !painting.current ||
@@ -51,7 +55,7 @@ export default ({
         ) {
           return;
         }
-        paintCell(...coords);
+        paint(prevCell.current, coords);
       }}
       onPointerUp={() => {
         painting.current = false;
