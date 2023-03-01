@@ -14,6 +14,7 @@ export default function Canvas({
   setGrid: Dispatch<SetStateAction<NonogramGrid>>;
 }) {
   const painting = useRef(false);
+  const brush = useRef(0);
   const prevCell = useRef<[number, number]>([0, 0]);
   const width = grid[0].length;
   const height = grid.length;
@@ -27,18 +28,17 @@ export default function Canvas({
   };
 
   const paint = (...points: [number, number][]) => {
-    prevCell.current = points[0];
     setGrid((prevGrid: NonogramGrid) =>
       produce(prevGrid, (draft) => {
-        draft[points[0][1]][points[0][0]] = 1;
+        draft[points[0][1]][points[0][0]] = brush.current;
         for (let i = 0; i + 1 < points.length; i++) {
           plotLine(points[i], points[i + 1], ([x, y]) => {
-            draft[y][x] = 1;
+            draft[y][x] = brush.current;
           });
-          prevCell.current = points[i + 1];
         }
       })
     );
+    prevCell.current = points[points.length - 1];
   };
 
   return (
@@ -46,8 +46,10 @@ export default function Canvas({
       viewBox={`0 0 ${width} ${height}`}
       onPointerDown={(e) => {
         e.currentTarget.setPointerCapture(e.pointerId);
-        paint(eventToCoords(e));
+        let [x, y] = eventToCoords(e);
         painting.current = true;
+        brush.current = +!grid[y][x];
+        paint([x, y]);
       }}
       onPointerMove={(e) => {
         const coords = eventToCoords(e);
@@ -63,7 +65,7 @@ export default function Canvas({
         painting.current = false;
       }}
     >
-      <path d={gridToPath(grid)} />
+      <path pointerEvents="none" d={gridToPath(grid)} />
     </svg>
   );
 }

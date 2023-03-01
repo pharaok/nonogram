@@ -6,7 +6,7 @@ import { NonogramGrid } from "types";
 
 export default function Home() {
   let [grid, setGrid] = useState<NonogramGrid>(
-    Array.from(Array(100), () => Array(100).fill(0))
+    Array.from(Array(50), () => Array(50).fill(0))
   );
   return (
     <main>
