@@ -2,17 +2,20 @@
 
 import Canvas from "components/canvas";
 import { useState } from "react";
-import { NonogramGrid } from "types";
+import { createNonogramStore, NonogramContext } from "store";
 
 export default function Home() {
-  let [grid, setGrid] = useState<NonogramGrid>(
-    Array.from(Array(50), () => Array(50).fill(0))
+  let [store] = useState(
+    createNonogramStore(Array.from(Array(50), () => Array(50).fill(0)))
   );
+
   return (
     <main>
-      <div className="max-w-xl border-2 border-red-600">
-        <Canvas grid={grid} setGrid={setGrid} />
-      </div>
+      <NonogramContext.Provider value={store}>
+        <div className="max-w-xl border-2 border-red-600">
+          <Canvas />
+        </div>
+      </NonogramContext.Provider>
     </main>
   );
 }
