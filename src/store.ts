@@ -36,6 +36,11 @@ export const createNonogramStore = (grid: NonogramGrid) => {
   }));
 };
 
+export const selectDimensions = (state: NonogramState) => [
+  state.grid[0].length,
+  state.grid.length,
+];
+
 export const NonogramContext = createContext(createNonogramStore([[0]]));
 
 const useNonogramStore = <U>(selector: (state: NonogramState) => U): U => {
