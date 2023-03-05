@@ -1,5 +1,3 @@
-"use client";
-
 import { clamp, gridToPath } from "helpers";
 import { PointerEvent, useRef } from "react";
 import useNonogramStore from "store";

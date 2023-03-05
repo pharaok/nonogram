@@ -1,6 +1,7 @@
 "use client";
 
 import Canvas from "components/canvas";
+import Nonogram from "components/nonogram";
 import { useState } from "react";
 import { createNonogramStore, NonogramContext } from "store";
 
@@ -13,7 +14,7 @@ export default function Home() {
     <main>
       <NonogramContext.Provider value={store}>
         <div className="max-w-xl border-2 border-red-600">
-          <Canvas />
+          <Nonogram />
         </div>
       </NonogramContext.Provider>
     </main>
