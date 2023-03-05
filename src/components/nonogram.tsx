@@ -1,8 +1,11 @@
 import Canvas from "components/canvas";
 import useNonogramStore, { selectDimensions } from "store";
+import { gridClues } from "helpers/clue";
 
 export default function Nonogram() {
+  const grid = useNonogramStore((state) => state.grid);
   const [width, height] = useNonogramStore(selectDimensions);
+  console.log(gridClues(grid));
   return (
     <div
       className="grid"

@@ -3,6 +3,7 @@ import produce from "immer";
 import { createContext, useContext } from "react";
 import { NonogramGrid } from "types";
 import { plotLine } from "helpers/line";
+import { gridClues } from "helpers";
 
 export interface NonogramState {
   grid: NonogramGrid;
@@ -40,6 +41,7 @@ export const selectDimensions = (state: NonogramState) => [
   state.grid[0].length,
   state.grid.length,
 ];
+export const selectClues = (state: NonogramState) => gridClues(state.grid);
 
 export const NonogramContext = createContext(createNonogramStore([[0]]));
 

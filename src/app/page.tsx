@@ -1,6 +1,5 @@
 "use client";
 
-import Canvas from "components/canvas";
 import Nonogram from "components/nonogram";
 import { useState } from "react";
 import { createNonogramStore, NonogramContext } from "store";
