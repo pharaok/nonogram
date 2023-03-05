@@ -15,8 +15,11 @@ export default function Canvas() {
   const height = grid.length;
 
   const eventToCoords = (e: PointerEvent): [number, number] => {
-    const ratioX = e.clientX / e.currentTarget.clientWidth;
-    const ratioY = e.clientY / e.currentTarget.clientHeight;
+    const { x: targetX, y: targetY } = e.currentTarget.getBoundingClientRect();
+    const [x, y] = [e.clientX - targetX, e.clientY - targetY];
+
+    const ratioX = x / e.currentTarget.clientWidth;
+    const ratioY = y / e.currentTarget.clientHeight;
     const cellX = clamp(Math.floor(ratioX * width), 0, width - 1);
     const cellY = clamp(Math.floor(ratioY * height), 0, height - 1);
     return [cellX, cellY];
