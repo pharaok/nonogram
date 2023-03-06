@@ -6,7 +6,7 @@ import { createNonogramStore, NonogramContext } from "store";
 
 export default function Home() {
   let [store] = useState(
-    createNonogramStore(Array.from(Array(50), () => Array(50).fill(0)))
+    createNonogramStore(Array.from(Array(20), () => Array(20).fill(0)))
   );
 
   return (
