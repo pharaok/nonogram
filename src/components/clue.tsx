@@ -1,3 +1,5 @@
+"use client";
+
 import type { Property } from "csstype";
 import { useRef, useEffect, useState } from "react";
 
@@ -19,7 +21,6 @@ export default function Clue({
         ? contentRect.height
         : contentRect.width;
       setFontSize((length * 2) / 3);
-      console.log("resizeObserver");
     });
     resizeObserver.current.observe(clueEl.current!);
     return () => {

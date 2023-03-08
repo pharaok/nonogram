@@ -12,9 +12,7 @@ export default function Clues({
   }
   const isRow = direction.includes("row");
   const oppositeDirection = (
-    isRow
-      ? direction.replace("row", "column")
-      : direction.replace("column", "row")
+    isRow ? "column" : "row"
   ) as Property.FlexDirection;
   const clues = useNonogramStore(selectClues);
   console.log(clues);
@@ -23,8 +21,8 @@ export default function Clues({
       className="flex w-full h-full"
       style={{ flexDirection: oppositeDirection }}
     >
-      {clues[+!isRow].map((clue) => (
-        <Clue direction={direction} clue={clue} />
+      {clues[+!isRow].map((clue, i) => (
+        <Clue key={i} direction={direction} clue={clue} />
       ))}
     </div>
   );
