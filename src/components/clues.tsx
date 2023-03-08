@@ -15,7 +15,7 @@ export default function Clues({
     isRow ? "column" : "row"
   ) as Property.FlexDirection;
   const clues = useNonogramStore(selectClues);
-  console.log(clues);
+
   return (
     <div
       className="flex w-full h-full"
