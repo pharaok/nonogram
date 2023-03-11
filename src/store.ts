@@ -7,14 +7,19 @@ import { gridClues } from "helpers";
 
 export interface NonogramState {
   grid: NonogramGrid;
+  solution: NonogramGrid;
   brush: number;
   paint: (...points: [number, number][]) => void;
   setBrush: (brush: number) => void;
 }
 
-export const createNonogramStore = (grid: NonogramGrid) => {
+export const createNonogramStore = (
+  solution: NonogramGrid,
+  grid?: NonogramGrid
+) => {
   return createStore<NonogramState>((set) => ({
-    grid,
+    grid: grid ?? Array.from(solution, (row) => Array.from(row, () => 0)),
+    solution,
     brush: 1,
     paint: (...points: [number, number][]) =>
       set((state) =>
@@ -41,7 +46,7 @@ export const selectDimensions = (state: NonogramState) => [
   state.grid[0].length,
   state.grid.length,
 ];
-export const selectClues = (state: NonogramState) => gridClues(state.grid);
+export const selectClues = (state: NonogramState) => gridClues(state.solution);
 
 export const NonogramContext = createContext(createNonogramStore([[0]]));
 
