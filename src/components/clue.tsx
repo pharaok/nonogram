@@ -40,7 +40,7 @@ export default memo(
         {clue.map((n, i) => (
           <div
             key={i}
-            className="border-[1px] border-red-600 rounded aspect-square min-h-0 flex justify-center items-center"
+            className="rounded aspect-square min-h-0 flex justify-center items-center"
             style={{ fontSize: `${Math.min(1, 2 / n.toString().length)}em` }}
           >
             <span>{n}</span>

@@ -18,6 +18,34 @@ export default function Nonogram() {
       }}
     >
       <div
+        className="grid"
+        style={{
+          gridRow: `1 / ${height + longestColClue + 1}`,
+          gridColumn: `1 / ${width + longestRowClue + 1}`,
+          gridTemplateRows: `repeat(${height + longestColClue}, 1fr)`,
+          gridTemplateColumns: `repeat(${width + longestRowClue}, 1fr)`,
+        }}
+      >
+        {Array.from(Array(height + longestColClue)).map((_, i) => (
+          <div
+            className="border-b-[1px] border-black"
+            style={{
+              gridRow: `${i + 1} / ${i + 1}`,
+              gridColumn: `1 / ${width + longestRowClue + 1}`,
+            }}
+          ></div>
+        ))}
+        {Array.from(Array(width + longestRowClue)).map((_, i) => (
+          <div
+            className="border-r-[1px] border-black"
+            style={{
+              gridRow: `1 / ${height + longestColClue + 1}`,
+              gridColumn: `${i + 1} / ${i + 1}`,
+            }}
+          ></div>
+        ))}
+      </div>
+      <div
         style={{
           gridRow: `1 / ${longestColClue + 1}`,
           gridColumn: `${longestRowClue + 1} / ${width + longestRowClue + 1}`,
