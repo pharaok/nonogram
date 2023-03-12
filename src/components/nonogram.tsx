@@ -9,6 +9,8 @@ export default function Nonogram() {
     Math.max(...clues[i].map((cs) => cs.length))
   );
 
+  const emphasizeBorder = (i: number, l: number) => i % l == 0;
+
   return (
     <div
       className="grid"
@@ -28,8 +30,10 @@ export default function Nonogram() {
       >
         {Array.from(Array(height + longestColClue)).map((_, i) => (
           <div
-            className="border-b-[1px] border-black"
+            key={i}
+            className="border-black"
             style={{
+              borderBottomWidth: emphasizeBorder(i, height) ? 2 : 1,
               gridRow: `${i + 1} / ${i + 1}`,
               gridColumn: `1 / ${width + longestRowClue + 1}`,
             }}
@@ -37,8 +41,10 @@ export default function Nonogram() {
         ))}
         {Array.from(Array(width + longestRowClue)).map((_, i) => (
           <div
-            className="border-r-[1px] border-black"
+            key={i}
+            className="border-black"
             style={{
+              borderRightWidth: emphasizeBorder(i, width) ? 2 : 1,
               gridRow: `1 / ${height + longestColClue + 1}`,
               gridColumn: `${i + 1} / ${i + 1}`,
             }}
