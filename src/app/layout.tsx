@@ -1,4 +1,12 @@
+import { Silkscreen } from "next/font/google";
+import Header from "components/header";
 import "./globals.css";
+
+const silkscreen = Silkscreen({
+  variable: "--font-silkscreen",
+  weight: "400",
+  subsets: ["latin"],
+});
 
 export const metadata = {
   title: {
@@ -19,7 +27,10 @@ export default function RootLayout({
         head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
       <head />
-      <body>{children}</body>
+      <body className={silkscreen.variable}>
+        <Header />
+        {children}
+      </body>
     </html>
   );
 }
