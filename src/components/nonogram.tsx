@@ -15,20 +15,20 @@ export default function Nonogram() {
     <div
       className="grid"
       style={{
-        gridTemplateRows: `repeat(${height + longestColClue}, 1fr)`,
-        gridTemplateColumns: `repeat(${width + longestRowClue}, 1fr)`,
+        gridTemplateRows: `${longestColClue}fr ${height}fr`,
+        gridTemplateColumns: `${longestRowClue}fr ${width}fr`,
       }}
     >
       <div
         className="grid"
         style={{
-          gridRow: `1 / ${height + longestColClue + 1}`,
-          gridColumn: `1 / ${width + longestRowClue + 1}`,
-          gridTemplateRows: `repeat(${height + longestColClue}, 1fr)`,
-          gridTemplateColumns: `repeat(${width + longestRowClue}, 1fr)`,
+          gridRow: `1 / 3`,
+          gridColumn: `1 / 3`,
+          gridTemplateRows: `${longestColClue}fr repeat(${height}, 1fr)`,
+          gridTemplateColumns: `${longestRowClue}fr repeat(${width}, 1fr)`,
         }}
       >
-        {Array.from(Array(height + longestColClue)).map((_, i) => (
+        {Array.from(Array(height + 1)).map((_, i) => (
           <div
             key={i}
             className="border-black"
@@ -39,7 +39,7 @@ export default function Nonogram() {
             }}
           ></div>
         ))}
-        {Array.from(Array(width + longestRowClue)).map((_, i) => (
+        {Array.from(Array(width + 1)).map((_, i) => (
           <div
             key={i}
             className="border-black"
@@ -51,28 +51,13 @@ export default function Nonogram() {
           ></div>
         ))}
       </div>
-      <div
-        style={{
-          gridRow: `1 / ${longestColClue + 1}`,
-          gridColumn: `${longestRowClue + 1} / ${width + longestRowClue + 1}`,
-        }}
-      >
+      <div style={{ gridArea: "1 / 2" }}>
         <Clues direction="column" />
       </div>
-      <div
-        style={{
-          gridRow: `${longestColClue + 1} / ${height + longestColClue + 1}`,
-          gridColumn: `1 / ${longestRowClue + 1}`,
-        }}
-      >
+      <div style={{ gridArea: "2 / 1" }}>
         <Clues direction="row" />
       </div>
-      <div
-        style={{
-          gridRow: `${longestColClue + 1} / ${height + longestColClue + 1}`,
-          gridColumn: `${longestRowClue + 1} / ${width + longestRowClue + 1}`,
-        }}
-      >
+      <div style={{ gridArea: "2 / 2" }}>
         <Canvas />
       </div>
     </div>
