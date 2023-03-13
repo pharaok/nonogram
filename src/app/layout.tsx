@@ -1,5 +1,5 @@
-import { Silkscreen } from "next/font/google";
 import Header from "components/header";
+import { Silkscreen } from "next/font/google";
 import "./globals.css";
 
 const silkscreen = Silkscreen({
@@ -22,11 +22,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      {/*
-        <head /> will contain the components returned by the nearest parent
-        head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
-      */}
-      <head />
       <body className={silkscreen.variable}>
         <Header />
         {children}
