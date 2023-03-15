@@ -10,6 +10,9 @@ interface Props {
 
 export default memo(
   function Clue({ clue, direction }: Props) {
+    if (!clue.length) {
+      clue = [0];
+    }
     const clueEl = useRef(null);
     const resizeObserver = useRef<ResizeObserver | null>(null);
     const [fontSize, setFontSize] = useState(0);

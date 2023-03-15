@@ -6,7 +6,7 @@ export default function Nonogram() {
   const [width, height] = useNonogramStore(selectDimensions);
   const clues = useNonogramStore(selectClues);
   const [longestRowClue, longestColClue] = Array.from(Array(2)).map((_, i) =>
-    Math.max(...clues[i].map((cs) => cs.length))
+    Math.max(1, ...clues[i].map((cs) => cs.length))
   );
 
   const emphasizeBorder = (i: number, l: number) => i % l == 0;

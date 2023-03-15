@@ -15,13 +15,13 @@ export const clueFromRow = (row: number[]) => {
   if (consecutive) {
     clue.push(consecutive);
   }
-  return clue.length ? clue : [0];
+  return clue;
 };
 
 export const rowClues = (grid: number[][]) =>
   grid.map((row) => clueFromRow(row));
 
-export const gridClues = (grid: number[][]) => [
+export const gridClues = (grid: number[][]): [number[][], number[][]] => [
   grid.map((row) => clueFromRow(row)),
   transpose(grid).map((col) => clueFromRow(col)),
 ];
