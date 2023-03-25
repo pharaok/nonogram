@@ -10,7 +10,7 @@ interface Props {
 
 export default memo(
   function Clue({ clue, direction }: Props) {
-    if (!clue.length) {
+    if (clue.length === 0) {
       clue = [0];
     }
     const clueEl = useRef(null);
@@ -54,6 +54,6 @@ export default memo(
   },
   (oldProps: Props, newProps: Props) =>
     oldProps.direction == newProps.direction &&
-    newProps.clue.length == newProps.clue.length &&
+    oldProps.clue.length == newProps.clue.length &&
     oldProps.clue.every((a, i) => a == newProps.clue[i])
 );

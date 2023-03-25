@@ -48,3 +48,13 @@ export const base64ToGrid = (b64: string, width: number, height: number) => {
   }
   return grid;
 };
+
+export const randomBigInt = (bits: number) => {
+  let bi = BigInt(0);
+  for (let i = 0; i < bits; i += 30) {
+    bi |=
+      BigInt(Math.floor(Math.random() * (1 << Math.min(30, bits - i)))) <<
+      BigInt(i);
+  }
+  return bi;
+};
