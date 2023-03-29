@@ -1,4 +1,4 @@
-import { clamp, gridToPath } from "helpers";
+import { clamp, markToPath, gridToPath } from "helpers";
 import { PointerEvent, useRef } from "react";
 import useNonogramStore from "store";
 
@@ -26,12 +26,14 @@ export default function Canvas() {
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
-      shapeRendering="crispEdges"
+      onContextMenu={(e) => e.preventDefault()}
       onPointerDown={(e) => {
         e.currentTarget.setPointerCapture(e.pointerId);
         let [x, y] = eventToCoords(e);
         painting.current = true;
-        setBrush(+!grid[y][x]);
+        console.log(e.button);
+        const brush = e.button === 0 ? 1 : 2;
+        setBrush(brush === grid[y][x] ? 0 : brush);
         paint([x, y]);
         prevCell.current = [x, y];
       }}
@@ -50,7 +52,18 @@ export default function Canvas() {
         painting.current = false;
       }}
     >
-      <path pointerEvents="none" d={gridToPath(grid)} />
+      <path
+        pointerEvents="none"
+        shapeRendering="crispEdges"
+        d={gridToPath(grid)}
+      />
+      <path
+        pointerEvents="none"
+        d={markToPath(grid)}
+        stroke="black"
+        strokeWidth={0.1}
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
