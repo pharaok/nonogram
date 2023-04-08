@@ -1,22 +1,46 @@
 import Canvas from "components/canvas";
+import { useEffect, useRef, useState } from "react";
 import useNonogramStore, { selectClues, selectDimensions } from "store";
 import Clues from "./clues";
 
 export default function Nonogram() {
+  const nonogramRef = useRef<HTMLDivElement | null>(null);
   const [width, height] = useNonogramStore(selectDimensions);
   const clues = useNonogramStore(selectClues);
   const [longestRowClue, longestColClue] = Array.from(Array(2)).map((_, i) =>
     Math.max(1, ...clues[i].map((cs) => cs.length))
   );
+  const [boundingDimension, setBoundingDimension] = useState("width");
 
   const emphasizeBorder = (i: number, l: number) => i % l == 0;
 
+  // if we cause the parent to overflow with the
+  // current dimension set to 100%, switch the dimension
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver((entries) => {
+      const { width: w, height: h } = entries[0].contentRect;
+      const { scrollWidth: sw, scrollHeight: sh } = entries[0].target;
+      if (sw > w) {
+        setBoundingDimension("width");
+      } else if (sh > h) {
+        setBoundingDimension("height");
+      }
+    });
+    resizeObserver.observe(nonogramRef.current!.parentElement!);
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
+
   return (
     <div
+      ref={nonogramRef}
       className="grid"
       style={{
         gridTemplateRows: `${longestColClue}fr ${height}fr`,
         gridTemplateColumns: `${longestRowClue}fr ${width}fr`,
+        aspectRatio: `${width + longestRowClue} / ${height + longestColClue}`,
+        [boundingDimension]: "100%",
       }}
     >
       <div

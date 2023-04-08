@@ -14,20 +14,19 @@ export default memo(
       clue = [0];
     }
     const clueEl = useRef(null);
-    const resizeObserver = useRef<ResizeObserver | null>(null);
     const [fontSize, setFontSize] = useState(0);
 
     useEffect(() => {
-      resizeObserver.current = new ResizeObserver((entries) => {
+      const resizeObserver = new ResizeObserver((entries) => {
         const contentRect = entries[0].contentRect;
         const length = direction.includes("row")
           ? contentRect.height
           : contentRect.width;
         setFontSize((length * 2) / 3);
       });
-      resizeObserver.current.observe(clueEl.current!);
+      resizeObserver.observe(clueEl.current!);
       return () => {
-        resizeObserver.current?.disconnect();
+        resizeObserver.disconnect();
       };
     }, [direction]);
 

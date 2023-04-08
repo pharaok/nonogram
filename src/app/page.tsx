@@ -23,12 +23,10 @@ export default function Home() {
   }, [width, height]);
 
   return (
-    <main>
-      <NonogramContext.Provider value={store}>
-        <div className="max-w-xl">
-          <Nonogram />
-        </div>
-      </NonogramContext.Provider>
-    </main>
+    <NonogramContext.Provider value={store}>
+      <div className="flex justify-evenly items-center w-full h-full">
+        <Nonogram />
+      </div>
+    </NonogramContext.Provider>
   );
 }
