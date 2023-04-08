@@ -5,7 +5,7 @@ import "./globals.css";
 const silkscreen = Silkscreen({
   variable: "--font-silkscreen",
   weight: "400",
-  subsets: ["latin"],
+  subsets: ["latin-ext"],
 });
 
 export const metadata = {
