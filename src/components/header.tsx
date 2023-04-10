@@ -3,12 +3,12 @@ import Link from "next/link";
 export default function Header() {
   return (
     <header
-      className="flex justify-between items-center  mb-4 py-1 bg-gray-200 shadow-md shadow-black/25
-                 border-t-4 border-t-purple-600 border-b-2"
+      className="mb-4 flex items-center  justify-between border-t-4 border-b-2 border-t-purple-600 bg-gray-200
+                 py-1 shadow-md shadow-black/25"
     >
       <nav className="flex items-center">
         <Link href="/">
-          <h1 className="text-3xl font-display mx-12">Nonogram</h1>
+          <h1 className="mx-12 font-display text-3xl">Nonogram</h1>
         </Link>
       </nav>
     </header>

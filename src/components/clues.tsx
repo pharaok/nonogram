@@ -15,7 +15,7 @@ export default function Clues({
 
   return (
     <div
-      className="flex w-full h-full"
+      className="flex h-full w-full"
       style={{ flexDirection: isRow ? "column" : "row" }}
     >
       {clues[+!isRow].map((clue, i) => (

@@ -30,7 +30,7 @@ export default memo(
     }, [direction]);
     return (
       <div
-        className={`flex w-full h-full justify-end`}
+        className={`flex h-full w-full justify-end`}
         style={{
           flexDirection: direction,
           fontSize: fontSize,
@@ -40,7 +40,7 @@ export default memo(
         {clue.map((c, i) => (
           <div
             key={i}
-            className={`rounded aspect-square min-h-0 flex justify-center items-center ${
+            className={`flex aspect-square min-h-0 items-center justify-center rounded ${
               c.isMarked ? "text-gray-400" : ""
             }`}
             style={{

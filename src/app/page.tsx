@@ -24,7 +24,7 @@ export default function Home() {
 
   return (
     <NonogramContext.Provider value={store}>
-      <div className="flex justify-evenly items-center w-full h-full">
+      <div className="flex h-full w-full items-center justify-evenly">
         <Nonogram />
       </div>
     </NonogramContext.Provider>

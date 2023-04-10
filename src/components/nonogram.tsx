@@ -44,7 +44,7 @@ export default function Nonogram() {
       }}
     >
       <div
-        className="grid z-10 pointer-events-none"
+        className="pointer-events-none z-10 grid"
         style={{
           gridRow: `1 / 3`,
           gridColumn: `1 / 3`,
