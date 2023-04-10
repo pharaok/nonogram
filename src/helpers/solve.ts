@@ -10,6 +10,8 @@ const minLength = (clue: number[]) =>
   clue.reduce((r, c) => r + c, 0) + clue.length - 1;
 
 // O(2^(n*m))
+
+// TODO: create clues incrementally instead of generating them from scratch each time
 export const solveNonogram = (
   rowClues: number[][],
   colClues: number[][],

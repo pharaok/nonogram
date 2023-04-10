@@ -2,17 +2,16 @@
 
 import type { Property } from "csstype";
 import { useRef, useEffect, useState, memo } from "react";
+import { isEqual } from "lodash-es";
+import { Clue } from "store";
 
 interface Props {
-  clue: number[];
+  clue: Clue[];
   direction: Property.FlexDirection;
 }
 
 export default memo(
   function Clue({ clue, direction }: Props) {
-    if (clue.length === 0) {
-      clue = [0];
-    }
     const clueEl = useRef(null);
     const [fontSize, setFontSize] = useState(0);
 
@@ -29,30 +28,30 @@ export default memo(
         resizeObserver.disconnect();
       };
     }, [direction]);
-
     return (
       <div
-        className="flex w-full h-full justify-end"
+        className={`flex w-full h-full justify-end`}
         style={{
           flexDirection: direction,
           fontSize: fontSize,
         }}
         ref={clueEl}
       >
-        {clue.map((n, i) => (
+        {clue.map((c, i) => (
           <div
             key={i}
-            className="rounded aspect-square min-h-0 flex justify-center items-center"
-            style={{ fontSize: `${Math.min(1, 2 / n.toString().length)}em` }}
+            className={`rounded aspect-square min-h-0 flex justify-center items-center ${
+              c.isMarked ? "text-gray-400" : ""
+            }`}
+            style={{
+              fontSize: `${Math.min(1, 2 / c.length.toString().length)}em`,
+            }}
           >
-            <span>{n}</span>
+            <span>{c.length}</span>
           </div>
         ))}
       </div>
     );
   },
-  (oldProps: Props, newProps: Props) =>
-    oldProps.direction == newProps.direction &&
-    oldProps.clue.length == newProps.clue.length &&
-    oldProps.clue.every((a, i) => a == newProps.clue[i])
+  (oldProps: Props, newProps: Props) => isEqual(oldProps, newProps)
 );
