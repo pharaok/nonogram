@@ -24,8 +24,12 @@ export default function Home() {
 
   return (
     <NonogramContext.Provider value={store}>
-      <div className="flex h-full w-full items-center justify-evenly">
-        <Nonogram />
+      {/* HACK: padding on Nonogram's parent breaks the ResizeObserver,
+          because overflow eats into padding first, then actually overflows. */}
+      <div className="h-full w-full p-8">
+        <div className="flex h-full w-full items-center justify-evenly">
+          <Nonogram />
+        </div>
       </div>
     </NonogramContext.Provider>
   );
