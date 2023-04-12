@@ -1,4 +1,5 @@
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
+import { markToPath } from "helpers";
 import produce from "immer";
 import { FaEraser } from "react-icons/fa";
 import useNonogramStore from "store";
@@ -10,14 +11,14 @@ export default function BrushToggleGroup() {
   return (
     <ToggleGroup.Root
       type="multiple"
-      className="whitespace-nowrap rounded-md bg-white"
+      className="inline-flex items-stretch whitespace-nowrap rounded-md bg-white"
       value={brushes.map((b) => b.toString())}
     >
       {[...Array(colors.length + 1)].map((_, i) => (
         <ToggleGroup.Item
           key={i}
           value={i.toString()}
-          className="h-full w-8 border-2 p-1 first:rounded-l-md last:rounded-r-md"
+          className="inline-flex w-8 items-center justify-center border-2 p-1 first:rounded-l-md last:rounded-r-md"
           style={{
             borderColor:
               brushes[0] === i
@@ -49,10 +50,19 @@ export default function BrushToggleGroup() {
           }}
           onContextMenu={(e) => e.preventDefault()}
         >
-          {i ? (
-            <span className="mix-blend-difference invert">{i}</span>
-          ) : (
+          {i === 0 ? (
             <FaEraser className="inline" />
+          ) : i === colors.length ? (
+            <svg viewBox="0 0 1 1" className="inline">
+              <path
+                d={markToPath([[2]])}
+                stroke="black"
+                strokeWidth={0.1}
+                strokeLinecap="round"
+              />
+            </svg>
+          ) : (
+            <span className="mix-blend-difference invert">{i}</span>
           )}
         </ToggleGroup.Item>
       ))}
