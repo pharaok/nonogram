@@ -10,21 +10,22 @@ export default function BrushToggleGroup() {
   return (
     <ToggleGroup.Root
       type="multiple"
-      className="rounded-md bg-white"
+      className="whitespace-nowrap rounded-md bg-white"
       value={brushes.map((b) => b.toString())}
     >
-      {[...Array(colors + 1)].map((_, i) => (
+      {[...Array(colors.length + 1)].map((_, i) => (
         <ToggleGroup.Item
           key={i}
           value={i.toString()}
-          className="h-full w-8 border p-1 first:rounded-l-md last:rounded-r-md"
+          className="h-full w-8 border-2 p-1 first:rounded-l-md last:rounded-r-md"
           style={{
             borderColor:
               brushes[0] === i
-                ? "red"
+                ? "rgb(var(--color-primary))"
                 : brushes[1] === i
-                ? "blue"
+                ? "rgb(var(--color-secondary))"
                 : "transparent",
+            backgroundColor: i !== 0 && i < colors.length ? colors[i] : "none",
           }}
           onMouseDown={(e) => {
             if (brushes.includes(i)) {
@@ -48,7 +49,11 @@ export default function BrushToggleGroup() {
           }}
           onContextMenu={(e) => e.preventDefault()}
         >
-          {i || <FaEraser className="inline" />}
+          {i ? (
+            <span className="mix-blend-difference invert">{i}</span>
+          ) : (
+            <FaEraser className="inline" />
+          )}
         </ToggleGroup.Item>
       ))}
     </ToggleGroup.Root>

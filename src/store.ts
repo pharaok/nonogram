@@ -8,7 +8,7 @@ import { gridClues, markedGridClues } from "helpers";
 export interface NonogramState {
   grid: NonogramGrid;
   solution: NonogramGrid;
-  colors: number;
+  colors: string[];
   brushes: number[];
   brushColor: number;
   paint: (points: [number, number][], brush?: number, toggle?: boolean) => void;
@@ -17,12 +17,13 @@ export interface NonogramState {
 
 export const createNonogramStore = (
   solution: NonogramGrid,
-  grid?: NonogramGrid
+  grid?: NonogramGrid,
+  colors?: string[]
 ) => {
   return createStore<NonogramState>((set) => ({
     grid: grid ?? Array.from(solution, (row) => Array.from(row, () => 0)),
     solution,
-    colors: 2,
+    colors: colors ?? ["white", "black"],
     brushes: [1, 2],
     brushColor: 0,
     paint: (points: [number, number][], brush?: number, toggle = true) =>

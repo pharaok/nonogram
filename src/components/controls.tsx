@@ -1,6 +1,5 @@
 import { formatDuration } from "helpers/time";
 import { useEffect, useState } from "react";
-import useNonogramStore from "store";
 import BrushToggleGroup from "./brushToggleGroup";
 
 export default function Controls() {
