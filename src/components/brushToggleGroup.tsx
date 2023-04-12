@@ -31,19 +31,17 @@ export default function BrushToggleGroup() {
           onMouseDown={(e) => {
             if (brushes.includes(i)) {
               // clicked on an already selected brush
-              setBrushes(
-                produce(brushes, (draft) => {
-                  draft[0] = draft.splice(1, 1, draft[0])[0]; // swap
-                })
-              );
+              if (brushes[+(e.button === 2)] !== i) {
+                setBrushes(
+                  produce(brushes, (draft) => {
+                    draft[0] = draft.splice(1, 1, draft[0])[0]; // swap
+                  })
+                );
+              }
             } else {
               setBrushes(
                 produce(brushes, (draft) => {
-                  if (e.button === 0) {
-                    draft[0] = i;
-                  } else if (e.button === 2) {
-                    draft[1] = i;
-                  }
+                  draft[+(e.button === 2)] = i;
                 })
               );
             }
