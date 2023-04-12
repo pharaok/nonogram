@@ -8,9 +8,11 @@ import { gridClues, markedGridClues } from "helpers";
 export interface NonogramState {
   grid: NonogramGrid;
   solution: NonogramGrid;
-  brush: number;
-  paint: (...points: [number, number][]) => void;
-  setBrush: (brush: number) => void;
+  colors: number;
+  brushes: number[];
+  brushColor: number;
+  paint: (points: [number, number][], brush?: number, toggle?: boolean) => void;
+  setBrushes: (brushes: number[]) => void;
 }
 
 export const createNonogramStore = (
@@ -20,23 +22,30 @@ export const createNonogramStore = (
   return createStore<NonogramState>((set) => ({
     grid: grid ?? Array.from(solution, (row) => Array.from(row, () => 0)),
     solution,
-    brush: 1,
-    paint: (...points: [number, number][]) =>
-      set((state) =>
-        produce(state, (draft) => {
-          const brush = state.brush;
-          draft.grid[points[0][1]][points[0][0]] = brush;
+    colors: 2,
+    brushes: [1, 2],
+    brushColor: 0,
+    paint: (points: [number, number][], brush?: number, toggle = true) =>
+      set((state) => {
+        const [sx, sy] = points[0];
+        return produce(state, (draft) => {
+          if (brush !== undefined) {
+            draft.brushColor = draft.brushes[brush];
+            if (toggle && state.grid[sy][sx] === draft.brushColor)
+              draft.brushColor = 0;
+          }
+          draft.grid[sy][sx] = draft.brushColor;
           for (let i = 0; i + 1 < points.length; i++) {
             plotLine(points[i], points[i + 1], ([x, y]) => {
-              draft.grid[y][x] = brush;
+              draft.grid[y][x] = draft.brushColor;
             });
           }
-        })
-      ),
-    setBrush: (brush: number) =>
+        });
+      }),
+    setBrushes: (brushes: number[]) =>
       set((state) =>
         produce(state, (draft) => {
-          draft.brush = brush;
+          draft.brushes = brushes;
         })
       ),
   }));

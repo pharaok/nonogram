@@ -1,5 +1,7 @@
 import { formatDuration } from "helpers/time";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import useNonogramStore from "store";
+import BrushToggleGroup from "./brushToggleGroup";
 
 export default function Controls() {
   const [startTime] = useState(Date.now());
@@ -12,9 +14,13 @@ export default function Controls() {
       clearInterval(interval);
     };
   }, []);
+
   return (
-    <div className="rounded-xl bg-gray-200 py-4 px-12 shadow-md shadow-black/25">
-      <span className="text-2xl">{formatDuration(currTime - startTime)}</span>
+    <div className="flex flex-col items-center rounded-xl bg-gray-200 py-4 px-12 shadow-md shadow-black/25">
+      <span className="mb-4 text-2xl">
+        {formatDuration(currTime - startTime)}
+      </span>
+      <BrushToggleGroup />
     </div>
   );
 }

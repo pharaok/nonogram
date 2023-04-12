@@ -4,7 +4,6 @@ import useNonogramStore from "store";
 
 export default function Canvas() {
   const grid = useNonogramStore((state) => state.grid);
-  const setBrush = useNonogramStore((state) => state.setBrush);
   const paint = useNonogramStore((state) => state.paint);
 
   const painting = useRef(false);
@@ -29,13 +28,10 @@ export default function Canvas() {
       onContextMenu={(e) => e.preventDefault()}
       onPointerDown={(e) => {
         e.currentTarget.setPointerCapture(e.pointerId);
-        let [x, y] = eventToCoords(e);
+        let coords = eventToCoords(e);
         painting.current = true;
-        console.log(e.button);
-        const brush = e.button === 0 ? 1 : 2;
-        setBrush(brush === grid[y][x] ? 0 : brush);
-        paint([x, y]);
-        prevCell.current = [x, y];
+        paint([coords], +(e.button === 2));
+        prevCell.current = coords;
       }}
       onPointerMove={(e) => {
         const coords = eventToCoords(e);
@@ -45,7 +41,7 @@ export default function Canvas() {
         ) {
           return;
         }
-        paint(prevCell.current, coords);
+        paint([prevCell.current, coords]);
         prevCell.current = coords;
       }}
       onPointerUp={() => {
