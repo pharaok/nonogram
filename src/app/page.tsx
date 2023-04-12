@@ -1,5 +1,6 @@
 "use client";
 
+import Controls from "components/controls";
 import Nonogram from "components/nonogram";
 import { base64ToGrid, bigIntToBase64, randomBigInt } from "helpers/base64";
 import { useSearchParams } from "next/navigation";
@@ -29,6 +30,7 @@ export default function Home() {
       <div className="h-full w-full p-8">
         <div className="flex h-full w-full items-center justify-evenly">
           <Nonogram />
+          <Controls />
         </div>
       </div>
     </NonogramContext.Provider>
