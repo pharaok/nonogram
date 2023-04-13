@@ -4,6 +4,7 @@ import { createContext, useContext } from "react";
 import { NonogramGrid } from "types";
 import { plotLine } from "helpers/line";
 import { gridClues, markedGridClues } from "helpers";
+import { isEqual } from "lodash-es";
 
 export interface NonogramState {
   grid: NonogramGrid;
@@ -83,6 +84,8 @@ export const selectClues = (state: NonogramState) => {
 
   return newClues;
 };
+export const selectIsSolved = (state: NonogramState) =>
+  isEqual(gridClues(state.grid), gridClues(state.solution));
 
 export const NonogramContext = createContext(createNonogramStore([[0]]));
 

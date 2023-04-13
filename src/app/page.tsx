@@ -2,10 +2,27 @@
 
 import Controls from "components/controls";
 import Nonogram from "components/nonogram";
+import WinDialog from "components/winDialog";
 import { base64ToGrid, bigIntToBase64, randomBigInt } from "helpers/base64";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { createNonogramStore, NonogramContext } from "store";
+import useNonogramStore, {
+  createNonogramStore,
+  NonogramContext,
+  selectIsSolved,
+} from "store";
+
+const WinDialogWrapper = () => {
+  const isSolved = useNonogramStore(selectIsSolved);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  useEffect(() => {
+    setDialogOpen(isSolved);
+  }, [isSolved]);
+
+  return (
+    <WinDialog open={dialogOpen} onOpenChange={(open) => setDialogOpen(open)} />
+  );
+};
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -32,6 +49,7 @@ export default function Home() {
           <Nonogram />
           <Controls />
         </div>
+        <WinDialogWrapper />
       </div>
     </NonogramContext.Provider>
   );
