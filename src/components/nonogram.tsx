@@ -4,7 +4,7 @@ import useNonogramStore, { selectClues, selectDimensions } from "store";
 import Clues from "./clues";
 
 export default function Nonogram() {
-  const nonogramRef = useRef<HTMLDivElement | null>(null);
+  const nonogramRef = useRef<HTMLDivElement>(null);
   const [width, height] = useNonogramStore(selectDimensions);
   const clues = useNonogramStore(selectClues);
   const [longestRowClue, longestColClue] = Array.from(Array(2)).map((_, i) =>
