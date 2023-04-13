@@ -11,7 +11,7 @@ export const clueFromRow = (row: number[]) => {
     }
   });
   if (consecutive) clue.push(consecutive);
-  return clue;
+  return clue.length ? clue : [0];
 };
 
 export const rowClues = (grid: number[][]) =>
@@ -35,7 +35,7 @@ export const markedClueFromRow = (row: number[]) => {
     } else consecutive = -1;
   });
   if (consecutive > 0) clue.push(consecutive);
-  return clue;
+  return clue.length ? clue : [0];
 };
 
 export const markedRowClues = (grid: number[][]) =>
