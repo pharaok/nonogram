@@ -1,12 +1,14 @@
 import Canvas2D from "helpers/canvas";
+import { clamp } from "lodash-es";
 import { PointerEvent, useEffect, useRef } from "react";
-import useNonogramStore, { selectClues } from "store";
+import useNonogramStore, { selectClues, selectDimensions } from "store";
 
 export default function Nonogram() {
   const canvasEl = useRef<HTMLCanvasElement>(null);
   const canvas = useRef<Canvas2D | null>(null);
   const prevCell = useRef<[number, number]>([0, 0]);
   const grid = useNonogramStore((state) => state.grid);
+  const [width, height] = useNonogramStore(selectDimensions);
   const paint = useNonogramStore((state) => state.paint);
   const colors = useNonogramStore((state) => state.colors);
   const clues = useNonogramStore(selectClues);
@@ -14,10 +16,7 @@ export default function Nonogram() {
     Math.max(...clues[0].map((c) => c.length)),
     Math.max(...clues[1].map((c) => c.length)),
   ];
-  const [totalWidth, totalHeight] = [
-    grid[0].length + clueWidth,
-    grid.length + clueHeight,
-  ];
+  const [totalWidth, totalHeight] = [width + clueWidth, height + clueHeight];
 
   const eventToCoords = (
     e: PointerEvent<HTMLCanvasElement>
@@ -93,6 +92,10 @@ export default function Nonogram() {
       className="h-full w-full"
       onPointerDown={(e) => {
         const coords = eventToCoords(e);
+        if (coords.some((d) => d < 0)) {
+          return;
+        }
+        e.currentTarget.setPointerCapture(e.pointerId);
         paint([coords], 0);
         prevCell.current = coords;
       }}
@@ -100,7 +103,9 @@ export default function Nonogram() {
         if (!e.buttons) {
           return;
         }
-        const coords = eventToCoords(e);
+        const coords = eventToCoords(e).map((d, i) =>
+          clamp(d, 0, [width, height][i] - 1)
+        ) as [number, number];
         paint([coords, prevCell.current]);
         prevCell.current = coords;
       }}
