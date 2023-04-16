@@ -3,19 +3,20 @@ import { clamp } from "lodash-es";
 type FillStyle = typeof CanvasRenderingContext2D.prototype.fillStyle;
 type StrokeStyle = typeof CanvasRenderingContext2D.prototype.strokeStyle;
 type Point = [number, number];
+type Vector4D = [number, number, number, number];
 
 export default class Canvas2D {
   readonly ctx: CanvasRenderingContext2D;
 
-  viewBox: [number, number, number, number];
+  viewBox: Vector4D;
   // extra "padding" pixels outside viewBox
   // [left, top, right, bottom]
-  extra: [number, number, number, number];
+  extra: Vector4D;
 
   constructor(
     canvasEl: HTMLCanvasElement,
-    viewBox?: [number, number, number, number],
-    extra?: [number, number, number, number]
+    viewBox?: Vector4D,
+    extra?: Vector4D
   ) {
     this.ctx = canvasEl.getContext("2d")!;
     this.viewBox = viewBox ?? [0, 0, canvasEl.width, canvasEl.height];
@@ -40,9 +41,9 @@ export default class Canvas2D {
     const [ratioX, ratioY] = this.getViewBoxRatio();
     this.ctx.fillStyle = fill;
     this.ctx.fillRect(
-      ...([...this.toPixel(x, y), w * ratioX, h * ratioY].map((n) =>
-        Math.round(n)
-      ) as [number, number, number, number])
+      ...([...this.toPixel(x, y), w * ratioX, h * ratioY].map(
+        Math.round
+      ) as Vector4D)
     );
   }
 

@@ -1,11 +1,13 @@
 import Canvas2D from "helpers/canvas";
-import { useEffect, useRef } from "react";
+import { PointerEvent, useEffect, useRef } from "react";
 import useNonogramStore, { selectClues } from "store";
 
 export default function Nonogram() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvas = useRef<Canvas2D | null>(null);
   const grid = useNonogramStore((state) => state.grid);
+  const paint = useNonogramStore((state) => state.paint);
+  const colors = useNonogramStore((state) => state.colors);
   const clues = useNonogramStore(selectClues);
   const [clueWidth, clueHeight] = [
     Math.max(...clues[0].map((c) => c.length)),
@@ -15,12 +17,22 @@ export default function Nonogram() {
     grid[0].length + clueWidth,
     grid.length + clueHeight,
   ];
-  const solution = useNonogramStore((state) => state.solution);
-  const colors = useNonogramStore((state) => state.colors);
+
+  const eventToCoords = (
+    e: PointerEvent<HTMLCanvasElement>
+  ): [number, number] => {
+    const [ratioX, ratioY] = canvas.current!.getViewBoxRatio();
+    const { top, left } = e.currentTarget.getBoundingClientRect();
+    const [cx, cy] = [
+      (e.clientX - left - canvas.current!.extra[0]) / ratioX,
+      (e.clientY - top - canvas.current!.extra[1]) / ratioY,
+    ].map(Math.floor);
+    return [cx - clueWidth, cy - clueHeight];
+  };
 
   const draw = () => {
     canvas.current!.clear();
-    solution.forEach((row, y) => {
+    grid.forEach((row, y) => {
       row.forEach((cell, x) => {
         canvas.current!.drawRect(
           clueWidth + x,
@@ -75,7 +87,15 @@ export default function Nonogram() {
 
   useEffect(() => {
     draw();
-  }, [solution]);
+  }, [grid]);
 
-  return <canvas ref={canvasRef} className="h-full w-full"></canvas>;
+  return (
+    <canvas
+      ref={canvasRef}
+      className="h-full w-full"
+      onPointerDown={(e) => {
+        paint([eventToCoords(e)], 0);
+      }}
+    ></canvas>
+  );
 }
