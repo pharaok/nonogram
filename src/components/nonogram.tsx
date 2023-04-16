@@ -51,22 +51,26 @@ export default function Nonogram() {
 
   const drawCell = (x: number, y: number) => {
     if (grid[y][x] == colors.length) {
-      const crossPadding = 0.2;
+      const crossPadding = 0.25;
+      const lineWidth = 0.075 * canvas.current!.getViewBoxRatio()[1];
+
       canvas.current!.drawLine(
         [
-          [clueWidth + x + crossPadding, clueHeight + y + crossPadding],
-          [clueWidth + x + 1 - crossPadding, clueHeight + y + 1 - crossPadding],
-        ],
-        4,
-        "black"
+          [crossPadding, crossPadding],
+          [1 - crossPadding, 1 - crossPadding],
+        ].map(([px, py]) => [px + clueWidth + x, py + clueHeight + y]),
+        lineWidth,
+        "black",
+        "round"
       );
       canvas.current!.drawLine(
         [
-          [clueWidth + x + 1 - crossPadding, clueHeight + y + crossPadding],
-          [clueWidth + x + crossPadding, clueHeight + y + 1 - crossPadding],
-        ],
-        4,
-        "black"
+          [1 - crossPadding, crossPadding],
+          [crossPadding, 1 - crossPadding],
+        ].map(([px, py]) => [px + clueWidth + x, py + clueHeight + y]),
+        lineWidth,
+        "black",
+        "round"
       );
     } else {
       canvas.current!.drawRect(

@@ -4,6 +4,7 @@ type FillStyle = typeof CanvasRenderingContext2D.prototype.fillStyle;
 type StrokeStyle = typeof CanvasRenderingContext2D.prototype.strokeStyle;
 type Point = [number, number];
 type Vector4D = [number, number, number, number];
+type LineCap = typeof CanvasRenderingContext2D.prototype.lineCap;
 
 export default class Canvas2D {
   readonly ctx: CanvasRenderingContext2D;
@@ -42,7 +43,7 @@ export default class Canvas2D {
     this.ctx.fillStyle = fill;
     this.ctx.fillRect(
       ...([...this.toPixel(x, y), w * ratioX, h * ratioY].map(
-        Math.round
+        Math.ceil
       ) as Vector4D)
     );
   }
@@ -59,13 +60,19 @@ export default class Canvas2D {
     ];
   }
 
-  drawLine(points: Point[], lineWidth: number, stroke: StrokeStyle) {
+  drawLine(
+    points: Point[],
+    lineWidth: number,
+    stroke: StrokeStyle,
+    lineCap?: LineCap
+  ) {
     if (!points.length) return;
     this.ctx.lineWidth = lineWidth;
     this.ctx.strokeStyle = stroke;
+    if (lineCap) this.ctx.lineCap = lineCap;
 
     const getCenter = (p: Point) =>
-      this.toPixel(...p).map((pp) => Math.floor(pp) + (lineWidth % 2) / 2) as [
+      this.toPixel(...p).map((pp) => Math.round(pp) + (lineWidth % 2) / 2) as [
         number,
         number
       ];
