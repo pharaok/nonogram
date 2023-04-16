@@ -39,15 +39,8 @@ export default function Home() {
       searchParams!.get("s") ?? bigIntToBase64(randomBigInt(width * height));
     const grid = base64ToGrid(seed, width, height);
     setStore(createNonogramStore(grid));
+    setVisible(true);
   }, [searchParams, width, height]);
-
-  useEffect(() => {
-    // HACK: to reduce layout shift
-    // Nonogram might have the bounding axis wrong on the first render,
-    // and the clue font size needs at least another render to adjust,
-    // so making them invisible for a bit avoids a jarring layout shift
-    setTimeout(() => setVisible(true), 100);
-  }, []);
 
   return (
     <NonogramContext.Provider value={store}>
