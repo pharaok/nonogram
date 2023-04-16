@@ -15,14 +15,51 @@ export default function Nonogram() {
     grid[0].length + clueWidth,
     grid.length + clueHeight,
   ];
+  const solution = useNonogramStore((state) => state.solution);
+  const colors = useNonogramStore((state) => state.colors);
+
+  const draw = () => {
+    canvas.current!.clear();
+    solution.forEach((row, y) => {
+      row.forEach((cell, x) => {
+        canvas.current!.drawRect(
+          clueWidth + x,
+          clueHeight + y,
+          1,
+          1,
+          colors[cell]
+        );
+      });
+    });
+
+    for (let i = clueHeight; i <= totalHeight; i++) {
+      canvas.current!.drawLine(
+        [
+          [-Infinity, i],
+          [Infinity, i],
+        ],
+        1,
+        "black"
+      );
+    }
+    for (let i = clueWidth; i <= totalWidth; i++) {
+      canvas.current!.drawLine(
+        [
+          [i, -Infinity],
+          [i, Infinity],
+        ],
+        1,
+        "black"
+      );
+    }
+  };
 
   useEffect(() => {
     canvas.current = new Canvas2D(
       canvasRef.current!,
       [0, 0, totalWidth, totalHeight],
-      [0, 0, 2, 2]
+      [0, 0, 1, 1]
     );
-    draw();
 
     const resizeObserver = new ResizeObserver((entries) => {
       const { width, height } = entries[0].contentRect;
@@ -36,28 +73,9 @@ export default function Nonogram() {
     };
   }, []);
 
-  const draw = () => {
-    canvas.current!.drawRect(clueWidth, clueHeight, 1, 1, "red");
-    for (let i = clueHeight; i <= totalHeight; i++) {
-      canvas.current!.drawLine(
-        [
-          [-Infinity, i],
-          [Infinity, i],
-        ],
-        4,
-        "black"
-      );
-    }
-    for (let i = clueWidth; i <= totalWidth; i++) {
-      canvas.current!.drawLine(
-        [
-          [i, -Infinity],
-          [i, Infinity],
-        ],
-        4,
-        "black"
-      );
-    }
-  };
+  useEffect(() => {
+    draw();
+  }, [solution]);
+
   return <canvas ref={canvasRef} className="h-full w-full"></canvas>;
 }

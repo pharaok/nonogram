@@ -39,7 +39,11 @@ export default class Canvas2D {
   drawRect(x: number, y: number, w: number, h: number, fill: FillStyle) {
     const [ratioX, ratioY] = this.getViewBoxRatio();
     this.ctx.fillStyle = fill;
-    this.ctx.fillRect(...this.toPixel(x, y), w * ratioX, h * ratioY);
+    this.ctx.fillRect(
+      ...([...this.toPixel(x, y), w * ratioX, h * ratioY].map((n) =>
+        Math.round(n)
+      ) as [number, number, number, number])
+    );
   }
 
   getViewBoxRatio(): [number, number] {
@@ -60,7 +64,7 @@ export default class Canvas2D {
     this.ctx.strokeStyle = stroke;
 
     const getCenter = (p: Point) =>
-      this.toPixel(...p).map((pp) => Math.round(pp) + (lineWidth % 2) / 2) as [
+      this.toPixel(...p).map((pp) => Math.floor(pp) + (lineWidth % 2) / 2) as [
         number,
         number
       ];
@@ -72,5 +76,9 @@ export default class Canvas2D {
     }
     this.ctx.stroke();
     this.ctx.closePath();
+  }
+
+  clear() {
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
   }
 }
