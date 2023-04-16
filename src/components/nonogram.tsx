@@ -49,17 +49,30 @@ export default function Nonogram() {
     }
   };
 
+  const drawCell = (cell: number, x: number, y: number) => {
+    canvas.current!.drawRect(clueWidth + x, clueHeight + y, 1, 1, colors[cell]);
+  };
+
   const draw = () => {
     canvas.current!.clear();
     grid.forEach((row, y) => {
       row.forEach((cell, x) => {
-        canvas.current!.drawRect(
-          clueWidth + x,
-          clueHeight + y,
-          1,
-          1,
-          colors[cell]
-        );
+        drawCell(cell, x, y);
+      });
+    });
+
+    const [_, ratioY] = canvas.current!.getViewBoxRatio();
+    clues.forEach((gClues, a) => {
+      gClues.forEach((ce, i) => {
+        ce.forEach((n, j) => {
+          canvas.current!.fillText(
+            n.length.toString(),
+            (a === 1 ? i + clueWidth : j + clueWidth - ce.length) + 0.5,
+            (a === 0 ? i + clueHeight : j + clueHeight - ce.length) + 0.5,
+            `${ratioY / 2}px sans-serif`,
+            "black"
+          );
+        });
       });
     });
 
@@ -107,11 +120,11 @@ export default function Nonogram() {
         if (!painting.current) {
           return;
         }
-        const coords = eventToCoords(e).map((d, i) =>
+        const [x, y] = eventToCoords(e).map((d, i) =>
           clamp(d, 0, [width, height][i] - 1)
         ) as [number, number];
-        paint([coords, prevCell.current]);
-        prevCell.current = coords;
+        paint([[x, y], prevCell.current]);
+        prevCell.current = [x, y];
       }}
       onPointerUp={() => {
         painting.current = false;

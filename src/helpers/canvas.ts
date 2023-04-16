@@ -82,4 +82,14 @@ export default class Canvas2D {
   clear() {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
   }
+
+  fillText(text: string, x: number, y: number, font: string, fill: FillStyle) {
+    this.ctx.textAlign = "center";
+    this.ctx.textBaseline = "middle";
+    this.ctx.font = font;
+    this.ctx.fillStyle = fill;
+    [x, y] = this.toPixel(x, y);
+    const fix = this.ctx.measureText(text).actualBoundingBoxDescent / 2;
+    this.ctx.fillText(text, x, y + fix);
+  }
 }
