@@ -3,8 +3,9 @@ import { PointerEvent, useEffect, useRef } from "react";
 import useNonogramStore, { selectClues } from "store";
 
 export default function Nonogram() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasEl = useRef<HTMLCanvasElement>(null);
   const canvas = useRef<Canvas2D | null>(null);
+  const prevCell = useRef<[number, number]>([0, 0]);
   const grid = useNonogramStore((state) => state.grid);
   const paint = useNonogramStore((state) => state.paint);
   const colors = useNonogramStore((state) => state.colors);
@@ -30,6 +31,22 @@ export default function Nonogram() {
     return [cx - clueWidth, cy - clueHeight];
   };
 
+  const drawGridLines = () => {
+    for (let a = 0; a < 2; a++) {
+      for (
+        let i = [clueWidth, clueHeight][a];
+        i <= [totalWidth, totalHeight][a];
+        i++
+      ) {
+        const p1: [number, number] = [-Infinity, -Infinity];
+        const p2: [number, number] = [Infinity, Infinity];
+        p1[a] = i;
+        p2[a] = i;
+        canvas.current!.drawLine([p1, p2], 1, "black");
+      }
+    }
+  };
+
   const draw = () => {
     canvas.current!.clear();
     grid.forEach((row, y) => {
@@ -44,46 +61,27 @@ export default function Nonogram() {
       });
     });
 
-    for (let i = clueHeight; i <= totalHeight; i++) {
-      canvas.current!.drawLine(
-        [
-          [-Infinity, i],
-          [Infinity, i],
-        ],
-        1,
-        "black"
-      );
-    }
-    for (let i = clueWidth; i <= totalWidth; i++) {
-      canvas.current!.drawLine(
-        [
-          [i, -Infinity],
-          [i, Infinity],
-        ],
-        1,
-        "black"
-      );
-    }
+    drawGridLines();
   };
 
   useEffect(() => {
     canvas.current = new Canvas2D(
-      canvasRef.current!,
+      canvasEl.current!,
       [0, 0, totalWidth, totalHeight],
       [0, 0, 1, 1]
     );
 
     const resizeObserver = new ResizeObserver((entries) => {
       const { width, height } = entries[0].contentRect;
-      canvasRef.current!.width = width;
-      canvasRef.current!.height = height;
+      canvasEl.current!.width = width;
+      canvasEl.current!.height = height;
       draw();
     });
-    resizeObserver.observe(canvasRef.current!);
+    resizeObserver.observe(canvasEl.current!);
     return () => {
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [totalWidth, totalHeight]);
 
   useEffect(() => {
     draw();
@@ -91,10 +89,20 @@ export default function Nonogram() {
 
   return (
     <canvas
-      ref={canvasRef}
+      ref={canvasEl}
       className="h-full w-full"
       onPointerDown={(e) => {
-        paint([eventToCoords(e)], 0);
+        const coords = eventToCoords(e);
+        paint([coords], 0);
+        prevCell.current = coords;
+      }}
+      onPointerMove={(e) => {
+        if (!e.buttons) {
+          return;
+        }
+        const coords = eventToCoords(e);
+        paint([coords, prevCell.current]);
+        prevCell.current = coords;
       }}
     ></canvas>
   );
