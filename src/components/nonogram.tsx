@@ -44,7 +44,17 @@ export default function Nonogram() {
         const p2: [number, number] = [Infinity, Infinity];
         p1[a] = i;
         p2[a] = i;
-        canvas.current!.drawLine([p1, p2], 1, "black");
+
+        let lineWidth = 1;
+        const j = i - [clueWidth, clueHeight][a];
+        if (j % 5 === 0) {
+          lineWidth = 2;
+        }
+        if (j === 0 || j === [width, height][a]) {
+          lineWidth = 2;
+        }
+
+        canvas.current!.drawLine([p1, p2], lineWidth, "black");
       }
     }
   };

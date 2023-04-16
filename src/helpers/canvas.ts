@@ -64,12 +64,12 @@ export default class Canvas2D {
     points: Point[],
     lineWidth: number,
     stroke: StrokeStyle,
-    lineCap?: LineCap
+    lineCap: LineCap = "butt"
   ) {
     if (!points.length) return;
     this.ctx.lineWidth = lineWidth;
     this.ctx.strokeStyle = stroke;
-    if (lineCap) this.ctx.lineCap = lineCap;
+    this.ctx.lineCap = lineCap;
 
     const getCenter = (p: Point) =>
       this.toPixel(...p).map((pp) => Math.round(pp) + (lineWidth % 2) / 2) as [
