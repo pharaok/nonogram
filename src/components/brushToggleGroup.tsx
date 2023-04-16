@@ -16,6 +16,9 @@ export default function BrushToggleGroup() {
     >
       {[...Array(colors.length + 1)].map((_, i) => (
         <ToggleGroup.Item
+          aria-label={
+            i === 0 ? "Eraser" : i === colors.length ? "Marker" : `Color ${i}`
+          }
           key={i}
           value={i.toString()}
           className="inline-flex w-8 items-center justify-center border-2 p-1 first:rounded-l-md last:rounded-r-md"
