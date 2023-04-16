@@ -1,5 +1,4 @@
 import Canvas2D from "helpers/canvas";
-import { totalmem } from "os";
 import { useEffect, useRef } from "react";
 import useNonogramStore, { selectClues } from "store";
 
@@ -18,12 +17,11 @@ export default function Nonogram() {
   ];
 
   useEffect(() => {
-    canvas.current = new Canvas2D(canvasRef.current!, [
-      0,
-      0,
-      totalWidth,
-      totalHeight,
-    ]);
+    canvas.current = new Canvas2D(
+      canvasRef.current!,
+      [0, 0, totalWidth, totalHeight],
+      [0, 0, 2, 2]
+    );
     draw();
 
     const resizeObserver = new ResizeObserver((entries) => {
@@ -39,27 +37,27 @@ export default function Nonogram() {
   }, []);
 
   const draw = () => {
-    for (let i = 0; i <= totalHeight; i++) {
+    canvas.current!.drawRect(clueWidth, clueHeight, 1, 1, "red");
+    for (let i = clueHeight; i <= totalHeight; i++) {
       canvas.current!.drawLine(
         [
-          [0, i],
-          [totalWidth, i],
+          [-Infinity, i],
+          [Infinity, i],
         ],
-        1,
+        4,
         "black"
       );
     }
-    for (let i = 0; i <= totalWidth; i++) {
+    for (let i = clueWidth; i <= totalWidth; i++) {
       canvas.current!.drawLine(
         [
-          [i, 0],
-          [i, totalHeight],
+          [i, -Infinity],
+          [i, Infinity],
         ],
-        1,
+        4,
         "black"
       );
     }
-    // canvas.current!.drawRect(1, 1, 1, 1, "red");
   };
   return <canvas ref={canvasRef} className="h-full w-full"></canvas>;
 }
