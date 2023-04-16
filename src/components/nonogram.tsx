@@ -49,15 +49,41 @@ export default function Nonogram() {
     }
   };
 
-  const drawCell = (cell: number, x: number, y: number) => {
-    canvas.current!.drawRect(clueWidth + x, clueHeight + y, 1, 1, colors[cell]);
+  const drawCell = (x: number, y: number) => {
+    if (grid[y][x] == colors.length) {
+      const crossPadding = 0.2;
+      canvas.current!.drawLine(
+        [
+          [clueWidth + x + crossPadding, clueHeight + y + crossPadding],
+          [clueWidth + x + 1 - crossPadding, clueHeight + y + 1 - crossPadding],
+        ],
+        4,
+        "black"
+      );
+      canvas.current!.drawLine(
+        [
+          [clueWidth + x + 1 - crossPadding, clueHeight + y + crossPadding],
+          [clueWidth + x + crossPadding, clueHeight + y + 1 - crossPadding],
+        ],
+        4,
+        "black"
+      );
+    } else {
+      canvas.current!.drawRect(
+        clueWidth + x,
+        clueHeight + y,
+        1,
+        1,
+        colors[grid[y][x]]
+      );
+    }
   };
 
   const draw = () => {
     canvas.current!.clear();
     grid.forEach((row, y) => {
-      row.forEach((cell, x) => {
-        drawCell(cell, x, y);
+      row.forEach((_, x) => {
+        drawCell(x, y);
       });
     });
 
@@ -106,13 +132,14 @@ export default function Nonogram() {
     <canvas
       ref={canvasEl}
       className="h-full w-full"
+      onContextMenu={(e) => e.preventDefault()}
       onPointerDown={(e) => {
         const coords = eventToCoords(e);
         if (coords.some((d) => d < 0)) {
           return;
         }
         e.currentTarget.setPointerCapture(e.pointerId);
-        paint([coords], 0);
+        paint([coords], +(e.button === 2));
         prevCell.current = coords;
         painting.current = true;
       }}
@@ -120,11 +147,11 @@ export default function Nonogram() {
         if (!painting.current) {
           return;
         }
-        const [x, y] = eventToCoords(e).map((d, i) =>
+        const coords = eventToCoords(e).map((d, i) =>
           clamp(d, 0, [width, height][i] - 1)
         ) as [number, number];
-        paint([[x, y], prevCell.current]);
-        prevCell.current = [x, y];
+        paint([coords, prevCell.current]);
+        prevCell.current = coords;
       }}
       onPointerUp={() => {
         painting.current = false;
