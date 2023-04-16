@@ -7,15 +7,18 @@ export default function Nonogram() {
   const canvasEl = useRef<HTMLCanvasElement>(null);
   const canvas = useRef<Canvas2D | null>(null);
   const prevCell = useRef<[number, number]>([0, 0]);
+  const painting = useRef(false);
+
   const grid = useNonogramStore((state) => state.grid);
   const [width, height] = useNonogramStore(selectDimensions);
-  const paint = useNonogramStore((state) => state.paint);
+
   const colors = useNonogramStore((state) => state.colors);
   const clues = useNonogramStore(selectClues);
   const [clueWidth, clueHeight] = [
     Math.max(...clues[0].map((c) => c.length)),
     Math.max(...clues[1].map((c) => c.length)),
   ];
+  const paint = useNonogramStore((state) => state.paint);
   const [totalWidth, totalHeight] = [width + clueWidth, height + clueHeight];
 
   const eventToCoords = (
@@ -98,9 +101,10 @@ export default function Nonogram() {
         e.currentTarget.setPointerCapture(e.pointerId);
         paint([coords], 0);
         prevCell.current = coords;
+        painting.current = true;
       }}
       onPointerMove={(e) => {
-        if (!e.buttons) {
+        if (!painting.current) {
           return;
         }
         const coords = eventToCoords(e).map((d, i) =>
@@ -108,6 +112,9 @@ export default function Nonogram() {
         ) as [number, number];
         paint([coords, prevCell.current]);
         prevCell.current = coords;
+      }}
+      onPointerUp={() => {
+        painting.current = false;
       }}
     ></canvas>
   );
