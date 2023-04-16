@@ -132,7 +132,7 @@ export default function Nonogram() {
       canvasEl.current!.height = height;
       draw();
     });
-    resizeObserver.observe(canvasEl.current!);
+    resizeObserver.observe(canvasEl.current!.parentElement!);
     return () => {
       resizeObserver.disconnect();
     };
@@ -143,33 +143,39 @@ export default function Nonogram() {
   }, [grid]);
 
   return (
-    <canvas
-      ref={canvasEl}
-      className="h-full w-full"
-      onContextMenu={(e) => e.preventDefault()}
-      onPointerDown={(e) => {
-        const coords = eventToCoords(e);
-        if (coords.some((d) => d < 0)) {
-          return;
-        }
-        e.currentTarget.setPointerCapture(e.pointerId);
-        paint([coords], +(e.button === 2));
-        prevCell.current = coords;
-        painting.current = true;
-      }}
-      onPointerMove={(e) => {
-        if (!painting.current) {
-          return;
-        }
-        const coords = eventToCoords(e).map((d, i) =>
-          clamp(d, 0, [width, height][i] - 1)
-        ) as [number, number];
-        paint([coords, prevCell.current]);
-        prevCell.current = coords;
-      }}
-      onPointerUp={() => {
-        painting.current = false;
-      }}
-    ></canvas>
+    <div
+      className="relative max-h-full max-w-full overflow-hidden"
+      style={{ aspectRatio: `${totalWidth} / ${totalHeight}` }}
+    >
+      <canvas
+        ref={canvasEl}
+        className="absolute h-full w-full"
+        onContextMenu={(e) => e.preventDefault()}
+        onPointerDown={(e) => {
+          const coords = eventToCoords(e);
+          if (coords.some((d) => d < 0)) {
+            return;
+          }
+          e.currentTarget.setPointerCapture(e.pointerId);
+          paint([coords], +(e.button === 2));
+          prevCell.current = coords;
+          painting.current = true;
+        }}
+        onPointerMove={(e) => {
+          if (!painting.current) {
+            return;
+          }
+          const coords = eventToCoords(e).map((d, i) =>
+            clamp(d, 0, [width, height][i] - 1)
+          ) as [number, number];
+          paint([coords, prevCell.current]);
+          prevCell.current = coords;
+        }}
+        onPointerUp={() => {
+          painting.current = false;
+        }}
+      ></canvas>
+      <div className="h-screen w-screen"></div>
+    </div>
   );
 }
