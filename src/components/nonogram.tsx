@@ -110,7 +110,7 @@ export default function Nonogram() {
             (a === 1 ? i + clueWidth : j + clueWidth - ce.length) + 0.5,
             (a === 0 ? i + clueHeight : j + clueHeight - ce.length) + 0.5,
             `${ratioY / 2}px sans-serif`,
-            "black"
+            n.isMarked ? "gray" : "black"
           );
         });
       });
