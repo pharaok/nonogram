@@ -14,10 +14,15 @@ import useNonogramStore, {
 
 const WinDialogWrapper = () => {
   const isSolved = useNonogramStore(selectIsSolved);
+  const [wasSolved, setWasSolved] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+
   useEffect(() => {
-    setDialogOpen(isSolved);
+    if (isSolved) setWasSolved(true);
   }, [isSolved]);
+  useEffect(() => {
+    if (wasSolved) setDialogOpen(true);
+  }, [wasSolved]);
 
   return (
     <WinDialog open={dialogOpen} onOpenChange={(open) => setDialogOpen(open)} />
@@ -34,6 +39,7 @@ export default function Home() {
     )
   );
   const [visible, setVisible] = useState(false);
+
   useEffect(() => {
     const seed =
       searchParams!.get("s") ?? bigIntToBase64(randomBigInt(width * height));
