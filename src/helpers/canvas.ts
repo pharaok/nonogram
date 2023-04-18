@@ -28,13 +28,14 @@ export default class Canvas2D {
     const ratios = this.getViewBoxRatio();
     const { width, height } = this.ctx.canvas;
     const dimensions = [width, height];
-    return [x, y].map(
-      (a, i) =>
+    return [x, y].map((a, i) =>
+      Math.round(
         clamp(
           (a - this.viewBox[i]) * ratios[i],
           -this.extra[i],
           dimensions[i] + this.extra[i + 2]
         ) + this.extra[i]
+      )
     ) as [number, number];
   }
 
@@ -43,7 +44,7 @@ export default class Canvas2D {
     this.ctx.fillStyle = fill;
     this.ctx.fillRect(
       ...([...this.toPixel(x, y), w * ratioX, h * ratioY].map(
-        Math.ceil
+        Math.round
       ) as Vector4D)
     );
   }
@@ -72,7 +73,7 @@ export default class Canvas2D {
     this.ctx.lineCap = lineCap;
 
     const getCenter = (p: Point) =>
-      this.toPixel(...p).map((pp) => Math.round(pp) + (lineWidth % 2) / 2) as [
+      this.toPixel(...p).map((pp) => pp + (lineWidth % 2) / 2) as [
         number,
         number
       ];
@@ -84,6 +85,64 @@ export default class Canvas2D {
     }
     this.ctx.stroke();
     this.ctx.closePath();
+  }
+
+  drawPath(
+    path: string,
+    lineWidth: number,
+    stroke: StrokeStyle,
+    lineCap: LineCap = "butt"
+  ) {
+    this.ctx.save();
+    this.ctx.strokeStyle = stroke;
+    this.ctx.lineWidth = lineWidth;
+    this.ctx.lineCap = lineCap;
+
+    const commandRegex = /^\s*([A-Za-z])/;
+    const decimalRegex = /([-+]?\d+(?:\.\d+)?)/.source;
+    const pointRegex =
+      /^\s+/.source + decimalRegex + /\s+/.source + decimalRegex;
+    let m = path.match(commandRegex);
+    let [x, y] = [0, 0];
+    let i = 0;
+    this.ctx.beginPath();
+    while (m !== null) {
+      console.log(x, y);
+      i += m[0].length;
+      if ("mM".includes(m[1])) {
+        if (m[1] === "M") [x, y] = [0, 0];
+
+        const nm = path.slice(i).match(pointRegex);
+        if (nm === null) break;
+        i += nm[0].length;
+        [x, y] = nm.slice(1, 3).map((n, i) => +n + [x, y][i]);
+        this.ctx.moveTo(...this.toPixel(x, y));
+      } else if ("LlHhVv".includes(m[1])) {
+        if (m[1] === "L") [x, y] = [0, 0];
+        else if (m[1] === "H") x = 0;
+        else if (m[1] === "V") y = 0;
+
+        if ("Ll".includes(m[1])) {
+          const nm = path.slice(i).match(pointRegex);
+          if (nm === null) break;
+          i += nm[0].length;
+          [x, y] = nm.slice(1, 3).map((n, i) => +n + [x, y][i]);
+        } else {
+          const nm = path.slice(i).match(/^\s+/.source + decimalRegex);
+          if (nm === null) break;
+          i += nm[0].length;
+          if ("Hh".includes(m[1])) x += +nm[1];
+          else y += +nm[1];
+        }
+        this.ctx.lineTo(...this.toPixel(x, y));
+      }
+      console.log(x, y);
+
+      m = path.slice(i).match(commandRegex);
+    }
+    this.ctx.stroke();
+    this.ctx.closePath();
+    this.ctx.restore();
   }
 
   clear() {
@@ -100,3 +159,23 @@ export default class Canvas2D {
     this.ctx.fillText(text, x, y + fix);
   }
 }
+
+export const drawGridLines = (
+  canvas: Canvas2D,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  getLineWidth: (a: number, i: number) => number
+) => {
+  for (let a = 0; a < 2; a++) {
+    for (let i = [x1, y1][a]; i <= [x2, y2][a]; i++) {
+      const p1: [number, number] = [-Infinity, -Infinity];
+      const p2: [number, number] = [Infinity, Infinity];
+      p1[a] = i;
+      p2[a] = i;
+
+      canvas.drawLine([p1, p2], getLineWidth(a, i), "black");
+    }
+  }
+};
