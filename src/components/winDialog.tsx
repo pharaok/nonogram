@@ -1,6 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useState, useEffect } from "react";
-import { RxCross2 } from "react-icons/rx";
+import { X } from "lucide-react";
 import useNonogramStore, { selectSeed } from "store";
 import Solution from "./solution";
 
@@ -28,7 +28,7 @@ export default function WinDialog({
             You Won!
           </Dialog.Title>
           <Dialog.Close className="absolute top-4 right-4 inline-flex items-center justify-center rounded-full">
-            <RxCross2 className="h-6 w-6" />
+            <X />
           </Dialog.Close>
           <div className="w-full bg-gray-200 p-4 shadow-xl shadow-black/50">
             <Solution className="w-full border border-black" />

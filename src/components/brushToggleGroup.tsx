@@ -1,7 +1,7 @@
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { crossPath } from "helpers";
 import produce from "immer";
-import { FaEraser } from "react-icons/fa";
+import { Eraser } from "lucide-react";
 import useNonogramStore from "store";
 
 export default function BrushToggleGroup() {
@@ -52,7 +52,7 @@ export default function BrushToggleGroup() {
           onContextMenu={(e) => e.preventDefault()}
         >
           {i === 0 ? (
-            <FaEraser className="inline" />
+            <Eraser strokeWidth={2} />
           ) : i === colors.length ? (
             <svg viewBox="0 0 1 1" className="inline">
               <path
