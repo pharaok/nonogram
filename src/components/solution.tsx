@@ -44,7 +44,7 @@ export default function Solution({
     return () => {
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [width, height, draw]);
 
   useEffect(() => {
     draw();

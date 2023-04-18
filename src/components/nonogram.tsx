@@ -99,7 +99,7 @@ export default function Nonogram() {
     return () => {
       resizeObserver.disconnect();
     };
-  }, [totalWidth, totalHeight]);
+  }, [totalWidth, totalHeight, draw]);
 
   useEffect(() => {
     draw();

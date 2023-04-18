@@ -30,7 +30,7 @@ export default function WinDialog({
           <Dialog.Close className="absolute top-4 right-4 inline-flex items-center justify-center rounded-full">
             <RxCross2 className="h-6 w-6" />
           </Dialog.Close>
-          <div className="bg-gray-200 p-4 shadow-xl shadow-black/50">
+          <div className="w-full bg-gray-200 p-4 shadow-xl shadow-black/50">
             <Solution className="w-full border border-black" />
             <h3 className="text-center font-bold">{seed}</h3>
           </div>

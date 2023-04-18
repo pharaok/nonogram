@@ -20,6 +20,7 @@ const WinDialogWrapper = () => {
   useEffect(() => {
     if (isSolved) setWasSolved(true);
   }, [isSolved]);
+
   useEffect(() => {
     if (wasSolved) setDialogOpen(true);
   }, [wasSolved]);
