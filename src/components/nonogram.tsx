@@ -1,3 +1,4 @@
+import { crossPath } from "helpers";
 import Canvas2D, { drawGrid, drawGridLines } from "helpers/canvas";
 import { clamp } from "lodash-es";
 import { PointerEvent, useEffect, useRef } from "react";
@@ -43,18 +44,9 @@ export default function Nonogram() {
       clueHeight,
       (canvas, cell, x, y) => {
         if (cell === colors.length) {
-          const crossPadding = 0.2;
           const lineWidth = 0.075 * canvas.getViewBoxRatio()[1];
 
-          canvas.drawPath(
-            `M ${x + crossPadding} ${y + crossPadding}
-           l ${1 - 2 * crossPadding} ${1 - 2 * crossPadding}
-           m 0 ${-(1 - 2 * crossPadding)}
-           l ${-(1 - 2 * crossPadding)} ${1 - 2 * crossPadding}`,
-            lineWidth,
-            "black",
-            "round"
-          );
+          canvas.drawPath(crossPath(x, y), lineWidth, "black", "round");
         } else {
           canvas.drawRect(x, y, 1, 1, colors[cell]);
         }
@@ -84,12 +76,8 @@ export default function Nonogram() {
       totalHeight,
       (a, i) => {
         const j = i - [clueWidth, clueHeight][a];
-        if (j % 5 === 0) {
-          return 2;
-        }
-        if (j === 0 || j === [width, height][a]) {
-          return 2;
-        }
+        if (j % 5 === 0) return 2;
+        if (j === 0 || j === [width, height][a]) return 2;
         return 1;
       }
     );

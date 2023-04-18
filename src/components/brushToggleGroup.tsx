@@ -1,5 +1,5 @@
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { markToPath } from "helpers";
+import { crossPath } from "helpers";
 import produce from "immer";
 import { FaEraser } from "react-icons/fa";
 import useNonogramStore from "store";
@@ -56,7 +56,7 @@ export default function BrushToggleGroup() {
           ) : i === colors.length ? (
             <svg viewBox="0 0 1 1" className="inline">
               <path
-                d={markToPath([[2]])}
+                d={crossPath(0, 0)}
                 stroke="black"
                 strokeWidth={0.1}
                 strokeLinecap="round"
