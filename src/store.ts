@@ -3,7 +3,7 @@ import produce from "immer";
 import { createContext, useContext } from "react";
 import { NonogramGrid } from "types";
 import { plotLine } from "helpers/line";
-import { gridClues, markedGridClues } from "helpers";
+import { gridClues, gridToBase64, markedGridClues } from "helpers";
 import { isEqual } from "lodash-es";
 
 export interface NonogramState {
@@ -86,6 +86,8 @@ export const selectClues = (state: NonogramState) => {
 };
 export const selectIsSolved = (state: NonogramState) =>
   isEqual(gridClues(state.grid), gridClues(state.solution));
+export const selectSeed = (state: NonogramState) =>
+  gridToBase64(state.solution);
 
 export const NonogramContext = createContext(createNonogramStore([[0]]));
 

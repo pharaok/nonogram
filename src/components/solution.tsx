@@ -10,6 +10,7 @@ export default function Solution({
   className?: string;
 }) {
   const solution = useNonogramStore((state) => state.solution);
+  const colors = useNonogramStore((state) => state.colors);
   const [width, height] = useNonogramStore(selectDimensions);
   const canvasEl = useRef<HTMLCanvasElement>(null);
   const canvas = useRef<Canvas2D | null>(null);
@@ -25,6 +26,7 @@ export default function Solution({
     grad.addColorStop(0, `hsl(${hue}, 100%, 50%)`);
     grad.addColorStop(1, `hsl(${hue + 60}, 100%, 50%)`);
     drawGrid(canvas.current!, solution, 0, 0, (canvas, cell, x, y) => {
+      if (!cell) canvas.drawRect(x, y, 1, 1, colors[0]);
       if (cell === 1) canvas.drawRect(x, y, 1, 1, grad);
     });
   };
