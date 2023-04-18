@@ -1,4 +1,4 @@
-import Canvas2D, { drawGridLines } from "helpers/canvas";
+import Canvas2D, { drawGrid, drawGridLines } from "helpers/canvas";
 import { clamp } from "lodash-es";
 import { PointerEvent, useEffect, useRef } from "react";
 import useNonogramStore, { selectClues, selectDimensions } from "store";
@@ -33,38 +33,33 @@ export default function Nonogram() {
     return [cx - clueWidth, cy - clueHeight];
   };
 
-  const drawCell = (x: number, y: number) => {
-    if (grid[y][x] == colors.length) {
-      const crossPadding = 0.2;
-      const lineWidth = 0.075 * canvas.current!.getViewBoxRatio()[1];
-
-      canvas.current!.drawPath(
-        `M ${clueWidth + x + crossPadding} ${clueHeight + y + crossPadding}
-         l ${1 - 2 * crossPadding} ${1 - 2 * crossPadding}
-         m 0 ${-(1 - 2 * crossPadding)}
-         l ${-(1 - 2 * crossPadding)} ${1 - 2 * crossPadding}`,
-        lineWidth,
-        "black",
-        "round"
-      );
-    } else {
-      canvas.current!.drawRect(
-        clueWidth + x,
-        clueHeight + y,
-        1,
-        1,
-        colors[grid[y][x]]
-      );
-    }
-  };
-
   const draw = () => {
     canvas.current!.clear();
-    grid.forEach((row, y) => {
-      row.forEach((_, x) => {
-        drawCell(x, y);
-      });
-    });
+
+    drawGrid(
+      canvas.current!,
+      grid,
+      clueWidth,
+      clueHeight,
+      (canvas, cell, x, y) => {
+        if (cell === colors.length) {
+          const crossPadding = 0.2;
+          const lineWidth = 0.075 * canvas.getViewBoxRatio()[1];
+
+          canvas.drawPath(
+            `M ${x + crossPadding} ${y + crossPadding}
+           l ${1 - 2 * crossPadding} ${1 - 2 * crossPadding}
+           m 0 ${-(1 - 2 * crossPadding)}
+           l ${-(1 - 2 * crossPadding)} ${1 - 2 * crossPadding}`,
+            lineWidth,
+            "black",
+            "round"
+          );
+        } else {
+          canvas.drawRect(x, y, 1, 1, colors[cell]);
+        }
+      }
+    );
 
     const [_, ratioY] = canvas.current!.getViewBoxRatio();
     clues.forEach((gClues, a) => {

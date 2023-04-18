@@ -40,6 +40,7 @@ export default class Canvas2D {
   }
 
   drawRect(x: number, y: number, w: number, h: number, fill: FillStyle) {
+    this.ctx.save();
     const [ratioX, ratioY] = this.getViewBoxRatio();
     this.ctx.fillStyle = fill;
     this.ctx.fillRect(
@@ -47,6 +48,7 @@ export default class Canvas2D {
         Math.round
       ) as Vector4D)
     );
+    this.ctx.restore();
   }
 
   getViewBoxRatio(): [number, number] {
@@ -68,6 +70,7 @@ export default class Canvas2D {
     lineCap: LineCap = "butt"
   ) {
     if (!points.length) return;
+    this.ctx.save();
     this.ctx.lineWidth = lineWidth;
     this.ctx.strokeStyle = stroke;
     this.ctx.lineCap = lineCap;
@@ -85,6 +88,7 @@ export default class Canvas2D {
     }
     this.ctx.stroke();
     this.ctx.closePath();
+    this.ctx.restore();
   }
 
   drawPath(
@@ -107,7 +111,6 @@ export default class Canvas2D {
     let i = 0;
     this.ctx.beginPath();
     while (m !== null) {
-      console.log(x, y);
       i += m[0].length;
       if ("mM".includes(m[1])) {
         if (m[1] === "M") [x, y] = [0, 0];
@@ -136,7 +139,6 @@ export default class Canvas2D {
         }
         this.ctx.lineTo(...this.toPixel(x, y));
       }
-      console.log(x, y);
 
       m = path.slice(i).match(commandRegex);
     }
@@ -150,6 +152,7 @@ export default class Canvas2D {
   }
 
   fillText(text: string, x: number, y: number, font: string, fill: FillStyle) {
+    this.ctx.save();
     this.ctx.textAlign = "center";
     this.ctx.textBaseline = "middle";
     this.ctx.font = font;
@@ -157,6 +160,7 @@ export default class Canvas2D {
     [x, y] = this.toPixel(x, y);
     const fix = this.ctx.measureText(text).actualBoundingBoxDescent / 2;
     this.ctx.fillText(text, x, y + fix);
+    this.ctx.restore();
   }
 }
 
@@ -178,4 +182,18 @@ export const drawGridLines = (
       canvas.drawLine([p1, p2], getLineWidth(a, i), "black");
     }
   }
+};
+
+export const drawGrid = <T>(
+  canvas: Canvas2D,
+  grid: T[][],
+  x: number,
+  y: number,
+  drawCell: (canvas: Canvas2D, value: T, x: number, y: number) => void
+) => {
+  grid.forEach((row, gy) => {
+    row.forEach((cell, gx) => {
+      drawCell(canvas, cell, x + gx, y + gy);
+    });
+  });
 };
