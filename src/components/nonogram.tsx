@@ -45,7 +45,6 @@ export default function Nonogram() {
       (canvas, cell, x, y) => {
         if (cell === colors.length) {
           const lineWidth = 0.075 * canvas.getViewBoxRatio()[1];
-
           canvas.drawPath(crossPath(x, y), lineWidth, "black", "round");
         } else {
           canvas.drawRect(x, y, 1, 1, colors[cell]);
