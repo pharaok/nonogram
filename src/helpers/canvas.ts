@@ -45,7 +45,7 @@ export default class Canvas2D {
     this.ctx.fillStyle = fill;
     this.ctx.fillRect(
       ...([...this.toPixel(x, y), w * ratioX, h * ratioY].map(
-        Math.round
+        Math.ceil
       ) as Vector4D)
     );
     this.ctx.restore();
