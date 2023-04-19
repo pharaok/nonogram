@@ -1,6 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { Copy, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import useNonogramStore, { selectSeed } from "store";
 import Solution from "./solution";
 
@@ -30,9 +30,17 @@ export default function WinDialog({
           <Dialog.Close className="absolute top-4 right-4 inline-flex items-center justify-center rounded-full">
             <X />
           </Dialog.Close>
-          <div className="w-full bg-gray-200 p-4 shadow-xl shadow-black/50">
-            <Solution className="w-full border border-black" />
-            <h3 className="text-center font-bold">{seed}</h3>
+          <div className="flex w-full flex-col items-center justify-center bg-gray-200 p-4 shadow-xl shadow-black/50">
+            <Solution className="mb-4 w-full border border-black" />
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(seed);
+              }}
+              className="relative flex items-center gap-1 border-b border-b-transparent hover:border-b-black"
+            >
+              <h3 className="font-bold">{seed}</h3>
+              <Copy className="h-5" />
+            </button>
           </div>
         </Dialog.Content>
       </Dialog.Portal>

@@ -14,7 +14,7 @@ import useNonogramStore, {
 
 const WinDialogWrapper = () => {
   const isSolved = useNonogramStore(selectIsSolved);
-  const [wasSolved, setWasSolved] = useState(false);
+  const [wasSolved, setWasSolved] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
