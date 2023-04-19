@@ -8,9 +8,3 @@
     --color-secondary: 37 99 235;
   }
 }
-
-@layer components {
-  .hover-underline {
-    @apply before:absolute before:inset-0 before:w-0 before:transition-[width] before:duration-300 before:hover:w-full;
-  }
-}

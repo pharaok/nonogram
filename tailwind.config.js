@@ -4,8 +4,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "rgb(var(--color-primary)) / <alpha-value>",
-        secondary: "rgb(var(--color-secondary)) / <alpha-value>",
+        primary: "rgb(var(--color-primary) / <alpha-value>)",
+        secondary: "rgb(var(--color-secondary) / <alpha-value>)",
       },
       fontFamily: {
         display: ["var(--font-silkscreen)", "cursive"],
