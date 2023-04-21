@@ -64,7 +64,7 @@ export default function Home() {
         className="h-full w-full p-8"
         style={{ visibility: visible ? "visible" : "hidden" }}
       >
-        <div className="flex h-full w-full items-center justify-evenly">
+        <div className="flex h-full w-full flex-col items-center justify-evenly gap-8 md:flex-row">
           <Nonogram />
           <Controls />
         </div>
