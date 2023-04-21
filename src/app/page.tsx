@@ -4,7 +4,7 @@ import Controls from "components/controls";
 import Nonogram from "components/nonogram";
 import WinDialog from "components/winDialog";
 import { base64ToGrid, bigIntToBase64, randomBigInt } from "helpers/base64";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import useNonogramStore, {
   createNonogramStore,
@@ -31,7 +31,9 @@ const WinDialogWrapper = () => {
 };
 
 export default function Home() {
+  const pathname = usePathname();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const width = +(searchParams!.get("w") ?? "10");
   const height = +(searchParams!.get("h") ?? "10");
   const [store, setStore] = useState(
@@ -42,8 +44,13 @@ export default function Home() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const seed =
-      searchParams!.get("s") ?? bigIntToBase64(randomBigInt(width * height));
+    const newSearchParams = new URLSearchParams(searchParams);
+    if (!searchParams.has("s")) {
+      newSearchParams.set("s", bigIntToBase64(randomBigInt(width * height)));
+      // WARN: no shallow routing in next 13 (yet) and window.history doesn't work
+      router.replace(pathname + "?" + newSearchParams.toString());
+    }
+    const seed = newSearchParams!.get("s")!;
     const grid = base64ToGrid(seed, width, height);
     setStore(createNonogramStore(grid));
     setVisible(true);

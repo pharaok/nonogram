@@ -2,10 +2,14 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Copy, Download, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import useNonogramStore, { selectSeed } from "store";
+import useNonogramStore, { selectDimensions, selectSeed } from "store";
 import Solution from "./solution";
+import { usePathname } from "next/navigation";
 
 const Content = () => {
+  const pathname = usePathname();
+  const [width, height] = useNonogramStore(selectDimensions);
+
   const seed = useNonogramStore(selectSeed);
   const [downloadLink, setDownloadLink] = useState("#");
   const solutionEl = useRef<HTMLCanvasElement>(null);
@@ -16,7 +20,7 @@ const Content = () => {
 
   return (
     <>
-      <div className="mb-8 flex w-full flex-col items-center justify-center bg-gray-200 p-4 shadow-xl shadow-black/50">
+      <div className="m-4 flex w-full flex-col items-center justify-center bg-gray-200 p-4 shadow-xl shadow-black/50">
         <Solution
           ref={solutionEl}
           className="mb-4 w-full border border-black"
@@ -31,9 +35,9 @@ const Content = () => {
           <Copy className="h-5 w-5" />
         </button>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="m-2 flex items-center gap-4">
         <Link
-          className="rounded-full border-2 border-current p-2 text-blue-700 hover:bg-current [&>*]:hover:text-white"
+          className="rounded-full border-2 border-blue-700 p-2 text-blue-700 hover:bg-blue-700 hover:text-white"
           download={`${seed}.png`}
           href={downloadLink}
           target="_blank"
@@ -41,6 +45,20 @@ const Content = () => {
           <Download className="h-5 w-5" />
         </Link>
       </div>
+      <Dialog.Close asChild>
+        <Link
+          href={{
+            pathname,
+            query: {
+              w: width,
+              h: height,
+            },
+          }}
+          className="relative rounded-full bg-primary p-2 font-bold uppercase text-white shadow shadow-black/50 transition-transform after:absolute after:inset-0 hover:scale-105 after:hover:bg-white/10"
+        >
+          Play Again
+        </Link>
+      </Dialog.Close>
     </>
   );
 };
