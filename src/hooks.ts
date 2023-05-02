@@ -11,6 +11,6 @@ export const useParentDimensions = (ref: RefObject<HTMLElement>) => {
     return () => {
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [ref]);
   return dimensions;
 };

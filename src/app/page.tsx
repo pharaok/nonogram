@@ -54,7 +54,7 @@ export default function Home() {
     const grid = base64ToGrid(seed, width, height);
     setStore(createNonogramStore(grid));
     setVisible(true);
-  }, [searchParams, width, height]);
+  }, [pathname, router, searchParams, width, height]);
 
   return (
     <NonogramContext.Provider value={store}>
