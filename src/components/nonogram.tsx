@@ -1,7 +1,7 @@
 import { crossPath } from "helpers";
 import Canvas2D, { drawGrid, drawGridLines } from "helpers/canvas";
 import { clamp } from "lodash-es";
-import { PointerEvent, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import useNonogramStore, { selectClues, selectDimensions } from "store";
 
 export default function Nonogram() {
@@ -21,18 +21,7 @@ export default function Nonogram() {
   ];
   const paint = useNonogramStore((state) => state.paint);
   const [totalWidth, totalHeight] = [width + clueWidth, height + clueHeight];
-
-  const eventToCoords = (
-    e: PointerEvent<HTMLCanvasElement>
-  ): [number, number] => {
-    const [ratioX, ratioY] = canvas.current!.getViewBoxRatio();
-    const { top, left } = e.currentTarget.getBoundingClientRect();
-    const [cx, cy] = [
-      (e.clientX - left - canvas.current!.extra[0]) / ratioX,
-      (e.clientY - top - canvas.current!.extra[1]) / ratioY,
-    ].map(Math.floor);
-    return [cx - clueWidth, cy - clueHeight];
-  };
+  const [canvasDim, setCanvasDim] = useState([0, 0]);
 
   const draw = () => {
     canvas.current!.clear();
@@ -91,8 +80,7 @@ export default function Nonogram() {
 
     const resizeObserver = new ResizeObserver((entries) => {
       const { width, height } = entries[0].contentRect;
-      canvasEl.current!.width = width;
-      canvasEl.current!.height = height;
+      setCanvasDim([width, height]);
       draw();
     });
     resizeObserver.observe(canvasEl.current!.parentElement!);
@@ -112,10 +100,15 @@ export default function Nonogram() {
     >
       <canvas
         ref={canvasEl}
-        className="absolute h-full w-full"
+        className="absolute h-full w-full touch-none "
+        width={canvasDim[0] * (canvas.current?.scale ?? 0)}
+        height={canvasDim[1] * (canvas.current?.scale ?? 0)}
+        style={{ width: canvasDim[0], height: canvasDim[1] }}
         onContextMenu={(e) => e.preventDefault()}
         onPointerDown={(e) => {
-          const coords = eventToCoords(e);
+          const coords = canvas
+            .current!.eventToCoords(e)
+            .map((c, i) => c - [clueWidth, clueHeight][i]) as [number, number];
           if (coords.some((d) => d < 0)) {
             return;
           }
@@ -128,9 +121,11 @@ export default function Nonogram() {
           if (!painting.current) {
             return;
           }
-          const coords = eventToCoords(e).map((d, i) =>
-            clamp(d, 0, [width, height][i] - 1)
-          ) as [number, number];
+          const coords = canvas
+            .current!.eventToCoords(e)
+            .map((c, i) =>
+              clamp(c - [clueWidth, clueHeight][i], 0, [width, height][i] - 1)
+            ) as [number, number];
           paint([coords, prevCell.current]);
           prevCell.current = coords;
         }}

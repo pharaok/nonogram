@@ -1,4 +1,5 @@
 import { clamp } from "lodash-es";
+import { PointerEvent } from "react";
 
 type FillStyle = typeof CanvasRenderingContext2D.prototype.fillStyle;
 type StrokeStyle = typeof CanvasRenderingContext2D.prototype.strokeStyle;
@@ -13,6 +14,7 @@ export default class Canvas2D {
   // extra "padding" pixels outside viewBox
   // [left, top, right, bottom]
   extra: Vector4D;
+  scale: number;
 
   constructor(
     canvasEl: HTMLCanvasElement,
@@ -21,7 +23,8 @@ export default class Canvas2D {
   ) {
     this.ctx = canvasEl.getContext("2d")!;
     this.viewBox = viewBox ?? [0, 0, canvasEl.width, canvasEl.height];
-    this.extra = extra ?? [0, 0, 0, 0];
+    this.scale = window.devicePixelRatio;
+    this.extra = (extra ?? [0, 0, 0, 0]).map((n) => n * this.scale) as Vector4D;
   }
 
   toPixel(x: number, y: number): [number, number] {
@@ -162,6 +165,16 @@ export default class Canvas2D {
     this.ctx.fillText(text, x, y + fix);
     this.ctx.restore();
   }
+
+  eventToCoords(e: PointerEvent<HTMLCanvasElement>): [number, number] {
+    const [ratioX, ratioY] = this.getViewBoxRatio();
+    const { top, left } = e.currentTarget.getBoundingClientRect();
+    const [cx, cy] = [
+      ((e.clientX - left - this.extra[0]) * this.scale) / ratioX,
+      ((e.clientY - top - this.extra[1]) * this.scale) / ratioY,
+    ].map(Math.floor);
+    return [cx, cy];
+  }
 }
 
 export const drawGridLines = (
@@ -179,7 +192,7 @@ export const drawGridLines = (
       p1[a] = i;
       p2[a] = i;
 
-      canvas.drawLine([p1, p2], getLineWidth(a, i), "black");
+      canvas.drawLine([p1, p2], getLineWidth(a, i) * canvas.scale, "black");
     }
   }
 };
