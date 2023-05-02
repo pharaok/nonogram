@@ -12,8 +12,11 @@ export interface NonogramState {
   colors: string[];
   brushes: number[];
   brushColor: number;
+  cursor: [number, number];
   paint: (points: [number, number][], brush?: number, toggle?: boolean) => void;
   setBrushes: (brushes: number[]) => void;
+  moveCursorTo: (x: number, y: number) => void;
+  moveCursorRelative: (x: number, y: number) => void;
 }
 
 export const createNonogramStore = (
@@ -27,7 +30,8 @@ export const createNonogramStore = (
     colors: colors ?? ["white", "black"],
     brushes: [1, 2],
     brushColor: 0,
-    paint: (points: [number, number][], brush?: number, toggle = true) =>
+    cursor: [0, 0],
+    paint: (points, brush, toggle = true) =>
       set((state) => {
         const [sx, sy] = points[0];
         return produce(state, (draft) => {
@@ -44,10 +48,25 @@ export const createNonogramStore = (
           }
         });
       }),
-    setBrushes: (brushes: number[]) =>
+    setBrushes: (brushes) =>
       set((state) =>
         produce(state, (draft) => {
           draft.brushes = brushes;
+        })
+      ),
+    moveCursorTo: (x, y) =>
+      set((state) =>
+        produce(state, (draft) => {
+          draft.cursor = [x, y];
+        })
+      ),
+    moveCursorRelative: (x, y) =>
+      set((state) =>
+        produce(state, (draft) => {
+          draft.cursor = draft.cursor.map((a, i) => a + [x, y][i]) as [
+            number,
+            number
+          ];
         })
       ),
   }));

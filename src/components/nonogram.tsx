@@ -9,11 +9,12 @@ import GridLines from "./gridLines";
 export default function Nonogram() {
   const canvasEl = useRef<HTMLCanvasElement>(null);
   const canvas = useRef<Canvas2D | null>(null);
-  const prevCell = useRef<[number, number]>([0, 0]);
   const painting = useRef(false);
 
   const grid = useNonogramStore((state) => state.grid);
   const [width, height] = useNonogramStore(selectDimensions);
+  const cursor = useNonogramStore((state) => state.cursor);
+  const moveCursorTo = useNonogramStore((state) => state.moveCursorTo);
 
   const colors = useNonogramStore((state) => state.colors);
   const clues = useNonogramStore(selectClues);
@@ -93,7 +94,7 @@ export default function Nonogram() {
           }
           e.currentTarget.setPointerCapture(e.pointerId);
           paint([coords], +(e.button === 2));
-          prevCell.current = coords;
+          moveCursorTo(...coords);
           painting.current = true;
         }}
         onPointerMove={(e) => {
@@ -105,8 +106,8 @@ export default function Nonogram() {
             .map((c, i) =>
               clamp(c - [clueWidth, clueHeight][i], 0, [width, height][i] - 1)
             ) as [number, number];
-          paint([coords, prevCell.current]);
-          prevCell.current = coords;
+          paint([cursor, coords]);
+          moveCursorTo(...coords);
         }}
         onPointerUp={() => {
           painting.current = false;
