@@ -27,7 +27,7 @@ export default class Canvas2D {
     this.extra = (extra ?? [0, 0, 0, 0]).map((n) => n * this.scale) as Vector4D;
   }
 
-  toPixel(x: number, y: number): [number, number] {
+  toPixel(x: number, y: number): Point {
     const ratios = this.getViewBoxRatio();
     const { width, height } = this.ctx.canvas;
     const dimensions = [width, height];
@@ -39,7 +39,7 @@ export default class Canvas2D {
           dimensions[i] + this.extra[i + 2]
         ) + this.extra[i]
       )
-    ) as [number, number];
+    ) as Point;
   }
 
   drawRect(x: number, y: number, w: number, h: number, fill: FillStyle) {
@@ -54,7 +54,7 @@ export default class Canvas2D {
     this.ctx.restore();
   }
 
-  getViewBoxRatio(): [number, number] {
+  getViewBoxRatio(): Point {
     const [viewBoxWidth, viewBoxHeight] = [
       this.viewBox[2] - this.viewBox[0],
       this.viewBox[3] - this.viewBox[1],
@@ -163,7 +163,7 @@ export default class Canvas2D {
     this.ctx.restore();
   }
 
-  eventToCoords(e: PointerEvent<HTMLCanvasElement>): [number, number] {
+  eventToCoords(e: PointerEvent<HTMLCanvasElement>): Point {
     const [ratioX, ratioY] = this.getViewBoxRatio();
     const { top, left } = e.currentTarget.getBoundingClientRect();
     const [cx, cy] = [
@@ -184,8 +184,8 @@ export const drawGridLines = (
 ) => {
   for (let a = 0; a < 2; a++) {
     for (let i = [x1, y1][a]; i <= [x2, y2][a]; i++) {
-      const p1: [number, number] = [-Infinity, -Infinity];
-      const p2: [number, number] = [Infinity, Infinity];
+      const p1: Point = [-Infinity, -Infinity];
+      const p2: Point = [Infinity, Infinity];
       p1[a] = i;
       p2[a] = i;
 
