@@ -79,10 +79,7 @@ export default class Canvas2D {
     this.ctx.lineCap = lineCap;
 
     const getCenter = (p: Point) =>
-      this.toPixel(...p).map((pp) => pp + (lineWidth % 2) / 2) as [
-        number,
-        number
-      ];
+      this.toPixel(...p).map((pp) => pp + (lineWidth % 2) / 2) as Point;
 
     this.ctx.beginPath();
     this.ctx.moveTo(...getCenter(points[0]));

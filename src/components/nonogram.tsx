@@ -80,7 +80,7 @@ export default function Nonogram() {
 
     const resizeObserver = new ResizeObserver((entries) => {
       const { width, height } = entries[0].contentRect;
-      setCanvasDim([width, height]);
+      setCanvasDim([width, height].map(Math.floor));
       draw();
     });
     resizeObserver.observe(canvasEl.current!.parentElement!);
