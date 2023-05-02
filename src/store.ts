@@ -4,7 +4,7 @@ import { createContext, useContext } from "react";
 import { NonogramGrid } from "types";
 import { plotLine } from "helpers/line";
 import { gridClues, gridToBase64, markedGridClues } from "helpers";
-import { isEqual } from "lodash-es";
+import { clamp, isEqual } from "lodash-es";
 
 export interface NonogramState {
   grid: NonogramGrid;
@@ -63,10 +63,10 @@ export const createNonogramStore = (
     moveCursorRelative: (x, y) =>
       set((state) =>
         produce(state, (draft) => {
-          draft.cursor = draft.cursor.map((a, i) => a + [x, y][i]) as [
-            number,
-            number
-          ];
+          const dimensions = selectDimensions(draft);
+          draft.cursor = draft.cursor.map((a, i) =>
+            clamp(a + [x, y][i], 0, dimensions[i] - 1)
+          ) as [number, number];
         })
       ),
   }));

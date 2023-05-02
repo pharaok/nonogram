@@ -3,6 +3,7 @@ import Canvas2D, { drawGrid } from "helpers/canvas";
 import { useParentDimensions } from "hooks";
 import { clamp } from "lodash-es";
 import { useCallback, useEffect, useRef } from "react";
+import { useSettings } from "settings";
 import useNonogramStore, { selectClues, selectDimensions } from "store";
 import GridLines from "./gridLines";
 
@@ -11,10 +12,14 @@ export default function Nonogram() {
   const canvas = useRef<Canvas2D | null>(null);
   const painting = useRef(false);
 
+  const keys = useSettings((state) => state.keys);
   const grid = useNonogramStore((state) => state.grid);
   const [width, height] = useNonogramStore(selectDimensions);
   const cursor = useNonogramStore((state) => state.cursor);
   const moveCursorTo = useNonogramStore((state) => state.moveCursorTo);
+  const moveCursorRelative = useNonogramStore(
+    (state) => state.moveCursorRelative
+  );
 
   const colors = useNonogramStore((state) => state.colors);
   const clues = useNonogramStore(selectClues);
@@ -72,6 +77,32 @@ export default function Nonogram() {
   useEffect(() => {
     draw();
   }, [canvasDim, draw]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (keys.cursorUp.includes(event.key)) moveCursorRelative(0, -1);
+      else if (keys.cursorRight.includes(event.key)) moveCursorRelative(1, 0);
+      else if (keys.cursorDown.includes(event.key)) moveCursorRelative(0, 1);
+      else if (keys.cursorLeft.includes(event.key)) moveCursorRelative(-1, 0);
+      else if (keys.brush1.includes(event.key) && !event.repeat) {
+        painting.current = true;
+        paint([cursor], +event.shiftKey);
+      }
+    };
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (keys.brush1.includes(event.key)) painting.current = false;
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [cursor, moveCursorRelative, paint]);
+  useEffect(() => {
+    if (painting.current) paint([cursor]);
+  }, [cursor]);
 
   return (
     <div
