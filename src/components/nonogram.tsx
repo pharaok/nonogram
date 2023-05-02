@@ -1,7 +1,8 @@
 import { crossPath } from "helpers";
 import Canvas2D, { drawGrid } from "helpers/canvas";
+import { useParentDimensions } from "hooks";
 import { clamp } from "lodash-es";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import useNonogramStore, { selectClues, selectDimensions } from "store";
 import GridLines from "./gridLines";
 
@@ -22,7 +23,7 @@ export default function Nonogram() {
   ];
   const paint = useNonogramStore((state) => state.paint);
   const [totalWidth, totalHeight] = [width + clueWidth, height + clueHeight];
-  const [canvasDim, setCanvasDim] = useState([0, 0]);
+  const canvasDim = useParentDimensions(canvasEl);
 
   const draw = () => {
     canvas.current!.clear();
@@ -64,21 +65,12 @@ export default function Nonogram() {
       [0, 0, totalWidth, totalHeight],
       [0, 0, 1, 1]
     );
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      const { width, height } = entries[0].contentRect;
-      setCanvasDim([width, height].map(Math.floor));
-      draw();
-    });
-    resizeObserver.observe(canvasEl.current!.parentElement!);
-    return () => {
-      resizeObserver.disconnect();
-    };
+    draw();
   }, [totalWidth, totalHeight, draw]);
 
   useEffect(() => {
     draw();
-  }, [grid]);
+  }, [grid, canvasDim]);
 
   return (
     <div

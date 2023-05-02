@@ -1,5 +1,6 @@
 import Canvas2D, { drawGridLines } from "helpers/canvas";
-import { useEffect, useRef, useState } from "react";
+import { useParentDimensions } from "hooks";
+import { useEffect, useRef } from "react";
 import useNonogramStore, { selectClues, selectDimensions } from "store";
 
 export default function GridLines() {
@@ -15,7 +16,7 @@ export default function GridLines() {
   ];
 
   const [totalWidth, totalHeight] = [width + clueWidth, height + clueHeight];
-  const [canvasDim, setCanvasDim] = useState([0, 0]);
+  const canvasDim = useParentDimensions(canvasEl);
 
   const draw = () => {
     canvas.current!.clear();
@@ -41,17 +42,12 @@ export default function GridLines() {
       [0, 0, totalWidth, totalHeight],
       [0, 0, 1, 1]
     );
+    draw();
+  }, [totalWidth, totalHeight]);
 
-    const resizeObserver = new ResizeObserver((entries) => {
-      const { width, height } = entries[0].contentRect;
-      setCanvasDim([width, height].map(Math.floor));
-      draw();
-    });
-    resizeObserver.observe(canvasEl.current!.parentElement!);
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [totalWidth, totalHeight, draw]);
+  useEffect(() => {
+    draw();
+  }, [canvasDim]);
 
   return (
     <canvas
