@@ -1,8 +1,9 @@
 import { crossPath } from "helpers";
-import Canvas2D, { drawGrid, drawGridLines } from "helpers/canvas";
+import Canvas2D, { drawGrid } from "helpers/canvas";
 import { clamp } from "lodash-es";
 import { useEffect, useRef, useState } from "react";
 import useNonogramStore, { selectClues, selectDimensions } from "store";
+import GridLines from "./gridLines";
 
 export default function Nonogram() {
   const canvasEl = useRef<HTMLCanvasElement>(null);
@@ -55,20 +56,6 @@ export default function Nonogram() {
         });
       });
     });
-
-    drawGridLines(
-      canvas.current!,
-      clueWidth,
-      clueHeight,
-      totalWidth,
-      totalHeight,
-      (a, i) => {
-        const j = i - [clueWidth, clueHeight][a];
-        if (j % 5 === 0) return 2;
-        if (j === 0 || j === [width, height][a]) return 2;
-        return 1;
-      }
-    );
   };
 
   useEffect(() => {
@@ -133,6 +120,7 @@ export default function Nonogram() {
           painting.current = false;
         }}
       ></canvas>
+      <GridLines />
       <div className="h-screen w-screen"></div>
     </div>
   );
