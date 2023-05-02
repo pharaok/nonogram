@@ -7,6 +7,7 @@ export default function GridLines() {
   const canvasEl = useRef<HTMLCanvasElement>(null);
   const canvas = useRef<Canvas2D | null>(null);
 
+  const cursor = useNonogramStore((state) => state.cursor);
   const [width, height] = useNonogramStore(selectDimensions);
 
   const clues = useNonogramStore(selectClues);
@@ -21,6 +22,10 @@ export default function GridLines() {
   const draw = useCallback(() => {
     canvas.current!.clear();
 
+    const primaryColor = getComputedStyle(canvasEl.current!).getPropertyValue(
+      "--color-primary"
+    );
+
     drawGridLines(
       canvas.current!,
       clueWidth,
@@ -32,9 +37,30 @@ export default function GridLines() {
         if (j % 5 === 0) return 2;
         if (j === 0 || j === [width, height][a]) return 2;
         return 1;
+      },
+      (a, i) => {
+        const j = i - [clueWidth, clueHeight][a];
+        const d = j - cursor[a];
+        if (0 <= d && d <= 1) return `rgb(${primaryColor})`;
+        return "black";
       }
     );
-  }, [clueWidth, clueHeight, totalWidth, totalHeight, width, height]);
+
+    canvas.current!.drawRect(
+      clueWidth + cursor[0],
+      0,
+      1,
+      totalHeight,
+      `rgb(${primaryColor} / 0.15)`
+    );
+    canvas.current!.drawRect(
+      0,
+      clueHeight + cursor[1],
+      totalWidth,
+      1,
+      `rgb(${primaryColor} / 0.15)`
+    );
+  }, [clueWidth, clueHeight, totalWidth, totalHeight, width, height, cursor]);
 
   useEffect(() => {
     canvas.current = new Canvas2D(

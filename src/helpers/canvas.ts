@@ -180,7 +180,8 @@ export const drawGridLines = (
   y1: number,
   x2: number,
   y2: number,
-  getLineWidth: (a: number, i: number) => number
+  getLineWidth: (a: number, i: number) => number,
+  getLineStroke: (a: number, i: number) => StrokeStyle
 ) => {
   for (let a = 0; a < 2; a++) {
     for (let i = [x1, y1][a]; i <= [x2, y2][a]; i++) {
@@ -189,7 +190,11 @@ export const drawGridLines = (
       p1[a] = i;
       p2[a] = i;
 
-      canvas.drawLine([p1, p2], getLineWidth(a, i) * canvas.scale, "black");
+      canvas.drawLine(
+        [p1, p2],
+        getLineWidth(a, i) * canvas.scale,
+        getLineStroke(a, i)
+      );
     }
   }
 };
