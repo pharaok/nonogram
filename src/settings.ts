@@ -22,9 +22,9 @@ export const useSettings = create<Settings>((set) => ({
     cursorDown: ["ArrowDown", "j"],
     cursorUp: ["ArrowUp", "k"],
     cursorRight: ["ArrowRight", "l"],
-    erase: ["z", "Backspace"],
-    brush1: ["x", " ", "Enter"],
-    brush2: ["c"],
+    erase: ["z", "Z", "Backspace"],
+    brush1: ["x", "X", " ", "Enter"],
+    brush2: ["c", "C"],
   },
   setKeys: (action, keys) =>
     set((state) =>

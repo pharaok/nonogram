@@ -13,7 +13,10 @@ export interface NonogramState {
   brushes: number[];
   brushColor: number;
   cursor: [number, number];
-  paint: (points: [number, number][], brush?: number, toggle?: boolean) => void;
+  paint: (
+    points: [number, number][],
+    options?: { color?: number; brush?: number; toggle?: boolean }
+  ) => void;
   setBrushes: (brushes: number[]) => void;
   moveCursorTo: (x: number, y: number) => void;
   moveCursorRelative: (x: number, y: number) => void;
@@ -31,15 +34,19 @@ export const createNonogramStore = (
     brushes: [1, 2],
     brushColor: 0,
     cursor: [0, 0],
-    paint: (points, brush, toggle = true) =>
-      set((state) => {
+    paint: (points, options) => {
+      let { color, brush, toggle = true } = options ?? {};
+      return set((state) => {
         const [sx, sy] = points[0];
         return produce(state, (draft) => {
-          if (brush !== undefined) {
+          if (color !== undefined) {
+            draft.brushColor = color;
+          } else if (brush !== undefined) {
             draft.brushColor = draft.brushes[brush];
-            if (toggle && state.grid[sy][sx] === draft.brushColor)
-              draft.brushColor = 0;
           }
+          if (toggle && draft.grid[sy][sx] === draft.brushColor)
+            draft.brushColor = 0;
+
           draft.grid[sy][sx] = draft.brushColor;
           for (let i = 0; i + 1 < points.length; i++) {
             plotLine(points[i], points[i + 1], ([x, y]) => {
@@ -47,7 +54,8 @@ export const createNonogramStore = (
             });
           }
         });
-      }),
+      });
+    },
     setBrushes: (brushes) =>
       set((state) =>
         produce(state, (draft) => {

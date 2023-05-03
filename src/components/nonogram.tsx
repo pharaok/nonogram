@@ -1,7 +1,7 @@
 import { crossPath } from "helpers";
 import Canvas2D, { drawGrid } from "helpers/canvas";
 import { useParentDimensions } from "hooks";
-import { clamp } from "lodash-es";
+import { clamp, isEqual } from "lodash-es";
 import { useCallback, useEffect, useRef } from "react";
 import { useSettings } from "settings";
 import useNonogramStore, { selectClues, selectDimensions } from "store";
@@ -80,17 +80,28 @@ export default function Nonogram() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      let handled = true;
       if (keys.cursorUp.includes(event.key)) moveCursorRelative(0, -1);
       else if (keys.cursorRight.includes(event.key)) moveCursorRelative(1, 0);
       else if (keys.cursorDown.includes(event.key)) moveCursorRelative(0, 1);
       else if (keys.cursorLeft.includes(event.key)) moveCursorRelative(-1, 0);
-      else if (keys.brush1.includes(event.key) && !event.repeat) {
+      else if (keys.erase.includes(event.key) && !event.repeat) {
         painting.current = true;
-        paint([cursor], +event.shiftKey);
-      }
+        paint([cursor], { color: 0 });
+      } else if (keys.brush1.includes(event.key) && !event.repeat) {
+        painting.current = true;
+        paint([cursor], { brush: +event.shiftKey });
+      } else if (keys.brush2.includes(event.key) && !event.repeat) {
+        painting.current = true;
+        paint([cursor], { brush: +!event.shiftKey });
+      } else handled = false;
+
+      if (handled) event.preventDefault();
     };
     const handleKeyUp = (event: KeyboardEvent) => {
-      if (keys.brush1.includes(event.key)) painting.current = false;
+      if (keys.erase.includes(event.key)) painting.current = false;
+      else if (keys.brush1.includes(event.key)) painting.current = false;
+      else if (keys.brush2.includes(event.key)) painting.current = false;
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -101,8 +112,8 @@ export default function Nonogram() {
     };
   }, [cursor, moveCursorRelative, paint]);
   useEffect(() => {
-    if (painting.current) paint([cursor]);
-  }, [cursor]);
+    if (painting.current) paint([cursor], { toggle: false });
+  }, [paint, cursor]);
 
   return (
     <div
@@ -124,7 +135,7 @@ export default function Nonogram() {
             return;
           }
           e.currentTarget.setPointerCapture(e.pointerId);
-          paint([coords], +(e.button === 2));
+          paint([coords], { brush: +(e.button === 2) });
           moveCursorTo(...coords);
           painting.current = true;
         }}
@@ -137,7 +148,8 @@ export default function Nonogram() {
             .map((c, i) =>
               clamp(c - [clueWidth, clueHeight][i], 0, [width, height][i] - 1)
             ) as [number, number];
-          paint([cursor, coords]);
+          if (isEqual(coords, cursor)) return;
+          paint([cursor, coords], { toggle: false });
           moveCursorTo(...coords);
         }}
         onPointerUp={() => {
