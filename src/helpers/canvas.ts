@@ -72,7 +72,8 @@ export default class Canvas2D {
     stroke: StrokeStyle,
     lineCap: LineCap = "butt"
   ) {
-    if (!points.length) return;
+    if (points.length < 2) return;
+    if (!lineWidth) return;
     this.ctx.save();
     this.ctx.lineWidth = lineWidth;
     this.ctx.strokeStyle = stroke;
