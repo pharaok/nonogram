@@ -2,6 +2,7 @@ import Canvas2D, { drawGridLines } from "helpers/canvas";
 import { useParentDimensions } from "hooks";
 import { useCallback, useEffect, useRef } from "react";
 import useNonogramStore, { selectClues, selectDimensions } from "store";
+import { Point } from "types";
 
 export default function GridLines() {
   const canvasEl = useRef<HTMLCanvasElement>(null);
@@ -67,8 +68,8 @@ export default function GridLines() {
       for (let di = 0; di < 2; di++) {
         const p = cursor.map(
           (c, ca) => c + [clueWidth, clueHeight][ca] + di
-        ) as [number, number];
-        const points: [number, number][] = [[...p], [...p]];
+        ) as Point;
+        const points: Point[] = [[...p], [...p]];
         points[0][+!a] = -Infinity;
         points[1][+!a] = Infinity;
         canvas.current!.drawLine(

@@ -5,6 +5,7 @@ import { clamp, isEqual } from "lodash-es";
 import { useCallback, useEffect, useRef } from "react";
 import { useSettings } from "settings";
 import useNonogramStore, { selectClues, selectDimensions } from "store";
+import { Point } from "types";
 import GridLines from "./gridLines";
 
 export default function Nonogram() {
@@ -130,7 +131,7 @@ export default function Nonogram() {
         onPointerDown={(e) => {
           const coords = canvas
             .current!.eventToCoords(e)
-            .map((c, i) => c - [clueWidth, clueHeight][i]) as [number, number];
+            .map((c, i) => c - [clueWidth, clueHeight][i]) as Point;
           if (coords.some((d) => d < 0)) {
             return;
           }
@@ -147,7 +148,7 @@ export default function Nonogram() {
             .current!.eventToCoords(e)
             .map((c, i) =>
               clamp(c - [clueWidth, clueHeight][i], 0, [width, height][i] - 1)
-            ) as [number, number];
+            ) as Point;
           if (isEqual(coords, cursor)) return;
           paint([cursor, coords], { toggle: false });
           moveCursorTo(...coords);

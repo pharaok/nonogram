@@ -1,10 +1,10 @@
-type Vector2D = [number, number];
+import { Point } from "types";
 
 // bresenham's line drawing algorithm
 export const plotLine = (
-  from: Vector2D,
-  to: Vector2D,
-  callback: (coords: Vector2D) => void
+  from: Point,
+  to: Point,
+  callback: (coords: Point) => void
 ) => {
   const d = [to[0] - from[0], to[1] - from[1]].map(Math.abs);
   const axis = +(d[1] > d[0]); // the axis with longest projection
@@ -18,8 +18,8 @@ export const plotLine = (
   let e = 2 * d[+!axis] - d[axis];
   let incr = from[+!axis] > to[+!axis] ? -1 : 1;
 
-  let curr: Vector2D = [...from];
-  for (curr[axis] = from[axis]; curr[axis] <= to[axis]; curr[axis]++) {
+  let curr: Point = [...from];
+  for (curr[axis] = from[axis] + 1; curr[axis] <= to[axis]; curr[axis]++) {
     // iterate over the axis with longest projection,
     // and increment the other axis when needed.
     callback(curr);

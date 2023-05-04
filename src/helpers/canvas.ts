@@ -1,10 +1,9 @@
 import { clamp } from "lodash-es";
 import { PointerEvent } from "react";
+import { Point, Vector4D } from "types";
 
 type FillStyle = typeof CanvasRenderingContext2D.prototype.fillStyle;
 type StrokeStyle = typeof CanvasRenderingContext2D.prototype.strokeStyle;
-type Point = [number, number];
-type Vector4D = [number, number, number, number];
 type LineCap = typeof CanvasRenderingContext2D.prototype.lineCap;
 
 export default class Canvas2D {

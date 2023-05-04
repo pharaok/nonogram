@@ -1,10 +1,10 @@
-import { createStore, useStore } from "zustand";
-import produce from "immer";
-import { createContext, useContext } from "react";
-import { NonogramGrid } from "types";
-import { plotLine } from "helpers/line";
 import { gridClues, gridToBase64, markedGridClues } from "helpers";
+import { plotLine } from "helpers/line";
+import produce from "immer";
 import { clamp, isEqual } from "lodash-es";
+import { createContext, useContext } from "react";
+import { NonogramGrid, Point } from "types";
+import { createStore, useStore } from "zustand";
 
 export interface NonogramState {
   grid: NonogramGrid;
@@ -12,9 +12,9 @@ export interface NonogramState {
   colors: string[];
   brushes: number[];
   brushColor: number;
-  cursor: [number, number];
+  cursor: Point;
   paint: (
-    points: [number, number][],
+    points: Point[],
     options?: { color?: number; brush?: number; toggle?: boolean }
   ) => void;
   setBrushes: (brushes: number[]) => void;
@@ -74,7 +74,7 @@ export const createNonogramStore = (
           const dimensions = selectDimensions(draft);
           draft.cursor = draft.cursor.map((a, i) =>
             clamp(a + [x, y][i], 0, dimensions[i] - 1)
-          ) as [number, number];
+          ) as Point;
         })
       ),
   }));
