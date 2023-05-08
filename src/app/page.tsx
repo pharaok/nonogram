@@ -58,18 +58,16 @@ export default function Home() {
 
   return (
     <NonogramContext.Provider value={store}>
-      {/* HACK: padding on Nonogram's parent breaks the ResizeObserver,
-          because overflow eats into padding first, then actually overflows. */}
-      <div
-        className="h-full w-full p-4 md:p-8"
-        style={{ visibility: visible ? "visible" : "hidden" }}
-      >
-        <div className="flex h-full w-full flex-col items-center justify-evenly gap-8 md:flex-row">
+      <main className="relative flex-1">
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-evenly gap-8 p-4 md:flex-row md:p-8"
+          style={{ visibility: visible ? "visible" : "hidden" }}
+        >
           <Nonogram />
           <Controls />
         </div>
-        <WinDialogWrapper />
-      </div>
+      </main>
+      <WinDialogWrapper />
     </NonogramContext.Provider>
   );
 }

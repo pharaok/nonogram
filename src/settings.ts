@@ -43,10 +43,6 @@ export const useSettings = create(
           })
         ),
       setColor: (color, value) => {
-        (document.querySelector(":root") as HTMLElement).style.setProperty(
-          `--color-${color}`,
-          value
-        );
         return set(
           produce(get(), (draft) => {
             draft.colors[color] = value;
@@ -54,21 +50,6 @@ export const useSettings = create(
         );
       },
     }),
-    {
-      name: "settings-storage",
-      onRehydrateStorage: () => {
-        return (state) => {
-          if (state === undefined) return;
-          const colors = state.colors;
-          let color: keyof typeof colors;
-          for (color in colors) {
-            (document.querySelector(":root") as HTMLElement).style.setProperty(
-              `--color-${color}`,
-              colors[color]
-            );
-          }
-        };
-      },
-    }
+    { name: "settings-storage" }
   )
 );

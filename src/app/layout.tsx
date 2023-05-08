@@ -1,4 +1,5 @@
 import Header from "components/header";
+import { ThemeSetter } from "components/themeSetter";
 import { Silkscreen } from "next/font/google";
 import "./globals.css";
 
@@ -23,11 +24,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`bg-white ${silkscreen.variable}`}>
-        <div className="flex h-screen w-screen flex-col">
+        <div className="min-w-screen flex min-h-screen flex-col">
           <Header />
-          <main className="flex-1 overflow-hidden">{children}</main>
+          {children}
         </div>
       </body>
+      <ThemeSetter />
     </html>
   );
 }
