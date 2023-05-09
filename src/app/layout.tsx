@@ -23,7 +23,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`bg-white ${silkscreen.variable}`}>
+      <body className={`bg-background text-foreground ${silkscreen.variable}`}>
         <div className="min-w-screen flex min-h-screen flex-col">
           <Header />
           {children}

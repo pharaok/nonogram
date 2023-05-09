@@ -20,7 +20,7 @@ const Content = () => {
 
   return (
     <>
-      <div className="m-4 flex w-full flex-col items-center justify-center bg-gray-200 p-4 shadow-xl shadow-black/50">
+      <div className="m-4 flex w-full flex-col items-center justify-center bg-background-alt p-4 shadow-xl shadow-black/50">
         <Solution
           ref={solutionEl}
           className="mb-4 w-full border border-black"
@@ -29,20 +29,20 @@ const Content = () => {
           onClick={() => {
             navigator.clipboard.writeText(seed);
           }}
-          className="relative flex items-center gap-1 border-b border-b-transparent hover:border-b-black"
+          className="relative flex items-center gap-1 border-b border-b-transparent hover:border-b-foreground"
         >
           <h3 className="font-bold">{seed}</h3>
-          <Copy className="h-5 w-5" />
+          <Copy size={16} />
         </button>
       </div>
       <div className="m-2 flex items-center gap-4">
         <Link
-          className="rounded-full border-2 border-blue-700 p-2 text-blue-700 hover:bg-blue-700 hover:text-white"
+          className="stroke rounded-full border-2 border-blue-700 p-2 text-blue-700 hover:bg-blue-700 hover:text-foreground"
           download={`${seed}.png`}
           href={downloadLink}
           target="_blank"
         >
-          <Download className="h-5 w-5" />
+          <Download size={24} strokeWidth={2} />
         </Link>
       </div>
       <Dialog.Close asChild>
@@ -54,7 +54,7 @@ const Content = () => {
               h: height,
             },
           }}
-          className="relative rounded-full bg-primary p-2 font-bold uppercase text-white shadow shadow-black/50 transition-transform after:absolute after:inset-0 hover:scale-105 after:hover:bg-white/10"
+          className="relative rounded-full bg-primary p-2 font-bold uppercase text-white shadow shadow-black/50 transition-transform after:absolute after:inset-0 after:rounded-full hover:scale-105 after:hover:bg-white/10"
         >
           Play Again
         </Link>
@@ -79,8 +79,8 @@ export default function WinDialog({
   return (
     <Dialog.Root open={rendered && open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/25 backdrop-blur-sm" />
-        <Dialog.Content className="fixed top-1/2 left-1/2 z-50 flex w-10/12 max-w-md -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-lg bg-white py-4 px-8">
+        <Dialog.Overlay className="fixed inset-0 bg-background-alt/50 backdrop-blur-sm" />
+        <Dialog.Content className="fixed top-1/2 left-1/2 z-50 flex w-10/12 max-w-md -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-lg bg-background py-4 px-8">
           <Dialog.Title className="mb-4 text-lg font-bold">
             You Won!
           </Dialog.Title>

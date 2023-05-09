@@ -4,6 +4,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        background: {
+          DEFAULT: "rgb(var(--color-background) / <alpha-value>)",
+          alt: "rgb(var(--color-background-alt) / <alpha-value>)",
+        },
+        foreground: "rgb(var(--color-foreground) / <alpha-value>)",
         primary: "rgb(var(--color-primary) / <alpha-value>)",
         secondary: "rgb(var(--color-secondary) / <alpha-value>)",
       },

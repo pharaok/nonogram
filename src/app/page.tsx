@@ -13,6 +13,7 @@ import useNonogramStore, {
 } from "store";
 
 const WinDialogWrapper = () => {
+  const solution = useNonogramStore((state) => state.solution);
   const isSolved = useNonogramStore(selectIsSolved);
   const [wasSolved, setWasSolved] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -24,6 +25,10 @@ const WinDialogWrapper = () => {
   useEffect(() => {
     if (wasSolved) setDialogOpen(true);
   }, [wasSolved]);
+
+  useEffect(() => {
+    setWasSolved(false);
+  }, [solution]);
 
   return (
     <WinDialog open={dialogOpen} onOpenChange={(open) => setDialogOpen(open)} />

@@ -23,10 +23,6 @@ export default function GridLines() {
   const draw = useCallback(() => {
     canvas.current!.clear();
 
-    const primaryColor = getComputedStyle(canvasEl.current!).getPropertyValue(
-      "--color-primary"
-    );
-
     const getLineWidth = (a: number, i: number) => {
       const j = i - [clueWidth, clueHeight][a];
       if (j % 5 === 0) return 2;
@@ -46,7 +42,7 @@ export default function GridLines() {
         if (0 <= d && d <= 1) return 0;
         return getLineWidth(a, i);
       },
-      () => "black"
+      () => "rgb(var(--color-foreground))"
     );
 
     canvas.current!.drawRect(
@@ -54,14 +50,14 @@ export default function GridLines() {
       0,
       1,
       totalHeight,
-      `rgb(${primaryColor} / 0.15)`
+      `rgb(var(--color-primary) / 0.15)`
     );
     canvas.current!.drawRect(
       0,
       clueHeight + cursor[1],
       totalWidth,
       1,
-      `rgb(${primaryColor} / 0.15)`
+      `rgb(var(--color-primary) / 0.15)`
     );
 
     for (let a = 0; a < 2; a++) {
@@ -75,7 +71,7 @@ export default function GridLines() {
         canvas.current!.drawLine(
           points,
           getLineWidth(a, p[a]),
-          `rgb(${primaryColor})`
+          `rgb(var(--color-primary))`
         );
       }
     }

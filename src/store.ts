@@ -30,7 +30,10 @@ export const createNonogramStore = (
   return createStore<NonogramState>((set) => ({
     grid: grid ?? Array.from(solution, (row) => Array.from(row, () => 0)),
     solution,
-    colors: colors ?? ["white", "black"],
+    colors: colors ?? [
+      "rgb(var(--color-background))",
+      "rgb(var(--color-foreground))",
+    ],
     brushes: [1, 2],
     brushColor: 0,
     cursor: [0, 0],

@@ -43,7 +43,12 @@ export default function Nonogram() {
       (canvas, cell, x, y) => {
         if (cell === colors.length) {
           const lineWidth = 0.075 * canvas.getViewBoxRatio()[1];
-          canvas.drawPath(crossPath(x, y), lineWidth, "black", "round");
+          canvas.drawPath(
+            crossPath(x, y),
+            lineWidth,
+            "rgb(var(--color-foreground))",
+            "round"
+          );
         } else {
           canvas.drawRect(x, y, 1, 1, colors[cell]);
         }
@@ -59,7 +64,9 @@ export default function Nonogram() {
             (a === 1 ? i + clueWidth : j + clueWidth - ce.length) + 0.5,
             (a === 0 ? i + clueHeight : j + clueHeight - ce.length) + 0.5,
             `${ratioY / 2}px sans-serif`,
-            n.isMarked ? "gray" : "black"
+            n.isMarked
+              ? "rgb(var(--color-foreground) / 0.5)"
+              : "rgb(var(--color-foreground))"
           );
         });
       });

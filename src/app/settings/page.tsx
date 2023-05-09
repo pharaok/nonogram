@@ -1,24 +1,12 @@
 "use client";
 import * as Tabs from "@radix-ui/react-tabs";
 import Input from "components/input";
+import { setDocumentColor, toRGB } from "helpers";
 import produce from "immer";
-import { capitalize, chunk } from "lodash-es";
-import { useState } from "react";
+import { startCase } from "lodash-es";
+import { Fragment, useState } from "react";
 import { Color, useSettings } from "settings";
 
-const hexToRGB = (hex: string) =>
-  chunk(hex.slice(1).split(""), 2)
-    .map((c) => parseInt(c.join(""), 16))
-    .join(" ");
-const RGBToHex = (rgb: string) =>
-  `#${rgb
-    .split(" ")
-    .map((n) => parseInt(n).toString(16).padStart(2, "0").toUpperCase())
-    .join("")}`;
-const toRGB = (s: string) => {
-  if (s[0] === "#") return hexToRGB(s);
-  return s;
-};
 export default function Settings() {
   const colors = useSettings((state) => state.colors);
   const setColor = useSettings((state) => state.setColor);
@@ -44,11 +32,11 @@ export default function Settings() {
         <Tabs.Content value="controls">Controls</Tabs.Content>
         <Tabs.Content asChild value="theme">
           <div className="grid grid-cols-3 gap-[inherit]">
-            {(Object.keys(currColors) as Color[]).map((color) => (
-              <>
-                <label className="col-span-2">{`${capitalize(
-                  color
-                )} color`}</label>
+            {(Object.keys(currColors) as Color[]).map((color, i) => (
+              <Fragment key={i}>
+                <label className="col-span-2">
+                  {startCase(`${color} color`)}
+                </label>
                 <Input
                   type="text"
                   value={currColors[color]}
@@ -61,20 +49,15 @@ export default function Settings() {
                   }}
                   key={color}
                   onBlur={() => {
-                    (
-                      document.querySelector(":root") as HTMLElement
-                    ).style.setProperty(
-                      `--color-${color}`,
-                      toRGB(currColors[color])
-                    );
+                    setDocumentColor(color, currColors[color]);
                   }}
                 />
-              </>
+              </Fragment>
             ))}
           </div>
         </Tabs.Content>
 
-        <div className="flex-1 border-b border-b-gray-200"></div>
+        <div className="flex-1"></div>
         <div className="grid grid-cols-6 gap-[inherit]">
           <button
             className="col-start-5 rounded-md bg-red-400 py-1 text-lg font-bold text-white disabled:text-gray-200"

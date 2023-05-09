@@ -42,6 +42,7 @@ export default class Canvas2D {
   }
 
   drawRect(x: number, y: number, w: number, h: number, fill: FillStyle) {
+    if (typeof fill === "string") fill = this.resolveCSSVariables(fill);
     this.ctx.save();
     const [ratioX, ratioY] = this.getViewBoxRatio();
     this.ctx.fillStyle = fill;
@@ -71,6 +72,7 @@ export default class Canvas2D {
     stroke: StrokeStyle,
     lineCap: LineCap = "butt"
   ) {
+    if (typeof stroke === "string") stroke = this.resolveCSSVariables(stroke);
     if (points.length < 2) return;
     if (!lineWidth) return;
     this.ctx.save();
@@ -97,6 +99,7 @@ export default class Canvas2D {
     stroke: StrokeStyle,
     lineCap: LineCap = "butt"
   ) {
+    if (typeof stroke === "string") stroke = this.resolveCSSVariables(stroke);
     this.ctx.save();
     this.ctx.strokeStyle = stroke;
     this.ctx.lineWidth = lineWidth;
@@ -152,6 +155,7 @@ export default class Canvas2D {
   }
 
   fillText(text: string, x: number, y: number, font: string, fill: FillStyle) {
+    if (typeof fill === "string") fill = this.resolveCSSVariables(fill);
     this.ctx.save();
     this.ctx.textAlign = "center";
     this.ctx.textBaseline = "middle";
@@ -171,6 +175,19 @@ export default class Canvas2D {
       ((e.clientY - top - this.extra[1]) * this.scale) / ratioY,
     ].map(Math.floor);
     return [cx, cy];
+  }
+
+  resolveCSSVariables(s: string) {
+    const matches = s.matchAll(/var\((.*?)\)/g);
+    let resolved = "";
+    let prevIndex = 0;
+    for (const match of matches) {
+      resolved += s.slice(prevIndex, match.index);
+      resolved += getComputedStyle(this.ctx.canvas).getPropertyValue(match[1]);
+      prevIndex = match.index! + match[0].length;
+    }
+    resolved += s.slice(prevIndex);
+    return resolved;
   }
 }
 

@@ -1,9 +1,13 @@
 import produce from "immer";
+import { assignIn } from "lodash-es";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface Settings {
   colors: {
+    background: string;
+    backgroundAlt: string;
+    foreground: string;
     primary: string;
     secondary: string;
   };
@@ -25,6 +29,9 @@ export const useSettings = create(
   persist<Settings>(
     (set, get) => ({
       colors: {
+        background: "255 255 255",
+        backgroundAlt: "224 224 224",
+        foreground: "0 0 0",
         primary: "147 51 234",
         secondary: "37 99 235",
       },
@@ -51,6 +58,9 @@ export const useSettings = create(
         );
       },
     }),
-    { name: "settings-storage" }
+    {
+      name: "settings-storage",
+      merge: (persisted, current) => assignIn(current, persisted),
+    }
   )
 );

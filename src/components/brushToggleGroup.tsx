@@ -11,7 +11,7 @@ export default function BrushToggleGroup() {
   return (
     <ToggleGroup.Root
       type="multiple"
-      className="inline-flex items-stretch whitespace-nowrap rounded-md bg-white"
+      className="inline-flex items-stretch whitespace-nowrap rounded-md bg-background"
       value={brushes.map((b) => b.toString())}
     >
       {[...Array(colors.length + 1)].map((_, i) => (
@@ -57,7 +57,7 @@ export default function BrushToggleGroup() {
             <svg viewBox="0 0 1 1" className="inline">
               <path
                 d={crossPath(0, 0)}
-                stroke="black"
+                stroke="rgb(var(--color-foreground))"
                 strokeWidth={0.1}
                 strokeLinecap="round"
               />

@@ -23,7 +23,7 @@ export default function Controls() {
   });
 
   return (
-    <div className="flex flex-col items-center rounded-xl bg-gray-200 py-4 px-12 shadow-md shadow-black/25">
+    <div className="flex flex-col items-center rounded-xl bg-background-alt py-4 px-12 shadow-md shadow-black/25">
       <span className="mb-4 text-2xl">
         {formatDuration(currTime - startTime)}
       </span>
