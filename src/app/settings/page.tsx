@@ -1,7 +1,7 @@
 "use client";
 import * as Tabs from "@radix-ui/react-tabs";
 import Button from "components/button";
-import Input from "components/input";
+import ColorInput from "components/colorInput";
 import { setDocumentColor, toRGB } from "helpers";
 import produce from "immer";
 import { startCase } from "lodash-es";
@@ -38,19 +38,15 @@ export default function Settings() {
                 <label className="col-span-2">
                   {startCase(`${color} color`)}
                 </label>
-                <Input
-                  type="text"
+                <ColorInput
                   value={currColors[color]}
-                  onChange={(e) => {
+                  onColorPicked={(value) => {
+                    setDocumentColor(color, value);
                     setCurrColors(
                       produce(currColors, (draft) => {
-                        draft[color] = e.currentTarget.value;
+                        draft[color] = value;
                       })
                     );
-                  }}
-                  key={color}
-                  onBlur={() => {
-                    setDocumentColor(color, currColors[color]);
                   }}
                 />
               </Fragment>
@@ -65,7 +61,13 @@ export default function Settings() {
             disabled={(Object.keys(colors) as Color[]).every(
               (color) => toRGB(currColors[color]) === colors[color]
             )}
-            onClick={() => setCurrColors(colors)}
+            onClick={() => {
+              setCurrColors(colors);
+
+              (Object.keys(colors) as Color[]).map((color) => {
+                setDocumentColor(color, toRGB(colors[color]));
+              });
+            }}
           >
             reset
           </Button>
