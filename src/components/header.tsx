@@ -1,14 +1,21 @@
+import { Settings } from "lucide-react";
 import Link from "next/link";
 
 export default function Header() {
   return (
     <header
       className="border-b-1 background-b-background-alt mb-4 flex items-center justify-between
-      border-t-4 border-t-primary bg-background-alt py-1 shadow-md shadow-black/25"
+      border-t-4 border-t-primary bg-background-alt px-8 py-1 shadow-md shadow-black/25"
     >
-      <nav className="flex items-center">
+      <nav className="flex">
         <Link href="/">
-          <h1 className="mx-12 font-display text-3xl">Nonogram</h1>
+          <h1 className="font-display text-3xl">Nonogram</h1>
+        </Link>
+      </nav>
+      <div className="flex-1"></div>
+      <nav className="flex">
+        <Link href="/settings">
+          <Settings />
         </Link>
       </nav>
     </header>

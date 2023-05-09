@@ -72,7 +72,7 @@ export default function Settings() {
             reset
           </Button>
           <Button
-            className="bg-primary hover:bg-foreground"
+            className="bg-primary hover:bg-secondary"
             onClick={() => {
               (Object.keys(currColors) as Color[]).map((color) => {
                 setColor(color, toRGB(currColors[color]));
