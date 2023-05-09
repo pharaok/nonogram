@@ -16,9 +16,10 @@ interface Settings {
     brush1: string[];
     brush2: string[];
   };
-  setColor: (color: keyof Settings["colors"], value: string) => void;
+  setColor: (color: Color, value: string) => void;
   setKeys: (action: keyof Settings["keys"], keys: string[]) => void;
 }
+export type Color = keyof Settings["colors"];
 
 export const useSettings = create(
   persist<Settings>(
