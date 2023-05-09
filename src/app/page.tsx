@@ -47,7 +47,6 @@ export default function Home() {
     const newSearchParams = new URLSearchParams(searchParams);
     if (!searchParams.has("s")) {
       newSearchParams.set("s", bigIntToBase64(randomBigInt(width * height)));
-      // WARN: no shallow routing in next 13 (yet) and window.history doesn't work
       router.replace(pathname + "?" + newSearchParams.toString());
     }
     const seed = newSearchParams!.get("s")!;
