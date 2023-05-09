@@ -1,10 +1,11 @@
-import { HTMLProps } from "react";
-
-export default function Input(props: HTMLProps<HTMLInputElement>) {
+export default function Input({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"input">) {
   return (
     <input
       {...props}
-      className={`${props.className} rounded-md bg-background-alt p-1`}
+      className={`${className} rounded-md bg-background-alt p-1`}
     />
   );
 }

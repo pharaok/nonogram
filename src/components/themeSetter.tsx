@@ -1,7 +1,6 @@
 "use client";
 
 import { setDocumentColor } from "helpers";
-import { kebabCase } from "lodash-es";
 import { useEffect } from "react";
 import { useSettings } from "settings";
 

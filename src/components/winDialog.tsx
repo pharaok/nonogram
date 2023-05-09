@@ -54,7 +54,7 @@ const Content = () => {
               h: height,
             },
           }}
-          className="relative rounded-full bg-primary p-2 font-bold uppercase text-white shadow shadow-black/50 transition-transform after:absolute after:inset-0 after:rounded-full hover:scale-105 after:hover:bg-white/10"
+          className="rounded-full bg-primary p-2 font-bold uppercase text-white shadow shadow-black/50 transition-transform after:absolute after:inset-0 after:rounded-full hover:scale-105 after:hover:bg-white/10"
         >
           Play Again
         </Link>

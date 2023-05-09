@@ -1,5 +1,6 @@
 "use client";
 import * as Tabs from "@radix-ui/react-tabs";
+import Button from "components/button";
 import Input from "components/input";
 import { setDocumentColor, toRGB } from "helpers";
 import produce from "immer";
@@ -59,25 +60,25 @@ export default function Settings() {
 
         <div className="flex-1"></div>
         <div className="grid grid-cols-6 gap-[inherit]">
-          <button
-            className="col-start-5 rounded-md bg-red-400 py-1 text-lg font-bold text-white disabled:text-gray-200"
+          <Button
+            className="col-start-5 bg-red-400"
             disabled={(Object.keys(colors) as Color[]).every(
               (color) => toRGB(currColors[color]) === colors[color]
             )}
             onClick={() => setCurrColors(colors)}
           >
             reset
-          </button>
-          <button
-            className="rounded-md bg-primary py-1 text-lg font-bold text-white transition hover:bg-secondary"
-            onClick={(e) => {
+          </Button>
+          <Button
+            className="bg-primary hover:bg-foreground"
+            onClick={() => {
               (Object.keys(currColors) as Color[]).map((color) => {
                 setColor(color, toRGB(currColors[color]));
               });
             }}
           >
             apply
-          </button>
+          </Button>
         </div>
       </Tabs.Root>
     </main>
