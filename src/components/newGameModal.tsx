@@ -1,6 +1,5 @@
 "use client";
 
-import * as Dialog from "@radix-ui/react-dialog";
 import Modal from "components/modal";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -48,21 +47,19 @@ export default function NewGameModal() {
           />
         </div>
 
-        <Dialog.Close asChild>
-          <Link
-            href={{
-              pathname: "/",
-              query: {
-                w: dimensions.width,
-                h: dimensions.height,
-                s: seed || null,
-              },
-            }}
-            className="relative min-w-[6rem] rounded-full bg-primary p-2 text-center font-bold uppercase text-white shadow shadow-black/50 transition-transform after:absolute after:inset-0 hover:scale-105 hover:after:rounded-full after:hover:bg-white/10"
-          >
-            PLAY
-          </Link>
-        </Dialog.Close>
+        <Link
+          href={{
+            pathname: "/",
+            query: {
+              w: dimensions.width,
+              h: dimensions.height,
+              s: seed || null,
+            },
+          }}
+          className="relative min-w-[6rem] rounded-full bg-primary p-2 text-center font-bold uppercase text-white shadow shadow-black/50 transition-transform after:absolute after:inset-0 hover:scale-105 hover:after:rounded-full after:hover:bg-white/10"
+        >
+          PLAY
+        </Link>
       </div>
     </Modal>
   );
