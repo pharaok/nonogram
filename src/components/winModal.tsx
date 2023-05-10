@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { Copy, Download, X } from "lucide-react";
+import { Copy, Download } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -71,12 +71,6 @@ export default function WinModal({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  // HACK: workaround for https://github.com/radix-ui/primitives/issues/1386
-  const [rendered, setRendered] = useState(false);
-  useEffect(() => {
-    setRendered(true);
-  }, []);
-
   return (
     <Modal open={open} onOpenChange={onOpenChange} title="You won!">
       <Content />
