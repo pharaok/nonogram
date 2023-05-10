@@ -87,46 +87,45 @@ export default function Nonogram() {
   }, [canvasDim, draw]);
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      let handled = true;
-      if (keys.cursorUp.includes(event.key)) moveCursorRelative(0, -1);
-      else if (keys.cursorRight.includes(event.key)) moveCursorRelative(1, 0);
-      else if (keys.cursorDown.includes(event.key)) moveCursorRelative(0, 1);
-      else if (keys.cursorLeft.includes(event.key)) moveCursorRelative(-1, 0);
-      else if (keys.erase.includes(event.key) && !event.repeat) {
-        painting.current = true;
-        paint([cursor], { color: 0 });
-      } else if (keys.brush1.includes(event.key) && !event.repeat) {
-        painting.current = true;
-        paint([cursor], { brush: +event.shiftKey });
-      } else if (keys.brush2.includes(event.key) && !event.repeat) {
-        painting.current = true;
-        paint([cursor], { brush: +!event.shiftKey });
-      } else handled = false;
-
-      if (handled) event.preventDefault();
-    };
-    const handleKeyUp = (event: KeyboardEvent) => {
-      if (keys.erase.includes(event.key)) painting.current = false;
-      else if (keys.brush1.includes(event.key)) painting.current = false;
-      else if (keys.brush2.includes(event.key)) painting.current = false;
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("keyup", handleKeyUp);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("keyup", handleKeyUp);
-    };
-  }, [cursor, moveCursorRelative, paint]);
-  useEffect(() => {
     if (painting.current) paint([cursor], { toggle: false });
   }, [paint, cursor]);
 
+  useEffect(() => {
+    // ¯\_(ツ)_/¯
+    setTimeout(() => {
+      canvasEl.current!.parentElement!.focus();
+    }, 0);
+  }, []);
+
   return (
     <div
-      className="relative max-h-full max-w-full overflow-hidden"
+      className="relative max-h-full max-w-full overflow-hidden outline-none"
       style={{ aspectRatio: `${totalWidth} / ${totalHeight}` }}
+      tabIndex={-1}
+      onKeyDown={(e) => {
+        let handled = true;
+        if (keys.cursorUp.includes(e.key)) moveCursorRelative(0, -1);
+        else if (keys.cursorRight.includes(e.key)) moveCursorRelative(1, 0);
+        else if (keys.cursorDown.includes(e.key)) moveCursorRelative(0, 1);
+        else if (keys.cursorLeft.includes(e.key)) moveCursorRelative(-1, 0);
+        else if (keys.erase.includes(e.key) && !e.repeat) {
+          painting.current = true;
+          paint([cursor], { color: 0 });
+        } else if (keys.brush1.includes(e.key) && !e.repeat) {
+          painting.current = true;
+          paint([cursor], { brush: +e.shiftKey });
+        } else if (keys.brush2.includes(e.key) && !e.repeat) {
+          painting.current = true;
+          paint([cursor], { brush: +!e.shiftKey });
+        } else handled = false;
+
+        if (handled) e.preventDefault();
+      }}
+      onKeyUp={(e) => {
+        if (keys.erase.includes(e.key)) painting.current = false;
+        else if (keys.brush1.includes(e.key)) painting.current = false;
+        else if (keys.brush2.includes(e.key)) painting.current = false;
+      }}
     >
       <canvas
         ref={canvasEl}
