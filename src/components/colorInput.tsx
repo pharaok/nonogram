@@ -1,18 +1,22 @@
 import { isColor, toHex } from "helpers";
 import { Palette } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { Overwrite } from "types";
 import Button from "./button";
 import Input from "./input";
 
 export default function ColorInput({
   value,
-  onColorPicked,
+  onChange,
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"input"> & {
-  value: string;
-  onColorPicked: (value: string) => void;
-}) {
+}: Overwrite<
+  React.ComponentPropsWithoutRef<"input">,
+  {
+    value: string;
+    onChange: (value: string) => void;
+  }
+>) {
   const [color, setColor] = useState(value);
   const colorPickerRef = useRef<HTMLInputElement>(null);
 
@@ -29,7 +33,7 @@ export default function ColorInput({
           setColor(e.target.value);
         }}
         onBlur={() => {
-          if (isColor(color)) onColorPicked(color);
+          if (isColor(color)) onChange(color);
         }}
         className="w-full rounded-r-none"
       />
@@ -49,7 +53,7 @@ export default function ColorInput({
         value={toHex(color)}
         onChange={(e) => {
           setColor(e.target.value);
-          onColorPicked(e.target.value);
+          onChange(e.target.value);
         }}
         className="hidden"
       />

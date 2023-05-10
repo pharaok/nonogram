@@ -1,4 +1,5 @@
 "use client";
+
 import * as Tabs from "@radix-ui/react-tabs";
 import Button from "components/button";
 import ColorInput from "components/colorInput";
@@ -40,7 +41,7 @@ export default function Settings() {
                 </label>
                 <ColorInput
                   value={currColors[color]}
-                  onColorPicked={(value) => {
+                  onChange={(value) => {
                     setDocumentColor(color, value);
                     setCurrColors(
                       produce(currColors, (draft) => {

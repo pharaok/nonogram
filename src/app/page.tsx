@@ -10,7 +10,9 @@ import useNonogramStore, {
   createNonogramStore,
   NonogramContext,
   selectIsSolved,
+  selectSeed,
 } from "store";
+import { useStore } from "zustand";
 
 const WinDialogWrapper = () => {
   const solution = useNonogramStore((state) => state.solution);
@@ -41,7 +43,7 @@ export default function Home() {
   const router = useRouter();
   const width = +(searchParams!.get("w") ?? "10");
   const height = +(searchParams!.get("h") ?? "10");
-  const seed = searchParams!.get("s");
+  let seed = searchParams!.get("s");
   const [store, setStore] = useState(
     createNonogramStore(
       seed
@@ -49,11 +51,12 @@ export default function Home() {
         : Array.from(Array(height), () => Array.from(Array(width), () => 1))
     )
   );
+  const currentSeed = useStore(store, selectSeed);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!searchParams.has("s")) {
-      const seed = bigIntToBase64(randomBigInt(width * height));
+    seed ||= bigIntToBase64(randomBigInt(width * height));
+    if (seed !== currentSeed) {
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.set("s", seed);
       router.replace(pathname + "?" + newSearchParams.toString());
@@ -62,7 +65,7 @@ export default function Home() {
       setStore(createNonogramStore(grid));
     }
     setVisible(true);
-  }, [pathname, router, searchParams, width, height]);
+  }, [pathname, router, searchParams, seed, width, height]);
 
   return (
     <NonogramContext.Provider value={store}>
