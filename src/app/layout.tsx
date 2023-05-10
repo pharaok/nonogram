@@ -18,8 +18,10 @@ export const metadata = {
 
 export default function RootLayout({
   children,
+  newGameModal,
 }: {
   children: React.ReactNode;
+  newGameModal: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -27,6 +29,7 @@ export default function RootLayout({
         <div className="min-w-screen flex min-h-screen flex-col">
           <Header />
           {children}
+          {newGameModal}
         </div>
       </body>
       <ThemeSetter />

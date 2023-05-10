@@ -1,10 +1,11 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { Copy, Download, X } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import useNonogramStore, { selectDimensions, selectSeed } from "store";
+import Modal from "./modal";
 import Solution from "./solution";
-import { usePathname } from "next/navigation";
 
 const Content = () => {
   const pathname = usePathname();
@@ -54,7 +55,7 @@ const Content = () => {
               h: height,
             },
           }}
-          className="rounded-full bg-primary p-2 font-bold uppercase text-white shadow shadow-black/50 transition-transform after:absolute after:inset-0 after:rounded-full hover:scale-105 after:hover:bg-white/10"
+          className="rounded-full bg-primary p-2 font-bold uppercase text-white shadow shadow-black/50 transition-transform after:absolute after:inset-0 hover:scale-105 hover:after:rounded-full after:hover:bg-white/10"
         >
           Play Again
         </Link>
@@ -63,7 +64,7 @@ const Content = () => {
   );
 };
 
-export default function WinDialog({
+export default function WinModal({
   open,
   onOpenChange,
 }: {
@@ -77,19 +78,8 @@ export default function WinDialog({
   }, []);
 
   return (
-    <Dialog.Root open={rendered && open} onOpenChange={onOpenChange}>
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-background-alt/50 backdrop-blur-sm" />
-        <Dialog.Content className="fixed top-1/2 left-1/2 z-50 flex w-10/12 max-w-md -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-lg bg-background py-4 px-8">
-          <Dialog.Title className="mb-4 text-lg font-bold">
-            You Won!
-          </Dialog.Title>
-          <Dialog.Close className="absolute top-4 right-4 inline-flex items-center justify-center rounded-full">
-            <X />
-          </Dialog.Close>
-          <Content />
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+    <Modal open={open} onOpenChange={onOpenChange} title="You won!">
+      <Content />
+    </Modal>
   );
 }
