@@ -41,9 +41,10 @@ export default function NewGameModal() {
           <label htmlFor="seed">seed</label>
           <Input
             name="seed"
+            placeholder="base 64 (A-Za-z0-9-_)"
             value={seed}
             onChange={(e) => setSeed(e.target.value)}
-            className="w-full"
+            className="w-full placeholder:italic placeholder:opacity-50"
           />
         </div>
 
