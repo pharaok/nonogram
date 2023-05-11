@@ -36,13 +36,13 @@ export const useSettings = create(
         secondary: "37 99 235",
       },
       keys: {
-        cursorLeft: ["ArrowLeft", "h"],
-        cursorDown: ["ArrowDown", "j"],
-        cursorUp: ["ArrowUp", "k"],
-        cursorRight: ["ArrowRight", "l"],
-        erase: ["z", "Z", "Backspace"],
-        brush1: ["x", "X", " ", "Enter"],
-        brush2: ["c", "C"],
+        cursorLeft: ["ArrowLeft", "H"],
+        cursorDown: ["ArrowDown", "J"],
+        cursorUp: ["ArrowUp", "K"],
+        cursorRight: ["ArrowRight", "L"],
+        erase: ["Z", "Backspace"],
+        brush1: ["X", " ", "Enter"],
+        brush2: ["C"],
       },
       setKeys: (action, keys) =>
         set(

@@ -103,18 +103,19 @@ export default function Nonogram() {
       style={{ aspectRatio: `${totalWidth} / ${totalHeight}` }}
       tabIndex={-1}
       onKeyDown={(e) => {
+        const key = e.key[0].toUpperCase() + e.key.slice(1);
         let handled = true;
-        if (keys.cursorUp.includes(e.key)) moveCursorRelative(0, -1);
-        else if (keys.cursorRight.includes(e.key)) moveCursorRelative(1, 0);
-        else if (keys.cursorDown.includes(e.key)) moveCursorRelative(0, 1);
-        else if (keys.cursorLeft.includes(e.key)) moveCursorRelative(-1, 0);
-        else if (keys.erase.includes(e.key) && !e.repeat) {
+        if (keys.cursorUp.includes(key)) moveCursorRelative(0, -1);
+        else if (keys.cursorRight.includes(key)) moveCursorRelative(1, 0);
+        else if (keys.cursorDown.includes(key)) moveCursorRelative(0, 1);
+        else if (keys.cursorLeft.includes(key)) moveCursorRelative(-1, 0);
+        else if (keys.erase.includes(key) && !e.repeat) {
           painting.current = true;
           paint([cursor], { color: 0 });
-        } else if (keys.brush1.includes(e.key) && !e.repeat) {
+        } else if (keys.brush1.includes(key) && !e.repeat) {
           painting.current = true;
           paint([cursor], { brush: +e.shiftKey });
-        } else if (keys.brush2.includes(e.key) && !e.repeat) {
+        } else if (keys.brush2.includes(key) && !e.repeat) {
           painting.current = true;
           paint([cursor], { brush: +!e.shiftKey });
         } else handled = false;
@@ -122,9 +123,10 @@ export default function Nonogram() {
         if (handled) e.preventDefault();
       }}
       onKeyUp={(e) => {
-        if (keys.erase.includes(e.key)) painting.current = false;
-        else if (keys.brush1.includes(e.key)) painting.current = false;
-        else if (keys.brush2.includes(e.key)) painting.current = false;
+        const key = e.key[0].toUpperCase() + e.key.slice(1);
+        if (keys.erase.includes(key)) painting.current = false;
+        else if (keys.brush1.includes(key)) painting.current = false;
+        else if (keys.brush2.includes(key)) painting.current = false;
       }}
     >
       <canvas
