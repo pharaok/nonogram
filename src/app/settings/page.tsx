@@ -6,10 +6,15 @@ import ColorInput from "components/colorInput";
 import { setDocumentColor, toRGB } from "helpers";
 import produce from "immer";
 import { startCase } from "lodash-es";
+import Key from "components/key";
 import { Fragment, useState } from "react";
 import { Color, useSettings } from "settings";
 
 export default function Settings() {
+  const keys = useSettings((state) => state.keys);
+  const setKeys = useSettings((state) => state.setKeys);
+  const [currKeys, setCurrKeys] = useState(keys);
+
   const colors = useSettings((state) => state.colors);
   const setColor = useSettings((state) => state.setColor);
   const [currColors, setCurrColors] = useState(colors);
@@ -31,9 +36,24 @@ export default function Settings() {
           ))}
         </Tabs.List>
 
-        <Tabs.Content value="controls">Controls</Tabs.Content>
+        <Tabs.Content asChild value="controls">
+          <div className="grid grid-cols-2 items-center gap-[inherit]">
+            {(Object.keys(currKeys) as (keyof typeof keys)[]).map((key, i) => (
+              <Fragment key={i}>
+                <span>{key}</span>
+                <div>
+                  <div className="flex gap-2">
+                    {currKeys[key].map((k, i) => (
+                      <Key name={k} key={i} />
+                    ))}
+                  </div>
+                </div>
+              </Fragment>
+            ))}
+          </div>
+        </Tabs.Content>
         <Tabs.Content asChild value="theme">
-          <div className="grid grid-cols-3 gap-[inherit]">
+          <div className="grid grid-cols-3 items-center gap-[inherit]">
             {(Object.keys(currColors) as Color[]).map((color, i) => (
               <Fragment key={i}>
                 <label className="col-span-2">
