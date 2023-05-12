@@ -7,13 +7,14 @@ import Key from "components/key";
 import { setDocumentColor, toRGB } from "helpers";
 import produce from "immer";
 import { isEqual, startCase } from "lodash-es";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useState } from "react";
 import { Color, useSettings } from "settings";
 
 export default function Settings() {
+  const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
   const keys = useSettings((state) => state.keys);
@@ -45,6 +46,7 @@ export default function Settings() {
         draft[action].push([mods, key]);
       })
     );
+    router.push("/settings");
   }, [params, searchParams]);
 
   return (
@@ -73,17 +75,25 @@ export default function Settings() {
                   <Fragment key={i}>
                     <span>{key}</span>
                     <div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         {currKeys[key].map((kc, i) => (
-                          <div
+                          <button
                             key={i}
-                            className="flex gap-1 rounded-md bg-secondary p-1"
+                            className="group relative flex gap-1 rounded-md bg-secondary p-1 after:absolute after:inset-0 after:rounded-md after:transition hover:after:bg-red-400"
+                            onClick={() => {
+                              setCurrKeys(
+                                produce(currKeys, (draft) => {
+                                  draft[key].splice(i, 1);
+                                })
+                              );
+                            }}
                           >
                             {kc[0].map((m, j) => (
                               <Key name={m} key={j} />
                             ))}
                             <Key name={kc[1]!} />
-                          </div>
+                            <X className="absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 opacity-0 transition group-hover:opacity-100" />
+                          </button>
                         ))}
                         <Link
                           href={`/settings/${key}/add`}
