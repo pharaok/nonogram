@@ -1,16 +1,8 @@
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useMods } from "hooks";
 import { KeyCombo } from "types";
 import Button from "./button";
 import Key from "./key";
 import Modal, { ModalProps } from "./modal";
-
-const modKeys = {
-  Alt: ["Alt"],
-  Control: ["Control"],
-  Meta: ["Meta", "OS"],
-  Shift: ["Shift"],
-};
 
 export default function KeyInput({
   value,
@@ -24,7 +16,7 @@ export default function KeyInput({
   onSubmit: (k: KeyCombo) => void;
   placeholder?: string;
 } & ModalProps) {
-  const [currMods, setCurrMods] = useState<string[]>(value[0]);
+  const [currMods, m] = useMods();
   const [mods, key] = value;
 
   return (
@@ -40,44 +32,19 @@ export default function KeyInput({
           className="flex h-16 w-full cursor-pointer items-center gap-2 rounded-md bg-background-alt p-2 outline-1 focus:outline active:outline"
           tabIndex={0}
           onBlur={() => {
-            setCurrMods([]);
+            m.reset();
           }}
           onKeyDown={(e) => {
             if (e.repeat) return;
             e.preventDefault();
             const k = e.key[0].toUpperCase() + e.key.slice(1);
-
-            let isMod = false;
-            let m: keyof typeof modKeys;
-            const ncm = [...currMods];
-            for (m in modKeys) {
-              if (modKeys[m].includes(k) && !ncm.includes(m)) {
-                ncm.push(m);
-                isMod = true;
-              }
-            }
-
-            setCurrMods(ncm);
-            if (isMod) {
-              onChange([ncm, null]);
-              return;
-            }
-            onChange([ncm, k]);
+            const isMod = m.down(e);
+            if (isMod) onChange([currMods, null]);
+            else onChange([currMods, k]);
           }}
           onKeyUp={(e) => {
-            const k = e.key[0].toUpperCase() + e.key.slice(1);
-
-            let isMod = false;
-            let m: keyof typeof modKeys;
-            const ncm = [...currMods];
-            for (m in modKeys) {
-              if (modKeys[m].includes(k)) {
-                ncm.splice(ncm.indexOf(m), 1);
-                isMod = true;
-              }
-            }
-            setCurrMods(ncm);
-            if (!key) onChange([ncm, null]);
+            m.up(e);
+            if (!key) onChange([currMods, null]);
           }}
         >
           <span className="hidden select-none italic text-foreground/50 only:inline">

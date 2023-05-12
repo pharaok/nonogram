@@ -1,5 +1,5 @@
 import produce from "immer";
-import { assignIn } from "lodash-es";
+import { assignIn, isEqual } from "lodash-es";
 import { KeyCombo } from "types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -22,7 +22,8 @@ interface Settings {
     brush2: KeyCombo[];
   };
   setColor: (color: Color, value: string) => void;
-  setKeys: (action: keyof Settings["keys"], keys: string[]) => void;
+  setKeys: (action: keyof Settings["keys"], keys: KeyCombo[]) => void;
+  matchKeys: (keys: KeyCombo) => keyof Settings["keys"] | null;
 }
 export type Color = keyof Settings["colors"];
 
@@ -76,6 +77,16 @@ export const useSettings = create(
             draft.colors[color] = value;
           })
         );
+      },
+      matchKeys: (keys) => {
+        const state = get();
+        let action: keyof Settings["keys"];
+        for (action in state.keys) {
+          if (state.keys[action].some((k) => isEqual(k, keys))) {
+            return action;
+          }
+        }
+        return null;
       },
     }),
     {

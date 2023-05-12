@@ -1,8 +1,8 @@
 import { crossPath } from "helpers";
 import Canvas2D, { drawGrid } from "helpers/canvas";
-import { useParentDimensions } from "hooks";
+import { useMods, useParentDimensions } from "hooks";
 import { clamp, isEqual } from "lodash-es";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSettings } from "settings";
 import useNonogramStore, { selectClues, selectDimensions } from "store";
 import { Point } from "types";
@@ -13,6 +13,8 @@ export default function Nonogram() {
   const canvas = useRef<Canvas2D | null>(null);
   const painting = useRef(false);
 
+  const [currMods, m] = useMods();
+  const matchKeys = useSettings((state) => state.matchKeys);
   const keys = useSettings((state) => state.keys);
   const grid = useNonogramStore((state) => state.grid);
   const [width, height] = useNonogramStore(selectDimensions);
@@ -104,29 +106,57 @@ export default function Nonogram() {
       tabIndex={-1}
       onKeyDown={(e) => {
         const key = e.key[0].toUpperCase() + e.key.slice(1);
-        let handled = true;
-        if (keys.cursorUp.includes(key)) moveCursorRelative(0, -1);
-        else if (keys.cursorRight.includes(key)) moveCursorRelative(1, 0);
-        else if (keys.cursorDown.includes(key)) moveCursorRelative(0, 1);
-        else if (keys.cursorLeft.includes(key)) moveCursorRelative(-1, 0);
-        else if (keys.erase.includes(key) && !e.repeat) {
-          painting.current = true;
-          paint([cursor], { color: 0 });
-        } else if (keys.brush1.includes(key) && !e.repeat) {
-          painting.current = true;
-          paint([cursor], { brush: +e.shiftKey });
-        } else if (keys.brush2.includes(key) && !e.repeat) {
-          painting.current = true;
-          paint([cursor], { brush: +!e.shiftKey });
-        } else handled = false;
-
-        if (handled) e.preventDefault();
+        const isMod = m.down(e);
+        if (isMod) return;
+        const action = matchKeys([currMods, key]);
+        if (action === null) return;
+        let isHandled = true;
+        switch (action) {
+          case "cursorLeft":
+            moveCursorRelative(-1, 0);
+            break;
+          case "cursorDown":
+            moveCursorRelative(0, 1);
+            break;
+          case "cursorUp":
+            moveCursorRelative(0, -1);
+            break;
+          case "cursorRight":
+            moveCursorRelative(1, 0);
+            break;
+          case "erase":
+            if (e.repeat) break;
+            painting.current = true;
+            paint([cursor], { color: 0 });
+            break;
+          case "brush1":
+            if (e.repeat) break;
+            painting.current = true;
+            paint([cursor], { brush: 0 });
+            break;
+          case "brush2":
+            if (e.repeat) break;
+            painting.current = true;
+            paint([cursor], { brush: 1 });
+            break;
+          default:
+            isHandled = false;
+            break;
+        }
+        if (isHandled) e.preventDefault();
       }}
       onKeyUp={(e) => {
+        m.up(e);
         const key = e.key[0].toUpperCase() + e.key.slice(1);
-        if (keys.erase.includes(key)) painting.current = false;
-        else if (keys.brush1.includes(key)) painting.current = false;
-        else if (keys.brush2.includes(key)) painting.current = false;
+        const action = matchKeys([currMods, key]);
+        if (action === null) return;
+        switch (action) {
+          case "erase":
+          case "brush1":
+          case "brush2":
+            painting.current = false;
+            break;
+        }
       }}
     >
       <canvas
