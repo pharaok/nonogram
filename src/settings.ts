@@ -1,5 +1,6 @@
 import produce from "immer";
 import { assignIn } from "lodash-es";
+import { KeyCombo } from "types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -12,13 +13,13 @@ interface Settings {
     secondary: string;
   };
   keys: {
-    cursorUp: string[];
-    cursorRight: string[];
-    cursorDown: string[];
-    cursorLeft: string[];
-    erase: string[];
-    brush1: string[];
-    brush2: string[];
+    cursorUp: KeyCombo[];
+    cursorRight: KeyCombo[];
+    cursorDown: KeyCombo[];
+    cursorLeft: KeyCombo[];
+    erase: KeyCombo[];
+    brush1: KeyCombo[];
+    brush2: KeyCombo[];
   };
   setColor: (color: Color, value: string) => void;
   setKeys: (action: keyof Settings["keys"], keys: string[]) => void;
@@ -36,13 +37,32 @@ export const useSettings = create(
         secondary: "37 99 235",
       },
       keys: {
-        cursorLeft: ["ArrowLeft", "H"],
-        cursorDown: ["ArrowDown", "J"],
-        cursorUp: ["ArrowUp", "K"],
-        cursorRight: ["ArrowRight", "L"],
-        erase: ["Z", "Backspace"],
-        brush1: ["X", " ", "Enter"],
-        brush2: ["C"],
+        cursorLeft: [
+          [[], "ArrowLeft"],
+          [[], "H"],
+        ],
+        cursorDown: [
+          [[], "ArrowDown"],
+          [[], "J"],
+        ],
+        cursorUp: [
+          [[], "ArrowUp"],
+          [[], "K"],
+        ],
+        cursorRight: [
+          [[], "ArrowRight"],
+          [[], "L"],
+        ],
+        erase: [
+          [[], "Z"],
+          [[], "Backspace"],
+        ],
+        brush1: [
+          [[], "X"],
+          [[], " "],
+          [[], "Enter"],
+        ],
+        brush2: [[[], "C"]],
       },
       setKeys: (action, keys) =>
         set(

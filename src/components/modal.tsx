@@ -2,19 +2,21 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 
+export interface ModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title?: string;
+  children?: React.ReactNode;
+  forceMount?: true;
+}
+
 export default function Modal({
   open,
   onOpenChange,
   title,
   children,
   forceMount,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  title: string;
-  children?: React.ReactNode;
-  forceMount?: true;
-}) {
+}: ModalProps) {
   // HACK: workaround for https://github.com/radix-ui/primitives/issues/1386
   const [rendered, setRendered] = useState(true);
   useEffect(() => {
