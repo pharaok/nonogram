@@ -1,6 +1,7 @@
 "use client";
 
 import KeyInput from "components/keyInput";
+import { startCase } from "lodash-es";
 import { notFound, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSettings } from "settings";
@@ -19,6 +20,8 @@ export default function KeyInputModal({
 
   return (
     <KeyInput
+      title={startCase(action)}
+      placeholder="Press a key..."
       forceMount
       open={true}
       onOpenChange={(open) => {

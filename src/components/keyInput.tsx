@@ -16,11 +16,13 @@ export default function KeyInput({
   value,
   onChange,
   onSubmit,
+  placeholder,
   ...props
 }: {
   value: KeyCombo;
   onChange: (k: KeyCombo) => void;
   onSubmit: (k: KeyCombo) => void;
+  placeholder?: string;
 } & ModalProps) {
   const [currMods, setCurrMods] = useState<string[]>(value[0]);
   const [mods, key] = value;
@@ -28,7 +30,7 @@ export default function KeyInput({
   return (
     <Modal title="Keybinding" {...props}>
       <form
-        className="flex w-full flex-col items-center"
+        className="flex w-full flex-col items-center gap-4"
         onSubmit={(e) => {
           e.preventDefault();
           onSubmit(value);
@@ -78,13 +80,16 @@ export default function KeyInput({
             if (!key) onChange([ncm, null]);
           }}
         >
+          <span className="hidden select-none italic text-foreground/50 only:inline">
+            {placeholder}
+          </span>
           {(key ? mods : currMods).map((mod, i) => (
             <Key key={i} name={mod} />
           ))}
           {key && <Key name={key} />}
         </div>
         <Button type="submit" className="bg-primary px-4">
-          confirm
+          Confirm
         </Button>
       </form>
     </Modal>

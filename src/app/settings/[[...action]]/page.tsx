@@ -73,35 +73,33 @@ export default function Settings() {
               {(Object.keys(currKeys) as (keyof typeof keys)[]).map(
                 (key, i) => (
                   <Fragment key={i}>
-                    <span>{key}</span>
-                    <div>
-                      <div className="flex flex-wrap gap-2">
-                        {currKeys[key].map((kc, i) => (
-                          <button
-                            key={i}
-                            className="group relative flex gap-1 rounded-md bg-secondary p-1 after:absolute after:inset-0 after:rounded-md after:transition hover:after:bg-red-400"
-                            onClick={() => {
-                              setCurrKeys(
-                                produce(currKeys, (draft) => {
-                                  draft[key].splice(i, 1);
-                                })
-                              );
-                            }}
-                          >
-                            {kc[0].map((m, j) => (
-                              <Key name={m} key={j} />
-                            ))}
-                            <Key name={kc[1]!} />
-                            <X className="absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 opacity-0 transition group-hover:opacity-100" />
-                          </button>
-                        ))}
-                        <Link
-                          href={`/settings/${key}/add`}
-                          className="flex aspect-square h-full items-center justify-center rounded-md bg-primary text-background"
+                    <span>{startCase(key)}</span>
+                    <div className="flex h-full flex-wrap items-center gap-2">
+                      {currKeys[key].map((kc, i) => (
+                        <button
+                          key={i}
+                          className="group relative flex gap-1 rounded-md bg-secondary p-1 after:absolute after:inset-0 after:rounded-md after:transition hover:after:bg-red-400"
+                          onClick={() => {
+                            setCurrKeys(
+                              produce(currKeys, (draft) => {
+                                draft[key].splice(i, 1);
+                              })
+                            );
+                          }}
                         >
-                          <Plus />
-                        </Link>
-                      </div>
+                          {kc[0].map((m, j) => (
+                            <Key name={m} key={j} />
+                          ))}
+                          <Key name={kc[1]!} />
+                          <X className="absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 opacity-0 transition group-hover:opacity-100" />
+                        </button>
+                      ))}
+                      <Link
+                        href={`/settings/${key}/add`}
+                        className="flex h-10 w-10 items-center justify-center rounded-md bg-primary text-background"
+                      >
+                        <Plus />
+                      </Link>
                     </div>
                   </Fragment>
                 )

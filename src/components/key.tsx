@@ -75,7 +75,7 @@ export default function Key({ name }: { name: string }) {
     label = label();
   }
   return (
-    <kbd className="text-md box-border flex min-w-[36px] items-center justify-center gap-1 rounded-md border-2 border-b-4 border-foreground bg-background p-1">
+    <kbd className="text-md box-border flex h-[38px] min-w-[36px] items-center justify-center gap-1 rounded-md border-2 border-b-4 border-foreground bg-background p-1">
       {Icon && <Icon size={20} />}
       {label && <span>{label}</span>}
     </kbd>
