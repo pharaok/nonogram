@@ -2,7 +2,7 @@ import { crossPath } from "helpers";
 import Canvas2D, { drawGrid } from "helpers/canvas";
 import { useMods, useParentDimensions } from "hooks";
 import { clamp, isEqual } from "lodash-es";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useSettings } from "settings";
 import useNonogramStore, { selectClues, selectDimensions } from "store";
 import { Point } from "types";
@@ -15,7 +15,6 @@ export default function Nonogram() {
 
   const [currMods, m] = useMods();
   const matchKeys = useSettings((state) => state.matchKeys);
-  const keys = useSettings((state) => state.keys);
   const grid = useNonogramStore((state) => state.grid);
   const [width, height] = useNonogramStore(selectDimensions);
   const cursor = useNonogramStore((state) => state.cursor);

@@ -6,7 +6,7 @@ import ColorInput from "components/colorInput";
 import Key from "components/key";
 import { setDocumentColor, toRGB } from "helpers";
 import produce from "immer";
-import { isEqual, startCase } from "lodash-es";
+import { isEqual, isEqualWith, startCase } from "lodash-es";
 import { Plus, X } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
@@ -74,7 +74,7 @@ export default function Settings() {
                 (key, i) => (
                   <Fragment key={i}>
                     <span>{startCase(key)}</span>
-                    <div className="flex h-full flex-wrap items-center gap-2">
+                    <div className="flex h-full flex-wrap items-center gap-2 rounded-lg bg-background-alt p-1">
                       {currKeys[key].map((kc, i) => (
                         <button
                           key={i}
@@ -132,10 +132,9 @@ export default function Settings() {
           <div className="grid grid-cols-6 gap-[inherit]">
             <Button
               className="col-start-5 bg-red-400"
-              disabled={(Object.keys(colors) as Color[]).every(
-                (color) => toRGB(currColors[color]) === colors[color]
-              )}
+              disabled={isEqual(currKeys, keys) && isEqual(currColors, colors)}
               onClick={() => {
+                setCurrKeys(keys);
                 setCurrColors(colors);
 
                 (Object.keys(colors) as Color[]).map((color) => {
@@ -143,17 +142,22 @@ export default function Settings() {
                 });
               }}
             >
-              reset
+              Reset
             </Button>
             <Button
               className="bg-primary hover:bg-secondary"
               onClick={() => {
-                (Object.keys(currColors) as Color[]).map((color) => {
+                let key: keyof typeof keys;
+                for (key in keys) {
+                  setKeys(key, currKeys[key]);
+                }
+                let color: Color;
+                for (color in colors) {
                   setColor(color, toRGB(currColors[color]));
-                });
+                }
               }}
             >
-              apply
+              Apply
             </Button>
           </div>
         </div>
