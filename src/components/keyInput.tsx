@@ -9,18 +9,20 @@ export default function KeyInput({
   onChange,
   onSubmit,
   placeholder,
+  forceMount,
   ...props
 }: {
   value: KeyCombo;
   onChange: (k: KeyCombo) => void;
   onSubmit: (k: KeyCombo) => void;
   placeholder?: string;
+  forceMount?: true;
 } & ModalProps) {
   const [currMods, m] = useMods();
   const [mods, key] = value;
 
   return (
-    <Modal title="Keybinding" {...props}>
+    <Modal title="Keybinding" {...props} forceMount={forceMount}>
       <form
         className="flex w-full flex-col items-center gap-4"
         onSubmit={(e) => {

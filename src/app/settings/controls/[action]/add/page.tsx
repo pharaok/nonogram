@@ -2,7 +2,7 @@
 
 import KeyInput from "components/keyInput";
 import { startCase } from "lodash-es";
-import { notFound, useRouter } from "next/navigation";
+import { notFound, usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSettings } from "settings";
 import { KeyCombo } from "types";
@@ -13,7 +13,8 @@ export default function KeyInputModal({
   params: { action: string };
 }) {
   const router = useRouter();
-  const keys = useSettings((state) => state.keys);
+  const pathname = usePathname();
+  const keys = useSettings((state) => state.settings.keys);
   const [key, setKey] = useState<KeyCombo>([[], null]);
 
   if (!Object.keys(keys).includes(action)) notFound();
@@ -32,7 +33,16 @@ export default function KeyInputModal({
         setKey(k);
       }}
       onSubmit={(k) => {
-        router.push(`/settings/${action}?k=${k[0].concat(k[1]!).join("+")}`);
+        console.log(
+          `${pathname.slice(0, pathname.lastIndexOf("/"))}?k=${k[0]
+            .concat(k[1]!)
+            .join("+")}`
+        );
+        router.push(
+          `${pathname.slice(0, pathname.lastIndexOf("/"))}?k=${k[0]
+            .concat(k[1]!)
+            .join("+")}`
+        );
       }}
     />
   );

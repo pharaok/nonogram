@@ -17,15 +17,13 @@ export default function Modal({
   children,
   forceMount,
 }: ModalProps) {
-  // HACK: workaround for https://github.com/radix-ui/primitives/issues/1386
-  const [rendered, setRendered] = useState(true);
-  useEffect(() => {
-    setRendered(true);
-  }, []);
-
   return (
-    <Dialog.Root open={rendered && open} onOpenChange={onOpenChange}>
-      <Dialog.Portal forceMount={forceMount}>
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+      <Dialog.Portal
+        // HACK: workaround for https://github.com/radix-ui/primitives/issues/1386
+        container={document.getElementById("modal-root")}
+        forceMount={forceMount}
+      >
         <Dialog.Overlay className="fixed inset-0 bg-background-alt/50 backdrop-blur-sm" />
         <Dialog.Content className="fixed top-1/2 left-1/2 z-50 flex w-10/12 max-w-md -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-lg bg-background py-4 px-8">
           <Dialog.Title className="mb-4 text-lg font-bold">

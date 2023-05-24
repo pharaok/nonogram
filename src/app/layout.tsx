@@ -31,6 +31,7 @@ export default function RootLayout({
           {children}
           {newGameModal}
         </div>
+        <div id="modal-root"></div>
       </body>
       <ThemeSetter />
     </html>

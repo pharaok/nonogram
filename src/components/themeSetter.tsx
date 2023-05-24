@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useSettings } from "settings";
 
 export function ThemeSetter() {
-  const colors = useSettings((state) => state.colors);
+  const colors = useSettings((state) => state.settings.colors);
 
   useEffect(() => {
     let color: keyof typeof colors;
