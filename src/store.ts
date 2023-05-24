@@ -1,6 +1,6 @@
 import { gridClues, gridToBase64, markedGridClues } from "helpers";
 import { plotLine } from "helpers/line";
-import produce from "immer";
+import produce, { Patch } from "immer";
 import { clamp, isEqual } from "lodash-es";
 import { createContext, useContext } from "react";
 import { NonogramGrid, Point } from "types";
@@ -39,14 +39,12 @@ export const createNonogramStore = (
     cursor: [0, 0],
     paint: (points, options) => {
       let { color, brush, toggle = true } = options ?? {};
-      return set((state) => {
-        const [sx, sy] = points[0];
-        return produce(state, (draft) => {
-          if (color !== undefined) {
-            draft.brushColor = color;
-          } else if (brush !== undefined) {
-            draft.brushColor = draft.brushes[brush];
-          }
+      const [sx, sy] = points[0];
+      return set((state) =>
+        produce(state, (draft) => {
+          if (color !== undefined) draft.brushColor = color;
+          else if (brush !== undefined) draft.brushColor = draft.brushes[brush];
+
           if (toggle && draft.grid[sy][sx] === draft.brushColor)
             draft.brushColor = 0;
 
@@ -56,8 +54,8 @@ export const createNonogramStore = (
               draft.grid[y][x] = draft.brushColor;
             });
           }
-        });
-      });
+        })
+      );
     },
     setBrushes: (brushes) =>
       set((state) =>

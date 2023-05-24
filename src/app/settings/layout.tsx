@@ -4,18 +4,14 @@ import * as Tabs from "@radix-ui/react-tabs";
 import Button from "components/button";
 import { setDocumentColor } from "helpers";
 import { isEqual } from "lodash-es";
-import {
-  usePathname,
-  useRouter,
-  useSelectedLayoutSegment,
-} from "next/navigation";
+import Link from "next/link";
+import { useRouter, useSelectedLayoutSegment } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createSettingsStore, SettingsContext, useSettings } from "settings";
 import { EntriesOf } from "types";
 import { useStore } from "zustand";
 
 export default function Settings({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
   const router = useRouter();
 
   const settings = useSettings((state) => state.settings);
@@ -27,8 +23,8 @@ export default function Settings({ children }: { children: React.ReactNode }) {
   const defaultTab = "controls";
   const tab = useSelectedLayoutSegment();
   useEffect(() => {
-    if (tab === null) router.replace(`${pathname}/${defaultTab}`);
-  }, [tab, pathname]);
+    if (tab === null) router.replace(`settings/${defaultTab}`);
+  }, [tab]);
 
   useEffect(() => {
     setSettingsDraft((draft) => {
@@ -53,7 +49,7 @@ export default function Settings({ children }: { children: React.ReactNode }) {
                 value={v.toLowerCase()}
                 className="data-[state=active]:text-primary"
               >
-                {v}
+                <Link href={`/settings/${v.toLowerCase()}`}>{v}</Link>
               </Tabs.Trigger>
             ))}
           </Tabs.List>
