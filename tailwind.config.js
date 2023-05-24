@@ -11,6 +11,7 @@ module.exports = {
         foreground: "rgb(var(--color-foreground) / <alpha-value>)",
         primary: "rgb(var(--color-primary) / <alpha-value>)",
         secondary: "rgb(var(--color-secondary) / <alpha-value>)",
+        error: "rgb(var(--color-error) / <alpha-value>)",
       },
       fontFamily: {
         display: ["var(--font-silkscreen)", "cursive"],

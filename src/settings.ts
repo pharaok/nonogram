@@ -14,6 +14,7 @@ interface Settings {
       foreground: string;
       primary: string;
       secondary: string;
+      error: string;
     };
     keys: {
       cursorUp: KeyCombo[];
@@ -39,6 +40,7 @@ const settingsReducer: StateCreator<Settings> = (set, get) => ({
       foreground: "0 0 0",
       primary: "147 51 234",
       secondary: "37 99 235",
+      error: "248 113 113",
     },
     keys: {
       cursorLeft: [

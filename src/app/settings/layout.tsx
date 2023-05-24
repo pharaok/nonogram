@@ -62,7 +62,7 @@ export default function Settings({ children }: { children: React.ReactNode }) {
             <div>{children}</div>
             <div className="grid grid-cols-6 justify-self-end">
               <Button
-                className="col-start-5 bg-red-400"
+                className="col-start-5 bg-error"
                 disabled={isEqual(settings, settingsDraft)}
                 onClick={() => {
                   (
