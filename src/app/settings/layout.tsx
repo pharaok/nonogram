@@ -2,6 +2,7 @@
 
 import * as Tabs from "@radix-ui/react-tabs";
 import Button from "components/button";
+import { setDocumentColor } from "helpers";
 import { isEqual } from "lodash-es";
 import {
   usePathname,
@@ -10,6 +11,7 @@ import {
 } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createSettingsStore, SettingsContext, useSettings } from "settings";
+import { EntriesOf } from "types";
 import { useStore } from "zustand";
 
 export default function Settings({ children }: { children: React.ReactNode }) {
@@ -63,6 +65,11 @@ export default function Settings({ children }: { children: React.ReactNode }) {
                 className="col-start-5 bg-red-400"
                 disabled={isEqual(settings, settingsDraft)}
                 onClick={() => {
+                  (
+                    Object.entries(settings.colors) as EntriesOf<
+                      typeof settings.colors
+                    >
+                  ).forEach(([k, v]) => setDocumentColor(k, v));
                   setSettingsDraft((draft) => {
                     draft.settings = settings;
                   });
