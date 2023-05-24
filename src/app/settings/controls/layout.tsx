@@ -32,7 +32,7 @@ export default function Controls({ children }: { children: React.ReactNode }) {
 
   return (
     <Tabs.Content value="controls">
-      <div className="grid grid-cols-2 items-center">
+      <div className="grid grid-cols-2 items-center gap-2">
         {(Object.keys(keys) as KeyT[]).map((key, i) => (
           <Fragment key={i}>
             <span>{startCase(key)}</span>

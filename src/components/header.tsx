@@ -3,6 +3,7 @@
 import { Settings } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import Heading from "./heading";
 
 export default function Header() {
   const searchParams = useSearchParams();
@@ -13,10 +14,12 @@ export default function Header() {
     >
       <nav className="flex items-center gap-4">
         <Link href="/">
-          <h1 className="font-display text-3xl">Nonogram</h1>
+          <Heading index={1} className="font-display">
+            Nonogram
+          </Heading>
         </Link>
         <Link href={`/play?${searchParams.toString()}`}>
-          <h1 className="">Play</h1>
+          <Heading index={2}>Play</Heading>
         </Link>
       </nav>
       <nav className="flex">

@@ -3,6 +3,7 @@
 import * as Tabs from "@radix-ui/react-tabs";
 import Button from "components/button";
 import ColorInput from "components/colorInput";
+import Heading from "components/heading";
 import { setDocumentColor, toHex } from "helpers";
 import { startCase } from "lodash-es";
 import { Fragment, useContext } from "react";
@@ -103,46 +104,58 @@ export default function Theme() {
 
   return (
     <Tabs.Content value="theme" className="flex flex-col gap-8">
-      <div className="flex flex-wrap justify-center">
-        {themeArray.map(([name, theme]) => (
-          <Button
-            className="border-2 p-2 hover:text-[color:var(--)]"
-            style={{
-              backgroundColor: toHex(theme.background),
-              color: toHex(theme.foreground),
-              borderColor: toHex(theme.foreground),
-            }}
-            onClick={() => {
-              (Object.entries(theme) as EntriesOf<typeof theme>).forEach(
-                ([k, v]) => {
-                  setDocumentColor(k, v);
-                }
-              );
-              setSettingsDraft((draft) => {
-                draft.settings.colors = theme;
-              });
-            }}
-          >
-            {name}
-          </Button>
-        ))}
-      </div>
-      <div className="grid grid-cols-3 items-center">
-        {(Object.keys(colors) as Color[]).map((color, i) => (
-          <Fragment key={i}>
-            <label className="col-span-2">{startCase(`${color} color`)}</label>
-            <ColorInput
-              value={colors[color]}
-              onChange={(value) => {
-                setDocumentColor(color, value);
+      <section>
+        <Heading index={3} className="text-primary">
+          Presets
+        </Heading>
+        <div className="flex flex-wrap justify-center gap-2">
+          {themeArray.map(([name, theme]) => (
+            <Button
+              className="border-2 p-2 hover:text-[color:var(--)]"
+              style={{
+                backgroundColor: toHex(theme.background),
+                color: toHex(theme.foreground),
+                borderColor: toHex(theme.foreground),
+              }}
+              onClick={() => {
+                (Object.entries(theme) as EntriesOf<typeof theme>).forEach(
+                  ([k, v]) => {
+                    setDocumentColor(k, v);
+                  }
+                );
                 setSettingsDraft((draft) => {
-                  draft.settings.colors[color] = value;
+                  draft.settings.colors = theme;
                 });
               }}
-            />
-          </Fragment>
-        ))}
-      </div>
+            >
+              {name}
+            </Button>
+          ))}
+        </div>
+      </section>
+      <section>
+        <Heading index={3} className="text-primary">
+          Custom
+        </Heading>
+        <div className="grid grid-cols-3 items-center gap-2">
+          {(Object.keys(colors) as Color[]).map((color, i) => (
+            <Fragment key={i}>
+              <label className="col-span-2">
+                {startCase(`${color} color`)}
+              </label>
+              <ColorInput
+                value={colors[color]}
+                onChange={(value) => {
+                  setDocumentColor(color, value);
+                  setSettingsDraft((draft) => {
+                    draft.settings.colors[color] = value;
+                  });
+                }}
+              />
+            </Fragment>
+          ))}
+        </div>
+      </section>
     </Tabs.Content>
   );
 }
