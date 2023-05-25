@@ -1,6 +1,6 @@
 import { gridClues, gridToBase64, markedGridClues } from "helpers";
 import { plotLine } from "helpers/line";
-import produce, { Patch } from "immer";
+import { history } from "history";
 import { clamp, isEqual } from "lodash-es";
 import { createContext, useContext } from "react";
 import { NonogramGrid, Point } from "types";
@@ -27,21 +27,21 @@ export const createNonogramStore = (
   grid?: NonogramGrid,
   colors?: string[]
 ) => {
-  return createStore<NonogramState>((set) => ({
-    grid: grid ?? Array.from(solution, (row) => Array.from(row, () => 0)),
-    solution,
-    colors: colors ?? [
-      "rgb(var(--color-background))",
-      "rgb(var(--color-foreground))",
-    ],
-    brushes: [1, 2],
-    brushColor: 0,
-    cursor: [0, 0],
-    paint: (points, options) => {
-      let { color, brush, toggle = true } = options ?? {};
-      const [sx, sy] = points[0];
-      return set((state) =>
-        produce(state, (draft) => {
+  return createStore<NonogramState>(
+    history((set) => ({
+      grid: grid ?? Array.from(solution, (row) => Array.from(row, () => 0)),
+      solution,
+      colors: colors ?? [
+        "rgb(var(--color-background))",
+        "rgb(var(--color-foreground))",
+      ],
+      brushes: [1, 2],
+      brushColor: 0,
+      cursor: [0, 0],
+      paint: (points, options) => {
+        let { color, brush, toggle = true } = options ?? {};
+        const [sx, sy] = points[0];
+        return set((draft) => {
           if (color !== undefined) draft.brushColor = color;
           else if (brush !== undefined) draft.brushColor = draft.brushes[brush];
 
@@ -54,31 +54,25 @@ export const createNonogramStore = (
               draft.grid[y][x] = draft.brushColor;
             });
           }
-        })
-      );
-    },
-    setBrushes: (brushes) =>
-      set((state) =>
-        produce(state, (draft) => {
+        });
+      },
+      setBrushes: (brushes) =>
+        set((draft) => {
           draft.brushes = brushes;
-        })
-      ),
-    moveCursorTo: (x, y) =>
-      set((state) =>
-        produce(state, (draft) => {
+        }),
+      moveCursorTo: (x, y) =>
+        set((draft) => {
           draft.cursor = [x, y];
-        })
-      ),
-    moveCursorRelative: (x, y) =>
-      set((state) =>
-        produce(state, (draft) => {
+        }),
+      moveCursorRelative: (x, y) =>
+        set((draft) => {
           const dimensions = selectDimensions(draft);
           draft.cursor = draft.cursor.map((a, i) =>
             clamp(a + [x, y][i], 0, dimensions[i] - 1)
           ) as Point;
-        })
-      ),
-  }));
+        }),
+    }))
+  );
 };
 
 export const selectDimensions = (state: NonogramState) => [

@@ -1,7 +1,10 @@
 import Header from "components/header";
 import { ThemeSetter } from "components/themeSetter";
+import { enablePatches } from "immer";
 import { Silkscreen } from "next/font/google";
 import "./globals.css";
+
+enablePatches();
 
 const silkscreen = Silkscreen({
   variable: "--font-silkscreen",
