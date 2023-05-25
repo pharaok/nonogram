@@ -1,4 +1,4 @@
-import produce, { Draft } from "immer";
+import produce, { Draft, enablePatches, produceWithPatches } from "immer";
 import {
   Mutate,
   StateCreator,
@@ -6,7 +6,12 @@ import {
   StoreMutatorIdentifier,
 } from "zustand";
 
-type SetState<T> = (updater: (draft: Draft<T>) => void) => void;
+enablePatches();
+
+type SetState<T> = (
+  updater: (draft: Draft<T>) => void,
+  track?: boolean
+) => void;
 
 declare module "zustand" {
   interface StoreMutators<S, A> {
@@ -29,8 +34,13 @@ const historyImpl =
   <T>(f: StateCreator<T>): StateCreator<T> =>
   (set, get, _store) => {
     const store = _store as Mutate<StoreApi<T>, [["history", never]]>;
-    store.setState = (updater) => {
-      set(produce(updater) as (state: T) => T);
+    store.setState = (updater, track = false) => {
+      let [nextState, patches, inversePatches] = produceWithPatches(
+        get(),
+        updater
+      );
+      if (track) console.log(patches, inversePatches);
+      set(nextState);
     };
 
     return f(_store.setState, get, _store);

@@ -8,10 +8,16 @@ import useNonogramStore, { selectClues, selectDimensions } from "store";
 import { Point } from "types";
 import GridLines from "./gridLines";
 
+const enum PaintingState {
+  None,
+  Mouse,
+  Keyboard,
+}
+
 export default function Nonogram() {
   const canvasEl = useRef<HTMLCanvasElement>(null);
   const canvas = useRef<Canvas2D | null>(null);
-  const painting = useRef(false);
+  const painting = useRef(PaintingState.None);
 
   const [currMods, m] = useMods();
   const matchKeys = useSettings((state) => state.matchKeys);
@@ -88,7 +94,8 @@ export default function Nonogram() {
   }, [canvasDim, draw]);
 
   useEffect(() => {
-    if (painting.current) paint([cursor], { toggle: false });
+    if (painting.current === PaintingState.Keyboard)
+      paint([cursor], { toggle: false });
   }, [paint, cursor]);
 
   useEffect(() => {
@@ -125,17 +132,17 @@ export default function Nonogram() {
             break;
           case "erase":
             if (e.repeat) break;
-            painting.current = true;
+            painting.current = PaintingState.Keyboard;
             paint([cursor], { color: 0 });
             break;
           case "brush1":
             if (e.repeat) break;
-            painting.current = true;
+            painting.current = PaintingState.Keyboard;
             paint([cursor], { brush: 0 });
             break;
           case "brush2":
             if (e.repeat) break;
-            painting.current = true;
+            painting.current = PaintingState.Keyboard;
             paint([cursor], { brush: 1 });
             break;
           default:
@@ -153,7 +160,7 @@ export default function Nonogram() {
           case "erase":
           case "brush1":
           case "brush2":
-            painting.current = false;
+            painting.current = PaintingState.None;
             break;
         }
       }}
@@ -175,10 +182,10 @@ export default function Nonogram() {
           e.currentTarget.setPointerCapture(e.pointerId);
           paint([coords], { brush: +(e.button === 2) });
           moveCursorTo(...coords);
-          painting.current = true;
+          painting.current = PaintingState.Mouse;
         }}
         onPointerMove={(e) => {
-          if (!painting.current) {
+          if (painting.current !== PaintingState.Mouse) {
             return;
           }
           const coords = canvas
@@ -191,7 +198,7 @@ export default function Nonogram() {
           moveCursorTo(...coords);
         }}
         onPointerUp={() => {
-          painting.current = false;
+          painting.current = PaintingState.None;
         }}
       ></canvas>
       <GridLines />

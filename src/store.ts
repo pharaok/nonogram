@@ -54,7 +54,7 @@ export const createNonogramStore = (
               draft.grid[y][x] = draft.brushColor;
             });
           }
-        });
+        }, true);
       },
       setBrushes: (brushes) =>
         set((draft) => {
