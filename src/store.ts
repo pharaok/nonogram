@@ -1,12 +1,12 @@
 import { gridClues, gridToBase64, markedGridClues } from "helpers";
 import { plotLine } from "helpers/line";
-import { history } from "history";
+import { history, HistorySlice } from "history";
 import { clamp, isEqual } from "lodash-es";
 import { createContext, useContext } from "react";
 import { NonogramGrid, Point } from "types";
 import { createStore, useStore } from "zustand";
 
-export interface NonogramState {
+export interface NonogramSlice {
   grid: NonogramGrid;
   solution: NonogramGrid;
   colors: string[];
@@ -27,8 +27,8 @@ export const createNonogramStore = (
   grid?: NonogramGrid,
   colors?: string[]
 ) => {
-  return createStore<NonogramState>(
-    history((set) => ({
+  return createStore(
+    history<NonogramSlice>((set) => ({
       grid: grid ?? Array.from(solution, (row) => Array.from(row, () => 0)),
       solution,
       colors: colors ?? [
@@ -75,12 +75,12 @@ export const createNonogramStore = (
   );
 };
 
-export const selectDimensions = (state: NonogramState) => [
+export const selectDimensions = (state: NonogramSlice) => [
   state.grid[0].length,
   state.grid.length,
 ];
 export type Clue = { length: number; isMarked: boolean };
-export const selectClues = (state: NonogramState) => {
+export const selectClues = (state: NonogramSlice) => {
   const clues = gridClues(state.solution);
   const markedClues = markedGridClues(state.grid);
 
@@ -106,14 +106,16 @@ export const selectClues = (state: NonogramState) => {
 
   return newClues;
 };
-export const selectIsSolved = (state: NonogramState) =>
+export const selectIsSolved = (state: NonogramSlice) =>
   isEqual(gridClues(state.grid), gridClues(state.solution));
-export const selectSeed = (state: NonogramState) =>
+export const selectSeed = (state: NonogramSlice) =>
   gridToBase64(state.solution);
 
 export const NonogramContext = createContext(createNonogramStore([[0]]));
 
-const useNonogramStore = <U>(selector: (state: NonogramState) => U): U => {
+const useNonogramStore = <U>(
+  selector: (state: NonogramSlice & HistorySlice) => U
+): U => {
   const store = useContext(NonogramContext);
   return useStore(store, selector);
 };

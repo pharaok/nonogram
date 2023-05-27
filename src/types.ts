@@ -1,4 +1,5 @@
-export type Overwrite<T, U> = Omit<T, keyof U> & U;
+export type Write<T, U> = Omit<T, keyof U> & U;
+export type Cast<T, U> = T extends U ? T : U;
 export type EntriesOf<T> = [keyof T, Required<T>[keyof T]][];
 export type NonogramGrid = Array<Array<number>>;
 export type Point = [number, number];

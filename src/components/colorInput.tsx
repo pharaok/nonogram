@@ -1,7 +1,7 @@
 import { isColor, toHex } from "helpers";
 import { Palette } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Overwrite } from "types";
+import { Write } from "types";
 import Button from "./button";
 import Input from "./input";
 
@@ -10,7 +10,7 @@ export default function ColorInput({
   onChange,
   className,
   ...props
-}: Overwrite<
+}: Write<
   React.ComponentPropsWithoutRef<"input">,
   {
     value: string;

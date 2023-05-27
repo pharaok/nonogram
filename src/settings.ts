@@ -32,7 +32,7 @@ interface Settings {
 export type Key = keyof Settings["settings"]["keys"];
 export type Color = keyof Settings["settings"]["colors"];
 
-const settingsReducer: StateCreator<Settings> = (set, get) => ({
+const settingsSlice: StateCreator<Settings> = (set, get) => ({
   settings: {
     colors: {
       background: "255 255 255",
@@ -85,7 +85,7 @@ const settingsReducer: StateCreator<Settings> = (set, get) => ({
 });
 
 export const useSettings = create(
-  persist<Settings>(settingsReducer, {
+  persist<Settings>(settingsSlice, {
     name: "settings-storage",
     merge: (persisted, current) => assignIn(current, persisted),
   })
@@ -93,4 +93,4 @@ export const useSettings = create(
 
 export const SettingsContext = createContext<StoreApi<Settings> | null>(null);
 
-export const createSettingsStore = () => createStore(settingsReducer);
+export const createSettingsStore = () => createStore(settingsSlice);

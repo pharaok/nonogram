@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { Overwrite } from "types";
+import { Write } from "types";
 import Input from "./input";
 
 export default function NumberInput({
@@ -7,7 +7,7 @@ export default function NumberInput({
   value,
   onChange,
   ...props
-}: Overwrite<
+}: Write<
   React.ComponentPropsWithoutRef<"input">,
   {
     value: number;
