@@ -1,4 +1,5 @@
 import produce, {
+  applyPatches,
   Draft,
   enablePatches,
   Patch,
@@ -34,7 +35,7 @@ declare module "zustand" {
 }
 
 type History = <
-  T extends object,
+  T,
   Mps extends [StoreMutatorIdentifier, unknown][] = [],
   Mcs extends [StoreMutatorIdentifier, unknown][] = []
 >(
@@ -43,27 +44,55 @@ type History = <
 
 export interface HistorySlice {
   history: [Patch[], Patch[]][];
+  historyIndex: 0;
+  undo: () => void;
+  redo: () => void;
 }
+
+const historySlice: StateCreator<HistorySlice> = (set) => ({
+  history: [],
+  historyIndex: 0,
+  undo: () => {
+    set((state) => {
+      if (state.historyIndex <= 0) return state;
+      return produce(state, (draft) => {
+        applyPatches(draft, draft.history[--draft.historyIndex][1]);
+      });
+    });
+  },
+  redo: () => {
+    set((state) => {
+      if (state.historyIndex >= state.history.length) return state;
+      return produce(state, (draft) => {
+        applyPatches(draft, draft.history[draft.historyIndex++][0]);
+      });
+    });
+  },
+});
 
 const historyImpl =
   <T extends HistorySlice>(f: StateCreator<T>): StateCreator<T> =>
   (set, get, _store) => {
     const store = _store as Mutate<StoreApi<T>, [["history", never]]>;
     store.setState = (updater, track = false) => {
-      console.log("we minor");
       let [nextState, patches, inversePatches] = produceWithPatches(
         get(),
         updater
       );
       if (track) {
         nextState = produce(nextState, (draft) => {
+          draft.history = draft.history.slice(0, draft.historyIndex);
           draft.history.push([patches, inversePatches]);
+          draft.historyIndex++;
         });
       }
       set(nextState);
     };
 
-    return { ...f(_store.setState, _store.getState, _store), history: [] };
+    return {
+      ...f(_store.setState, get, _store),
+      ...historySlice(set, get, _store),
+    };
   };
 
 export const history = historyImpl as History;
