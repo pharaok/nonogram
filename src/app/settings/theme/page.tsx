@@ -107,8 +107,9 @@ export default function Theme() {
         </Heading>
         <div className="flex flex-wrap justify-center gap-2">
           {(Object.entries(themes) as EntriesOf<typeof themes>).map(
-            ([name, theme]) => (
+            ([name, theme], i) => (
               <Button
+                key={i}
                 className="border-2 p-2 hover:text-[color:var(--)]"
                 style={{
                   backgroundColor: toHex(theme.background),

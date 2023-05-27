@@ -33,9 +33,9 @@ const icons: { [key: string]: () => LucideIcon | undefined } = {
   Meta: () => {
     const ua = navigator.userAgent;
     if (ua.includes("Windows"))
-      return (props: LucideProps) => (
-        <LayoutGrid fill="currentcolor" {...props} />
-      );
+      return function MetaIcon(props: LucideProps) {
+        return <LayoutGrid fill="currentcolor" {...props} />;
+      };
     else if (ua.includes("Mac")) return Command;
   },
   [" "]: () => Space,
