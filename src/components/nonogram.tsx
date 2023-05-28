@@ -1,6 +1,6 @@
 import { crossPath } from "helpers";
 import Canvas2D, { drawGrid } from "helpers/canvas";
-import { useMods, useParentDimensions } from "hooks";
+import { isMod, useMods, useParentDimensions } from "hooks";
 import { clamp, isEqual } from "lodash-es";
 import { useCallback, useEffect, useRef } from "react";
 import { useSettings } from "settings";
@@ -19,7 +19,7 @@ export default function Nonogram() {
   const canvas = useRef<Canvas2D | null>(null);
   const painting = useRef(PaintingState.None);
 
-  const [currMods, m] = useMods();
+  const mods = useMods(canvasEl.current?.parentElement ?? null);
   const matchKeys = useSettings((state) => state.matchKeys);
   const grid = useNonogramStore((state) => state.grid);
   const [width, height] = useNonogramStore(selectDimensions);
@@ -112,9 +112,8 @@ export default function Nonogram() {
       tabIndex={-1}
       onKeyDown={(e) => {
         const key = e.key[0].toUpperCase() + e.key.slice(1);
-        const isMod = m.down(e);
-        if (isMod) return;
-        const action = matchKeys([currMods, key]);
+        if (isMod(e.key)) return;
+        const action = matchKeys([mods, key]);
         if (action === null) return;
         let isHandled = true;
         switch (action) {
@@ -152,9 +151,8 @@ export default function Nonogram() {
         if (isHandled) e.preventDefault();
       }}
       onKeyUp={(e) => {
-        m.up(e);
         const key = e.key[0].toUpperCase() + e.key.slice(1);
-        const action = matchKeys([currMods, key]);
+        const action = matchKeys([mods, key]);
         if (action === null) return;
         switch (action) {
           case "erase":

@@ -1,4 +1,7 @@
-import { KeyboardEvent, RefObject, useEffect, useState } from "react";
+import produce from "immer";
+import { isEqual } from "lodash-es";
+import { RefObject, useEffect, useState } from "react";
+import { KeyCombo } from "types";
 
 export const useParentDimensions = (ref: RefObject<HTMLElement>) => {
   const [dimensions, setDimensions] = useState([0, 0]);
@@ -23,43 +26,47 @@ const modKeys = {
 };
 
 type Mod = keyof typeof modKeys;
-type KEH = (e: KeyboardEvent) => boolean;
 
-export const useMods = (): [
-  Mod[],
-  { down: KEH; up: KEH; reset: () => void }
-] => {
-  const [currMods, setCurrMods] = useState<Mod[]>([]);
-  const down = (e: KeyboardEvent) => {
-    const key = e.key[0].toUpperCase() + e.key.slice(1);
+export const isMod = (key: string) =>
+  ([] as string[]).concat(...Object.values(modKeys)).includes(key);
 
-    let isMod = false;
-    const ncm = [...currMods];
-    let m: Mod;
-    for (m in modKeys) {
-      if (modKeys[m].includes(key) && !ncm.includes(m)) {
-        ncm.push(m);
-        isMod = true;
-      }
-    }
-    setCurrMods(ncm);
-    return isMod;
-  };
-  const up = (e: KeyboardEvent) => {
-    const key = e.key[0].toUpperCase() + e.key.slice(1);
+export const useMods = (element: HTMLElement | null): Mod[] => {
+  const [mods, setMods] = useState<Mod[]>([]);
 
-    let isMod = false;
-    const ncm = [...currMods];
-    let m: Mod;
-    for (m in modKeys) {
-      if (modKeys[m].includes(key)) {
-        ncm.splice(ncm.indexOf(m), 1);
-        isMod = true;
-      }
-    }
-    setCurrMods(ncm);
-    return isMod;
-  };
-  const reset = () => setCurrMods([]);
-  return [currMods, { down, up, reset }];
+  useEffect(() => {
+    if (element === null) return;
+    const down = (e: KeyboardEvent) => {
+      const key = e.key[0].toUpperCase() + e.key.slice(1);
+
+      setMods(
+        produce((draft) => {
+          (Object.keys(modKeys) as (keyof typeof modKeys)[]).forEach((m) => {
+            if (modKeys[m].includes(key) && !draft.includes(m)) draft.push(m);
+          });
+        })
+      );
+    };
+    const up = (e: KeyboardEvent) => {
+      const key = e.key[0].toUpperCase() + e.key.slice(1);
+
+      setMods(
+        produce((draft) => {
+          (Object.keys(modKeys) as (keyof typeof modKeys)[]).forEach((m) => {
+            if (modKeys[m].includes(key)) draft.splice(draft.indexOf(m), 1);
+          });
+        })
+      );
+    };
+    const blur = () => setMods([]);
+
+    element.addEventListener("keydown", down);
+    element.addEventListener("keyup", up);
+    element.addEventListener("blur", blur);
+    return () => {
+      element.removeEventListener("keydown", down);
+      element.removeEventListener("keyup", up);
+      element.removeEventListener("blur", blur);
+    };
+  }, [mods, setMods, element]);
+  return mods;
 };

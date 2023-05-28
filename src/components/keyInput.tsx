@@ -1,8 +1,9 @@
-import { useMods } from "hooks";
+import { isMod, useMods } from "hooks";
 import { KeyCombo } from "types";
 import Button from "./button";
 import Key from "./key";
 import Modal, { ModalProps } from "./modal";
+import { useRef } from "react";
 
 export default function KeyInput({
   value,
@@ -18,7 +19,8 @@ export default function KeyInput({
   placeholder?: string;
   forceMount?: true;
 } & ModalProps) {
-  const [currMods, m] = useMods();
+  const divRef = useRef<HTMLDivElement>(null);
+  const currMods = useMods(divRef.current!);
   const [mods, key] = value;
 
   return (
@@ -32,20 +34,16 @@ export default function KeyInput({
       >
         <div
           className="flex h-16 w-full cursor-pointer items-center gap-2 rounded-md bg-background-alt p-2 outline-1 focus:outline active:outline"
+          ref={divRef}
           tabIndex={0}
-          onBlur={() => {
-            m.reset();
-          }}
           onKeyDown={(e) => {
             if (e.repeat) return;
             e.preventDefault();
             const k = e.key[0].toUpperCase() + e.key.slice(1);
-            const isMod = m.down(e);
-            if (isMod) onChange([currMods, null]);
+            if (isMod(e.key)) onChange([currMods, null]);
             else onChange([currMods, k]);
           }}
-          onKeyUp={(e) => {
-            m.up(e);
+          onKeyUp={() => {
             if (!key) onChange([currMods, null]);
           }}
         >
