@@ -49,26 +49,33 @@ export interface HistorySlice {
   redo: () => void;
 }
 
-const historySlice: StateCreator<HistorySlice> = (set) => ({
+const historySlice: StateCreator<HistorySlice> = (set, get) => ({
   history: [],
   historyIndex: 0,
   undo: () => {
-    set((state) => {
-      if (state.historyIndex <= 0) return state;
-      return produce(state, (draft) => {
+    const state = get();
+    if (!selectCanUndo(state)) return;
+    set(
+      produce(state, (draft) => {
         applyPatches(draft, draft.history[--draft.historyIndex][1]);
-      });
-    });
+      })
+    );
   },
   redo: () => {
-    set((state) => {
-      if (state.historyIndex >= state.history.length) return state;
-      return produce(state, (draft) => {
+    const state = get();
+    if (!selectCanRedo(state)) return;
+    set(
+      produce(state, (draft) => {
         applyPatches(draft, draft.history[draft.historyIndex++][0]);
-      });
-    });
+      })
+    );
   },
 });
+
+export const selectCanUndo = <T extends HistorySlice>(state: T) =>
+  state.historyIndex > 0;
+export const selectCanRedo = <T extends HistorySlice>(state: T) =>
+  state.historyIndex < state.history.length;
 
 const historyImpl =
   <T extends HistorySlice>(f: StateCreator<T>): StateCreator<T> =>

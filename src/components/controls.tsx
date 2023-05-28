@@ -4,12 +4,15 @@ import useNonogramStore, { selectIsSolved } from "store";
 import BrushToggleGroup from "./brushToggleGroup";
 import Button from "./button";
 import { Redo2, Undo2 } from "lucide-react";
+import { selectCanRedo, selectCanUndo } from "history";
 
 export default function Controls() {
   const solution = useNonogramStore((state) => state.solution);
   const isSolved = useNonogramStore(selectIsSolved);
   const undo = useNonogramStore((state) => state.undo);
   const redo = useNonogramStore((state) => state.redo);
+  const canUndo = useNonogramStore(selectCanUndo);
+  const canRedo = useNonogramStore(selectCanRedo);
   const [startTime, setStartTime] = useState(Date.now());
   const [currTime, setCurrTime] = useState(Date.now());
   const interval = useRef<NodeJS.Timer | null>(null);
@@ -38,14 +41,16 @@ export default function Controls() {
         <Button
           className="group flex h-8 w-8 justify-center rounded-md bg-background"
           onClick={() => undo()}
+          disabled={!canUndo}
         >
-          <Undo2 className="text-foreground group-hover:text-primary" />
+          <Undo2 className="text-foreground group-enabled:group-hover:text-primary group-disabled:text-foreground/50" />
         </Button>
         <Button
           className="group flex h-8 w-8 justify-center rounded-md bg-background"
           onClick={() => redo()}
+          disabled={!canRedo}
         >
-          <Redo2 className="text-foreground group-hover:text-primary" />
+          <Redo2 className="text-foreground group-enabled:group-hover:text-primary group-disabled:text-foreground/50" />
         </Button>
       </div>
       <BrushToggleGroup />
