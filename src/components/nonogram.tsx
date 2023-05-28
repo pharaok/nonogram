@@ -28,6 +28,8 @@ export default function Nonogram() {
   const moveCursorRelative = useNonogramStore(
     (state) => state.moveCursorRelative
   );
+  const undo = useNonogramStore((state) => state.undo);
+  const redo = useNonogramStore((state) => state.redo);
 
   const colors = useNonogramStore((state) => state.colors);
   const clues = useNonogramStore(selectClues);
@@ -143,6 +145,12 @@ export default function Nonogram() {
             if (e.repeat) break;
             painting.current = PaintingState.Keyboard;
             paint([cursor], { brush: 1 });
+            break;
+          case "undo":
+            undo();
+            break;
+          case "redo":
+            redo();
             break;
           default:
             isHandled = false;

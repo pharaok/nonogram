@@ -1,7 +1,5 @@
 import produce from "immer";
-import { isEqual } from "lodash-es";
 import { RefObject, useEffect, useState } from "react";
-import { KeyCombo } from "types";
 
 export const useParentDimensions = (ref: RefObject<HTMLElement>) => {
   const [dimensions, setDimensions] = useState([0, 0]);
@@ -18,7 +16,7 @@ export const useParentDimensions = (ref: RefObject<HTMLElement>) => {
   return dimensions;
 };
 
-const modKeys = {
+export const modKeys = {
   Alt: ["Alt"],
   Control: ["Control"],
   Meta: ["Meta", "OS"],

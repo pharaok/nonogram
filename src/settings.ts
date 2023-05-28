@@ -24,6 +24,8 @@ interface Settings {
       erase: KeyCombo[];
       brush1: KeyCombo[];
       brush2: KeyCombo[];
+      undo: KeyCombo[];
+      redo: KeyCombo[];
     };
   };
   set: (recipe: (initalState: WritableDraft<Settings>) => void) => void;
@@ -69,6 +71,11 @@ const settingsSlice: StateCreator<Settings> = (set, get) => ({
         [[], "Enter"],
       ],
       brush2: [[[], "C"]],
+      undo: [[["Control"], "Z"]],
+      redo: [
+        [["Control", "Shift"], "Z"],
+        [["Control"], "Y"],
+      ],
     },
   },
   set: (recipe) => set(produce(get(), recipe)),
