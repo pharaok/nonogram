@@ -56,9 +56,9 @@ export default function Settings({ children }: { children: React.ReactNode }) {
 
           <div className="flex h-full flex-col justify-between">
             <div>{children}</div>
-            <div className="grid grid-cols-6 gap-2">
+            <div className="grid h-8 grid-cols-6 gap-2">
               <Button
-                className="col-start-5 bg-error"
+                className="col-start-5 h-full border-2 border-error !text-error enabled:hover:bg-error enabled:hover:!text-background"
                 disabled={isEqual(settings, settingsDraft)}
                 onClick={() => {
                   (
@@ -74,7 +74,7 @@ export default function Settings({ children }: { children: React.ReactNode }) {
                 Reset
               </Button>
               <Button
-                className="bg-primary hover:bg-secondary"
+                className="h-full bg-primary !text-background hover:bg-secondary hover:!text-background"
                 onClick={() => {
                   setSettings((draft) => {
                     draft.settings = settingsDraft;

@@ -44,7 +44,7 @@ type History = <
 
 export interface HistorySlice {
   history: [Patch[], Patch[]][];
-  historyIndex: 0;
+  historyIndex: number;
   undo: () => void;
   redo: () => void;
 }
@@ -86,7 +86,7 @@ const historyImpl =
         get(),
         updater
       );
-      if (track) {
+      if (track && patches.length > 0) {
         nextState = produce(nextState, (draft) => {
           draft.history = draft.history.slice(0, draft.historyIndex);
           draft.history.push([patches, inversePatches]);

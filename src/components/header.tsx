@@ -1,7 +1,7 @@
 "use client";
 
 import { Settings } from "lucide-react";
-import Link from "next/link";
+import Link from "./link";
 import { useSearchParams } from "next/navigation";
 import Heading from "./heading";
 

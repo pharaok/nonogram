@@ -1,6 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
-import { useState, useEffect } from "react";
+import Button from "./button";
 
 export interface ModalProps {
   open: boolean;
@@ -29,8 +29,10 @@ export default function Modal({
           <Dialog.Title className="mb-4 text-lg font-bold">
             {title}
           </Dialog.Title>
-          <Dialog.Close className="absolute top-4 right-4 inline-flex items-center justify-center rounded-full">
-            <X />
+          <Dialog.Close asChild>
+            <Button className="absolute top-4 right-4 inline-flex items-center justify-center !rounded-full">
+              <X />
+            </Button>
           </Dialog.Close>
           {children}
           <Dialog.Content />

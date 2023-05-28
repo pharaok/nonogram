@@ -17,6 +17,7 @@ export interface NonogramSlice {
     points: Point[],
     options?: { color?: number; brush?: number; toggle?: boolean }
   ) => void;
+  clear: () => void;
   setBrushes: (brushes: number[]) => void;
   moveCursorTo: (x: number, y: number) => void;
   moveCursorRelative: (x: number, y: number) => void;
@@ -54,6 +55,11 @@ export const createNonogramStore = (
               draft.grid[y][x] = draft.brushColor;
             });
           }
+        }, true);
+      },
+      clear: () => {
+        set((draft) => {
+          draft.grid = Array.from(solution, (row) => Array.from(row, () => 0));
         }, true);
       },
       setBrushes: (brushes) =>

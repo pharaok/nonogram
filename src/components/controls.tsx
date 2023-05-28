@@ -3,12 +3,13 @@ import { useEffect, useRef, useState } from "react";
 import useNonogramStore, { selectIsSolved } from "store";
 import BrushToggleGroup from "./brushToggleGroup";
 import Button from "./button";
-import { Redo2, Undo2 } from "lucide-react";
+import { Redo2, RotateCcw, Undo2 } from "lucide-react";
 import { selectCanRedo, selectCanUndo } from "history";
 
 export default function Controls() {
   const solution = useNonogramStore((state) => state.solution);
   const isSolved = useNonogramStore(selectIsSolved);
+  const clear = useNonogramStore((state) => state.clear);
   const undo = useNonogramStore((state) => state.undo);
   const redo = useNonogramStore((state) => state.redo);
   const canUndo = useNonogramStore(selectCanUndo);
@@ -39,18 +40,24 @@ export default function Controls() {
       </span>
       <div className="flex gap-2">
         <Button
-          className="group flex h-8 w-8 justify-center rounded-md bg-background"
+          className="flex h-8 w-8 items-center justify-center bg-background"
+          onClick={() => clear()}
+        >
+          <RotateCcw />
+        </Button>
+        <Button
+          className="flex h-8 w-8 items-center justify-center bg-background"
           onClick={() => undo()}
           disabled={!canUndo}
         >
-          <Undo2 className="text-foreground group-enabled:group-hover:text-primary group-disabled:text-foreground/50" />
+          <Undo2 />
         </Button>
         <Button
-          className="group flex h-8 w-8 justify-center rounded-md bg-background"
+          className="flex h-8 w-8 items-center justify-center bg-background"
           onClick={() => redo()}
           disabled={!canRedo}
         >
-          <Redo2 className="text-foreground group-enabled:group-hover:text-primary group-disabled:text-foreground/50" />
+          <Redo2 />
         </Button>
       </div>
       <BrushToggleGroup />

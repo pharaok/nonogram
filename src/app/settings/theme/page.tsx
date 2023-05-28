@@ -110,7 +110,7 @@ export default function Theme() {
             ([name, theme], i) => (
               <Button
                 key={i}
-                className="border-2 p-2 hover:text-[color:var(--)]"
+                className="rounded-md border-2 py-1 px-2"
                 style={{
                   backgroundColor: toHex(theme.background),
                   color: toHex(theme.foreground),

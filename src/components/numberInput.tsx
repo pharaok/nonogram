@@ -1,6 +1,7 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Write } from "types";
 import Input from "./input";
+import Button from "./button";
 
 export default function NumberInput({
   className,
@@ -24,18 +25,18 @@ export default function NumberInput({
         {...props}
       />
       <div className="flex flex-col justify-evenly rounded-r-md bg-background-alt">
-        <button
-          className="rounded-tr-[inherit]"
+        <Button
+          className="!rounded-none !rounded-tr-[inherit]"
           onClick={() => onChange(value + 1)}
         >
           <ChevronUp size={16} />
-        </button>
-        <button
-          className="rounded-br-[inherit]"
+        </Button>
+        <Button
+          className="!rounded-none !rounded-br-[inherit]"
           onClick={() => onChange(value - 1)}
         >
           <ChevronDown size={16} />
-        </button>
+        </Button>
       </div>
     </div>
   );

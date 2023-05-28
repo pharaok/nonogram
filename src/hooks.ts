@@ -23,7 +23,7 @@ export const modKeys = {
   Shift: ["Shift"],
 };
 
-type Mod = keyof typeof modKeys;
+export type Mod = keyof typeof modKeys;
 
 export const isMod = (key: string) =>
   ([] as string[]).concat(...Object.values(modKeys)).includes(key);

@@ -11,6 +11,13 @@
     --color-secondary: 37 99 235;
     --color-error: 248 113 113;
   }
+  ::selection {
+    background: rgb(var(--color-primary));
+    color: rgb(var(--color-background));
+  }
+  *:focus {
+    outline: 1px solid rgb(var(--color-primary));
+  }
 }
 
 @layer utilities {

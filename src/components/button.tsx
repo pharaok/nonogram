@@ -2,10 +2,6 @@ export default function Button({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"button">) {
-  return (
-    <button
-      {...props}
-      className={`${className} rounded-md py-1 text-lg font-bold text-white transition disabled:text-white/75`}
-    ></button>
-  );
+  className = `rounded-md text-lg font-bold text-foreground transition hover:text-primary disabled:text-foreground/50 ${className}`;
+  return <button {...props} className={className}></button>;
 }

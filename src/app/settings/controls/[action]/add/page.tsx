@@ -33,13 +33,10 @@ export default function KeyInputModal({
         setKey(k);
       }}
       onSubmit={(k) => {
-        console.log(
-          `${pathname.slice(0, pathname.lastIndexOf("/"))}?k=${k[0]
-            .concat(k[1]!)
-            .join("+")}`
-        );
         router.push(
-          `${pathname.slice(0, pathname.lastIndexOf("/"))}?k=${k[0]
+          `${pathname.slice(0, pathname.lastIndexOf("/"))}?k=${(
+            k[0] as string[]
+          )
             .concat(k[1]!)
             .join("+")}`
         );
