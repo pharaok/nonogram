@@ -19,7 +19,7 @@ export const plotLine = (
   let incr = from[+!axis] > to[+!axis] ? -1 : 1;
 
   let curr: Point = [...from];
-  for (curr[axis] = from[axis] + 1; curr[axis] <= to[axis]; curr[axis]++) {
+  for (curr[axis] = from[axis]; curr[axis] <= to[axis]; curr[axis]++) {
     // iterate over the axis with longest projection,
     // and increment the other axis when needed.
     callback(curr);
