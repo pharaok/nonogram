@@ -1,6 +1,6 @@
 import produce from "immer";
 import { WritableDraft } from "immer/dist/internal";
-import { assignIn, isEqual } from "lodash-es";
+import { merge, isEqual } from "lodash-es";
 import { createContext } from "react";
 import { KeyCombo } from "types";
 import { create, createStore, StateCreator, StoreApi } from "zustand";
@@ -94,7 +94,7 @@ const settingsSlice: StateCreator<Settings> = (set, get) => ({
 export const useSettings = create(
   persist<Settings>(settingsSlice, {
     name: "settings-storage",
-    merge: (persisted, current) => assignIn(current, persisted),
+    merge: (persisted, current) => merge(current, persisted),
   })
 );
 
