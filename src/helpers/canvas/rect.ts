@@ -41,9 +41,9 @@ export class Rect extends CanvasElement {
     const w = this.width * ratioX,
       h = this.height * ratioY;
     if (this.fill) {
-      if (typeof this.fill === "string")
-        this.fill = canvas.resolveCSSVariables(this.fill);
-      canvas.ctx.fillStyle = this.fill;
+      let fill = this.fill;
+      if (typeof fill === "string") fill = canvas.resolveCSSVariables(fill);
+      canvas.ctx.fillStyle = fill;
       canvas.ctx.fillRect(...([x, y, w, h].map(Math.ceil) as Vector4D));
     }
     if (this.stroke) {

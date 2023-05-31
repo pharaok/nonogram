@@ -31,7 +31,7 @@ export default class Canvas2D {
   }
 
   draw() {
-    this.clear();
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.elements.forEach((el) => {
       el.draw(this);
     });
@@ -63,33 +63,6 @@ export default class Canvas2D {
       (height - this.extra[1] - this.extra[3]) / viewBoxHeight,
     ];
   }
-
-  // drawLine(
-  //   points: Point[],
-  //   lineWidth: number,
-  //   stroke: StrokeStyle,
-  //   lineCap: LineCap = "butt"
-  // ) {
-  //   if (typeof stroke === "string") stroke = this.resolveCSSVariables(stroke);
-  //   if (points.length < 2) return;
-  //   if (!lineWidth) return;
-  //   this.ctx.save();
-  //   this.ctx.lineWidth = lineWidth;
-  //   this.ctx.strokeStyle = stroke;
-  //   this.ctx.lineCap = lineCap;
-  //
-  //   const getCenter = (p: Point) =>
-  //     this.toPixel(...p).map((pp) => pp + (lineWidth % 2) / 2) as Point;
-  //
-  //   this.ctx.beginPath();
-  //   this.ctx.moveTo(...getCenter(points[0]));
-  //   for (let i = 1; i < points.length; i++) {
-  //     this.ctx.lineTo(...getCenter(points[i]));
-  //   }
-  //   this.ctx.stroke();
-  //   this.ctx.closePath();
-  //   this.ctx.restore();
-  // }
 
   // drawPath(
   //   path: string,
@@ -149,6 +122,7 @@ export default class Canvas2D {
   // }
 
   clear() {
+    this.elements = [];
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
   }
 
@@ -229,3 +203,4 @@ export default class Canvas2D {
 // };
 //
 export { Rect } from "./rect";
+export { Line } from "./line";

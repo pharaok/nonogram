@@ -1,5 +1,5 @@
 import { crossPath } from "helpers";
-import Canvas2D, { Rect } from "helpers/canvas";
+import Canvas2D, { Line, Rect } from "helpers/canvas";
 import { isMod, useMods, useParentDimensions } from "hooks";
 import { clamp, isEqual } from "lodash-es";
 import { useCallback, useEffect, useRef } from "react";
@@ -88,19 +88,15 @@ export default function Nonogram() {
       [0, 0, totalWidth, totalHeight],
       [0, 0, 1, 1]
     );
-    canvas.current.add(new Rect({ x: 1, y: 1, width: 1, height: 1 }));
     canvas.current.add(
-      new Rect({
-        x: 2,
-        y: 2,
-        width: 1,
-        height: 1,
-        fill: null,
-        stroke: "black",
-        strokeWidth: 5,
+      new Line({
+        points: [
+          [2, 2],
+          [4, 3],
+        ],
+        width: 2,
       })
     );
-    canvas.current.draw();
   }, [totalWidth, totalHeight]);
 
   useEffect(() => {
