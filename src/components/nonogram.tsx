@@ -1,5 +1,5 @@
 import { crossPath } from "helpers";
-import Canvas2D, { drawGrid } from "helpers/canvas";
+import Canvas2D, { Rect } from "helpers/canvas";
 import { isMod, useMods, useParentDimensions } from "hooks";
 import { clamp, isEqual } from "lodash-es";
 import { useCallback, useEffect, useRef } from "react";
@@ -41,46 +41,46 @@ export default function Nonogram() {
   const [totalWidth, totalHeight] = [width + clueWidth, height + clueHeight];
   const canvasDim = useParentDimensions(canvasEl);
 
-  const draw = useCallback(() => {
-    canvas.current!.clear();
-
-    drawGrid(
-      canvas.current!,
-      grid,
-      clueWidth,
-      clueHeight,
-      (canvas, cell, x, y) => {
-        if (cell === colors.length) {
-          const lineWidth = 0.075 * canvas.getViewBoxRatio()[1];
-          canvas.drawPath(
-            crossPath(x, y),
-            lineWidth,
-            "rgb(var(--color-foreground))",
-            "round"
-          );
-        } else {
-          canvas.drawRect(x, y, 1, 1, colors[cell]);
-        }
-      }
-    );
-
-    const [_, ratioY] = canvas.current!.getViewBoxRatio();
-    clues.forEach((gClues, a) => {
-      gClues.forEach((ce, i) => {
-        ce.forEach((n, j) => {
-          canvas.current!.fillText(
-            n.length.toString(),
-            (a === 1 ? i + clueWidth : j + clueWidth - ce.length) + 0.5,
-            (a === 0 ? i + clueHeight : j + clueHeight - ce.length) + 0.5,
-            `${ratioY / 2}px sans-serif`,
-            n.isMarked
-              ? "rgb(var(--color-foreground) / 0.5)"
-              : "rgb(var(--color-foreground))"
-          );
-        });
-      });
-    });
-  }, [grid, clues, clueWidth, clueHeight, colors]);
+  // const draw = useCallback(() => {
+  //   canvas.current!.clear();
+  //
+  //   drawGrid(
+  //     canvas.current!,
+  //     grid,
+  //     clueWidth,
+  //     clueHeight,
+  //     (canvas, cell, x, y) => {
+  //       if (cell === colors.length) {
+  //         const lineWidth = 0.075 * canvas.getViewBoxRatio()[1];
+  //         canvas.drawPath(
+  //           crossPath(x, y),
+  //           lineWidth,
+  //           "rgb(var(--color-foreground))",
+  //           "round"
+  //         );
+  //       } else {
+  //         canvas.drawRect(x, y, 1, 1, colors[cell]);
+  //       }
+  //     }
+  //   );
+  //
+  //   const [_, ratioY] = canvas.current!.getViewBoxRatio();
+  //   clues.forEach((gClues, a) => {
+  //     gClues.forEach((ce, i) => {
+  //       ce.forEach((n, j) => {
+  //         canvas.current!.fillText(
+  //           n.length.toString(),
+  //           (a === 1 ? i + clueWidth : j + clueWidth - ce.length) + 0.5,
+  //           (a === 0 ? i + clueHeight : j + clueHeight - ce.length) + 0.5,
+  //           `${ratioY / 2}px sans-serif`,
+  //           n.isMarked
+  //             ? "rgb(var(--color-foreground) / 0.5)"
+  //             : "rgb(var(--color-foreground))"
+  //         );
+  //       });
+  //     });
+  //   });
+  // }, [grid, clues, clueWidth, clueHeight, colors]);
 
   useEffect(() => {
     canvas.current = new Canvas2D(
@@ -88,24 +88,29 @@ export default function Nonogram() {
       [0, 0, totalWidth, totalHeight],
       [0, 0, 1, 1]
     );
-    draw();
-  }, [totalWidth, totalHeight, draw]);
+    canvas.current.add(new Rect({ x: 1, y: 1, width: 1, height: 1 }));
+    canvas.current.add(
+      new Rect({
+        x: 2,
+        y: 2,
+        width: 1,
+        height: 1,
+        fill: null,
+        stroke: "black",
+        strokeWidth: 5,
+      })
+    );
+    canvas.current.draw();
+  }, [totalWidth, totalHeight]);
 
   useEffect(() => {
-    draw();
-  }, [canvasDim, draw]);
+    canvas.current!.draw();
+  }, [canvasDim]);
 
   useEffect(() => {
     if (painting.current === PaintingState.Keyboard)
       paint([cursor], { toggle: false });
   }, [paint, cursor]);
-
-  useEffect(() => {
-    // ¯\_(ツ)_/¯
-    setTimeout(() => {
-      canvasEl.current!.parentElement!.focus();
-    }, 0);
-  }, []);
 
   return (
     <div
@@ -207,7 +212,6 @@ export default function Nonogram() {
           painting.current = PaintingState.None;
         }}
       ></canvas>
-      <GridLines />
       <div className="h-screen w-screen"></div>
     </div>
   );
