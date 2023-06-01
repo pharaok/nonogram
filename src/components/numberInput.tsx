@@ -11,8 +11,10 @@ export default function NumberInput({
 }: Write<
   React.ComponentPropsWithoutRef<"input">,
   {
-    value: number;
-    onChange: (value: number) => void;
+    min?: number;
+    max?: number;
+    value: string | number;
+    onChange: (value: string) => void;
   }
 >) {
   return (
@@ -21,19 +23,29 @@ export default function NumberInput({
         type="number"
         className={`appearance-textfield w-full rounded-r-none ${className}`}
         value={value}
-        onChange={(e) => onChange(parseInt(e.target.value))}
+        onChange={(e) => {
+          onChange(e.target.value);
+        }}
         {...props}
       />
       <div className="flex flex-col justify-evenly rounded-r-md bg-background-alt">
         <Button
           className="!rounded-none !rounded-tr-[inherit]"
-          onClick={() => onChange(value + 1)}
+          onClick={() => {
+            if (Number.isInteger(+value))
+              onChange(Math.min(+value + 1, props.max ?? Infinity).toString());
+          }}
+          tabIndex={-1}
         >
           <ChevronUp size={16} />
         </Button>
         <Button
           className="!rounded-none !rounded-br-[inherit]"
-          onClick={() => onChange(value - 1)}
+          onClick={() => {
+            if (Number.isInteger(+value))
+              onChange(Math.max(+value - 1, props.min ?? -Infinity).toString());
+          }}
+          tabIndex={-1}
         >
           <ChevronDown size={16} />
         </Button>

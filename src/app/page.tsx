@@ -43,12 +43,13 @@ export default function Home() {
   const router = useRouter();
   const width = +(searchParams!.get("w") ?? "10");
   const height = +(searchParams!.get("h") ?? "10");
+  localStorage.setItem("lastDimensions", JSON.stringify({ width, height }));
   let seed = searchParams!.get("s");
   const [store, setStore] = useState(
     createNonogramStore(
       seed
         ? base64ToGrid(seed, width, height)
-        : Array.from(Array(height), () => Array.from(Array(width), () => 1))
+        : [...Array(height)].map(() => Array(width).fill(1))
     )
   );
   const currentSeed = useStore(store, selectSeed);
