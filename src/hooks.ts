@@ -1,14 +1,14 @@
 import produce from "immer";
 import { RefObject, useEffect, useState } from "react";
 
-export const useParentDimensions = (ref: RefObject<HTMLElement>) => {
+export const useDimensions = (ref: RefObject<HTMLElement>) => {
   const [dimensions, setDimensions] = useState([0, 0]);
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
       const { width, height } = entries[0].contentRect;
       setDimensions([width, height].map(Math.floor));
     });
-    resizeObserver.observe(ref.current!.parentElement!);
+    resizeObserver.observe(ref.current!);
     return () => {
       resizeObserver.disconnect();
     };

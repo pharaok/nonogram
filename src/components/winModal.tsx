@@ -17,7 +17,7 @@ const Content = () => {
 
   useEffect(() => {
     setDownloadLink(solutionEl.current!.toDataURL("image/png"));
-  }, []);
+  }, [solutionEl.current]);
 
   return (
     <>

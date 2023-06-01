@@ -22,6 +22,10 @@ export default class Canvas2D {
     this.extra = extra ?? [0, 0, 0, 0];
     this.elements = [];
 
+    this.setScale();
+  }
+
+  setScale() {
     const transform = this.ctx.getTransform();
 
     const [viewBoxWidth, viewBoxHeight] = [
@@ -42,7 +46,6 @@ export default class Canvas2D {
 
   add(...elements: CanvasElement[]) {
     this.elements.push(...elements);
-    this.draw();
   }
 
   draw() {
