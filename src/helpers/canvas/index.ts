@@ -126,19 +126,6 @@ export default class Canvas2D {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
   }
 
-  fillText(text: string, x: number, y: number, font: string, fill: FillStyle) {
-    if (typeof fill === "string") fill = this.resolveCSSVariables(fill);
-    this.ctx.save();
-    this.ctx.textAlign = "center";
-    this.ctx.textBaseline = "middle";
-    this.ctx.font = font;
-    this.ctx.fillStyle = fill;
-    [x, y] = this.toPixel(x, y);
-    const fix = this.ctx.measureText(text).actualBoundingBoxDescent / 2;
-    this.ctx.fillText(text, x, y + fix);
-    this.ctx.restore();
-  }
-
   eventToCoords(e: PointerEvent<HTMLCanvasElement>): Point {
     const [ratioX, ratioY] = this.getViewBoxRatio();
     const { top, left } = e.currentTarget.getBoundingClientRect();
@@ -204,3 +191,4 @@ export default class Canvas2D {
 //
 export { Rect } from "./rect";
 export { Line } from "./line";
+export { Text } from "./text";
