@@ -36,7 +36,7 @@ export default function Settings({ children }: { children: React.ReactNode }) {
     <SettingsContext.Provider value={settingsDraftStore}>
       <main className="relative flex-1">
         <Tabs.Root
-          className="absolute inset-0 mx-8 mb-8 flex flex-col md:mx-[20%]"
+          className="absolute inset-0 mx-8 mb-8 flex flex-col md:mx-[20%] lg:mx-[25%]"
           value={tab ?? defaultTab}
           onValueChange={(value) => {
             router.push(`/settings/${value}`);
@@ -54,11 +54,13 @@ export default function Settings({ children }: { children: React.ReactNode }) {
             ))}
           </Tabs.List>
 
-          <div className="flex h-full flex-col justify-between">
-            <div>{children}</div>
-            <div className="grid h-8 grid-cols-6 gap-2">
+          <div className="flex h-full flex-col justify-between gap-4">
+            <div className="relative flex-1">
+              <div className="absolute inset-0 overflow-scroll">{children}</div>
+            </div>
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-6">
               <Button
-                className="col-start-5 h-full border-2 border-error !text-error enabled:hover:bg-error enabled:hover:!text-background"
+                className="h-full border-2 border-error !text-error enabled:hover:bg-error enabled:hover:!text-background md:col-start-3 lg:col-start-5"
                 disabled={isEqual(settings, settingsDraft)}
                 onClick={() => {
                   (

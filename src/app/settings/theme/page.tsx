@@ -137,10 +137,10 @@ export default function Theme() {
         <Heading index={3} className="text-primary">
           Custom
         </Heading>
-        <div className="grid grid-cols-3 items-center gap-2">
+        <div className="grid grid-cols-2 items-center gap-2 md:grid-cols-3">
           {(Object.keys(colors) as Color[]).map((color, i) => (
             <Fragment key={i}>
-              <label className="col-span-2">
+              <label className="col-span-1 md:col-span-2">
                 {startCase(`${color} color`)}
               </label>
               <ColorInput

@@ -33,15 +33,15 @@ export default function Controls({ children }: { children: React.ReactNode }) {
 
   return (
     <Tabs.Content value="controls">
-      <div className="grid grid-cols-2 items-center gap-2">
+      <div className="grid grid-cols-3 items-center gap-2 md:grid-cols-2">
         {(Object.keys(keys) as KeyT[]).map((key, i) => (
           <Fragment key={i}>
             <span>{startCase(key)}</span>
-            <div className="flex h-full flex-wrap items-center gap-2 rounded-lg bg-background-alt p-1">
+            <div className="col-span-2 flex h-full flex-wrap items-center gap-2 rounded-lg bg-background-alt p-1 md:col-span-1">
               {keys[key].map((kc, i) => (
                 <button
                   key={i}
-                  className="group relative flex gap-1 rounded-md bg-secondary p-1 after:absolute after:inset-0 after:rounded-md after:transition hover:after:bg-error"
+                  className="group relative flex flex-wrap gap-1 rounded-md bg-secondary p-1 after:absolute after:inset-0 after:rounded-md after:transition hover:after:bg-error"
                   onClick={() => {
                     setSettingsDraft((draft) => {
                       draft.settings.keys[key].splice(i, 1);
