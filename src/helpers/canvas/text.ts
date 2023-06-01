@@ -40,7 +40,7 @@ export class Text extends CanvasElement {
     y += fix;
     canvas.ctx.textAlign = "center";
     canvas.ctx.textBaseline = "middle";
-    canvas.ctx.font = `${this.fontSize * canvas.getViewBoxRatio()[1]}px ${
+    canvas.ctx.font = `${this.fontSize * canvas.getPixelRatio()}px ${
       this.font
     }`;
 
