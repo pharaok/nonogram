@@ -38,7 +38,7 @@ export default function Play() {
                   name={d}
                   value={dimensions[d]}
                   onChange={(value) => {
-                    setDimensions({ ...dimensions, [d]: +value });
+                    setDimensions({ ...dimensions, [d]: value });
                   }}
                   min={1}
                   max={50}
