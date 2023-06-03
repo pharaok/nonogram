@@ -6,9 +6,8 @@ import { createContext, useContext } from "react";
 import { NonogramGrid, Point } from "types";
 import { createStore, useStore } from "zustand";
 
-export interface NonogramSlice {
+export interface GridSlice {
   grid: NonogramGrid;
-  solution: NonogramGrid;
   colors: string[];
   brushes: number[];
   brushColor: number;
@@ -22,66 +21,73 @@ export interface NonogramSlice {
   moveCursorTo: (x: number, y: number) => void;
   moveCursorRelative: (x: number, y: number) => void;
 }
+export interface NonogramSlice extends GridSlice {
+  solution: NonogramGrid;
+}
+
+export const createGridSlice = (grid: number[][], colors?: string[]) =>
+  history<GridSlice>((set) => ({
+    grid: grid,
+    colors: colors ?? [
+      "rgb(var(--color-background))",
+      "rgb(var(--color-foreground))",
+    ],
+    brushes: [1, 2],
+    brushColor: 0,
+    cursor: [0, 0],
+    paint: (points, options) => {
+      let { color, brush, toggle = true } = options ?? {};
+      const [sx, sy] = points[0];
+      return set((draft) => {
+        if (color !== undefined) draft.brushColor = color;
+        else if (brush !== undefined) draft.brushColor = draft.brushes[brush];
+
+        if (toggle && draft.grid[sy][sx] === draft.brushColor)
+          draft.brushColor = 0;
+
+        draft.grid[sy][sx] = draft.brushColor;
+        for (let i = 0; i + 1 < points.length; i++) {
+          plotLine(points[i], points[i + 1], ([x, y]) => {
+            draft.grid[y][x] = draft.brushColor;
+          });
+        }
+      }, true);
+    },
+    clear: () =>
+      set((draft) => {
+        draft.grid = Array.from(draft.grid, (row) => Array.from(row, () => 0));
+      }, true),
+    setBrushes: (brushes) =>
+      set((draft) => {
+        draft.brushes = brushes;
+      }),
+    moveCursorTo: (x, y) =>
+      set((draft) => {
+        draft.cursor = [x, y];
+      }),
+    moveCursorRelative: (x, y) =>
+      set((draft) => {
+        const dimensions = selectDimensions(draft);
+        draft.cursor = draft.cursor.map((a, i) =>
+          clamp(a + [x, y][i], 0, dimensions[i] - 1)
+        ) as Point;
+      }),
+  }));
 
 export const createNonogramStore = (
   solution: NonogramGrid,
   grid?: NonogramGrid,
   colors?: string[]
-) => {
-  return createStore(
-    history<NonogramSlice>((set) => ({
-      grid: grid ?? Array.from(solution, (row) => Array.from(row, () => 0)),
-      solution,
-      colors: colors ?? [
-        "rgb(var(--color-background))",
-        "rgb(var(--color-foreground))",
-      ],
-      brushes: [1, 2],
-      brushColor: 0,
-      cursor: [0, 0],
-      paint: (points, options) => {
-        let { color, brush, toggle = true } = options ?? {};
-        const [sx, sy] = points[0];
-        return set((draft) => {
-          if (color !== undefined) draft.brushColor = color;
-          else if (brush !== undefined) draft.brushColor = draft.brushes[brush];
+) =>
+  createStore<NonogramSlice & HistorySlice>((set, get, store) => ({
+    solution: solution,
+    ...createGridSlice(
+      grid ?? Array.from(solution, (row) => Array.from(row).fill(0)),
+      colors
+    )(set, get, store),
+  }));
 
-          if (toggle && draft.grid[sy][sx] === draft.brushColor)
-            draft.brushColor = 0;
-
-          draft.grid[sy][sx] = draft.brushColor;
-          for (let i = 0; i + 1 < points.length; i++) {
-            plotLine(points[i], points[i + 1], ([x, y]) => {
-              draft.grid[y][x] = draft.brushColor;
-            });
-          }
-        }, true);
-      },
-      clear: () => {
-        set((draft) => {
-          draft.grid = Array.from(solution, (row) => Array.from(row, () => 0));
-        }, true);
-      },
-      setBrushes: (brushes) =>
-        set((draft) => {
-          draft.brushes = brushes;
-        }),
-      moveCursorTo: (x, y) =>
-        set((draft) => {
-          draft.cursor = [x, y];
-        }),
-      moveCursorRelative: (x, y) =>
-        set((draft) => {
-          const dimensions = selectDimensions(draft);
-          draft.cursor = draft.cursor.map((a, i) =>
-            clamp(a + [x, y][i], 0, dimensions[i] - 1)
-          ) as Point;
-        }),
-    }))
-  );
-};
-
-export const selectDimensions = (state: NonogramSlice) => [
+export const selectDimensions = (state: GridSlice): [number, number] => [
   state.grid[0].length,
   state.grid.length,
 ];
