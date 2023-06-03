@@ -14,12 +14,20 @@ export default function Header() {
     >
       <nav className="flex items-center gap-4">
         <Link href="/">
-          <Heading index={1} className="font-display">
+          <Heading index={1} className="hidden">
             Nonogram
           </Heading>
+          <span className='font-display text-3xl before:content-["Nng"] md:before:content-["Nonogram"]'></span>
         </Link>
         <Link href={`/play?${searchParams.toString()}`}>
-          <Heading index={2}>Play</Heading>
+          <Heading index={2} className="!mb-0">
+            Play
+          </Heading>
+        </Link>
+        <Link href="/editor">
+          <Heading index={2} className="!mb-0">
+            Editor
+          </Heading>
         </Link>
       </nav>
       <nav className="flex">
