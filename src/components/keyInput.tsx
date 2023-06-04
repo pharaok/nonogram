@@ -55,7 +55,7 @@ export default function KeyInput({
           ))}
           {key && <Key name={key} />}
         </div>
-        <Button type="submit" className="bg-primary px-4">
+        <Button type="submit" className="bg-primary px-4 !text-background">
           Confirm
         </Button>
       </form>

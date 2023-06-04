@@ -12,7 +12,7 @@ export default function SizeModal() {
   const [dimensions, setDimensions] = useState({ width: 10, height: 10 });
   return (
     <Modal open={true} onOpenChange={() => router.back()} title="Resize canvas">
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-4">
         <div className="grid grid-cols-2 gap-2">
           {(Object.entries(dimensions) as EntriesOf<typeof dimensions>).map(
             ([k, v], i) => (
@@ -33,6 +33,8 @@ export default function SizeModal() {
             pathname: "/editor",
             query: { w: dimensions.width, h: dimensions.height },
           }}
+          className="bg-primary px-2 py-1"
+          variant="button"
         >
           Confirm
         </Link>

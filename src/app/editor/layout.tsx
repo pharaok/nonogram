@@ -2,11 +2,11 @@
 
 import Button from "components/button";
 import Canvas from "components/canvas";
-import Link from "components/link";
 import { Rect } from "helpers/canvas";
 import { selectCanRedo, selectCanUndo } from "history";
 import { clamp, isEqual } from "lodash-es";
 import { Redo2, RotateCcw, Scaling, Undo2 } from "lucide-react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createGridSlice, selectDimensions } from "store";
@@ -50,9 +50,11 @@ export default function Editor({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (pathname === "/editor") {
-      router.replace(`${pathname}?w=${grid[0].length}&h=${grid.length}`);
+      const w = searchParams.get("w") ?? dimensions[0],
+        h = searchParams.get("h") ?? dimensions[1];
+      router.replace(`${pathname}?w=${w}&h=${h}`);
     }
-  }, []);
+  }, [pathname, searchParams]);
 
   return (
     <main className="relative flex-1">
@@ -107,30 +109,31 @@ export default function Editor({ children }: { children: React.ReactNode }) {
         <div className="flex flex-col items-center gap-2 rounded-xl bg-background-alt py-4 px-8 shadow-md shadow-black/25">
           <div className="flex gap-2">
             <Button
-              className="flex h-8 w-8 items-center justify-center bg-background"
+              className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
+              onClick={() => router.push("/editor/size")}
+            >
+              <Scaling />
+            </Button>
+            <Button
+              className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
               onClick={() => clear()}
             >
               <RotateCcw />
             </Button>
             <Button
-              className="flex h-8 w-8 items-center justify-center bg-background"
+              className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
               onClick={() => undo()}
               disabled={!canUndo}
             >
               <Undo2 />
             </Button>
             <Button
-              className="flex h-8 w-8 items-center justify-center bg-background"
+              className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
               onClick={() => redo()}
               disabled={!canRedo}
             >
               <Redo2 />
             </Button>
-          </div>
-          <div>
-            <Link href="/editor/size">
-              <Scaling />
-            </Link>
           </div>
         </div>
       </div>

@@ -40,20 +40,20 @@ export default function Controls() {
       </span>
       <div className="flex gap-2">
         <Button
-          className="flex h-8 w-8 items-center justify-center bg-background"
+          className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
           onClick={() => clear()}
         >
           <RotateCcw />
         </Button>
         <Button
-          className="flex h-8 w-8 items-center justify-center bg-background"
+          className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
           onClick={() => undo()}
           disabled={!canUndo}
         >
           <Undo2 />
         </Button>
         <Button
-          className="flex h-8 w-8 items-center justify-center bg-background"
+          className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
           onClick={() => redo()}
           disabled={!canRedo}
         >

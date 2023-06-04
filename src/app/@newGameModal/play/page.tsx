@@ -1,9 +1,9 @@
 "use client";
 
 import Input from "components/input";
+import Link from "components/link";
 import Modal from "components/modal";
 import NumberInput from "components/numberInput";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -21,7 +21,7 @@ export default function Play() {
   const [seed, setSeed] = useState("");
   return (
     <Modal
-      title="New game:"
+      title="New game"
       open={true}
       onOpenChange={(open) => {
         if (!open) router.back();
@@ -67,7 +67,7 @@ export default function Play() {
               s: seed || null,
             },
           }}
-          className="relative min-w-[6rem] rounded-full bg-primary p-2 text-center font-bold uppercase text-white shadow shadow-black/50 transition-transform after:absolute after:inset-0 hover:scale-105 hover:after:rounded-full after:hover:bg-white/10"
+          variant="cta"
         >
           PLAY
         </Link>

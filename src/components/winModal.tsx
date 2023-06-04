@@ -1,11 +1,11 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { Copy, Download } from "lucide-react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import useNonogramStore, { selectDimensions, selectSeed } from "store";
 import Modal from "./modal";
 import Solution from "./solution";
+import Link from "./link";
 
 const Content = () => {
   const pathname = usePathname();
@@ -55,7 +55,7 @@ const Content = () => {
               h: height,
             },
           }}
-          className="relative rounded-full bg-primary p-2 font-bold uppercase text-white shadow shadow-black/50 transition-transform after:absolute after:inset-0 hover:scale-105 hover:after:rounded-full after:hover:bg-white/10"
+          variant="cta"
         >
           Play Again
         </Link>

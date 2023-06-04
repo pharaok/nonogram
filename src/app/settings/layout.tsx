@@ -60,7 +60,7 @@ export default function Settings({ children }: { children: React.ReactNode }) {
             </div>
             <div className="grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-6">
               <Button
-                className="h-full border-2 border-error !text-error enabled:hover:bg-error enabled:hover:!text-background md:col-start-3 lg:col-start-5"
+                className="h-full border-2 border-error !bg-background !text-error enabled:hover:!bg-error enabled:hover:!text-background md:col-start-3 lg:col-start-5"
                 disabled={isEqual(settings, settingsDraft)}
                 onClick={() => {
                   (
@@ -76,7 +76,7 @@ export default function Settings({ children }: { children: React.ReactNode }) {
                 Reset
               </Button>
               <Button
-                className="h-full bg-primary !text-background hover:bg-secondary hover:!text-background"
+                className="h-full bg-primary !text-background"
                 onClick={() => {
                   setSettings((draft) => {
                     draft.settings = settingsDraft;

@@ -30,7 +30,7 @@ export default function Modal({
             {title}
           </Dialog.Title>
           <Dialog.Close asChild>
-            <Button className="absolute top-4 right-4 inline-flex items-center justify-center !rounded-full">
+            <Button className="absolute top-4 right-4 inline-flex items-center justify-center !rounded-full bg-transparent bg-none enabled:hover:!bg-error">
               <X />
             </Button>
           </Dialog.Close>
