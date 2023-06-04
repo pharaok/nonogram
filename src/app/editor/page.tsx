@@ -1,30 +1,32 @@
 "use client";
 
+import Button from "components/button";
 import Canvas from "components/canvas";
-import NumberInput from "components/numberInput";
-import { plotLine } from "helpers";
 import { Rect } from "helpers/canvas";
-import produce from "immer";
+import { selectCanRedo, selectCanUndo } from "history";
 import { clamp, isEqual } from "lodash-es";
-import { useEffect, useRef, useState } from "react";
-import { EntriesOf, Point } from "types";
+import { Redo2, RotateCcw, Undo2 } from "lucide-react";
+import { useState } from "react";
+import { createGridSlice, selectDimensions } from "store";
+import { Point } from "types";
+import { createStore, useStore } from "zustand";
 
 export default function Editor() {
-  const cursor = useRef<Point>([0, 0]);
-  const brush = useRef(1);
-  const [dimensions, setDimensions] = useState({ width: 10, height: 10 });
-  const [grid, setGrid] = useState(
-    [...Array(dimensions.height)].map(() => Array(dimensions.width).fill(0))
+  const [gridStore, _] = useState(
+    createStore(createGridSlice([...Array(10)].map(() => Array(10).fill(0))))
   );
-  useEffect(() => {
-    setGrid((grid) =>
-      [...Array(dimensions.height)].map((_, y) =>
-        Array(dimensions.width)
-          .fill(0)
-          .map((v, x) => grid?.[y]?.[x] ?? v)
-      )
-    );
-  }, [dimensions]);
+  const grid = useStore(gridStore, (state) => state.grid);
+  const dimensions = useStore(gridStore, selectDimensions);
+  const paint = useStore(gridStore, (state) => state.paint);
+  const cursor = useStore(gridStore, (state) => state.cursor);
+  const moveCursorTo = useStore(gridStore, (state) => state.moveCursorTo);
+
+  const undo = useStore(gridStore, (state) => state.undo);
+  const redo = useStore(gridStore, (state) => state.redo);
+  const clear = useStore(gridStore, (state) => state.clear);
+  const canUndo = useStore(gridStore, selectCanUndo);
+  const canRedo = useStore(gridStore, selectCanRedo);
+
   return (
     <main className="relative flex-1">
       <div className="items center absolute inset-0 flex flex-col items-center justify-evenly gap-8 p-4 md:flex-row md:p-8">
@@ -32,37 +34,25 @@ export default function Editor() {
           <div
             className="relative max-h-full max-w-full overflow-hidden"
             style={{
-              aspectRatio: `${dimensions.width} / ${dimensions.height}`,
+              aspectRatio: dimensions.join("/"),
             }}
           >
             <Canvas
               className="absolute h-full w-full touch-none border border-foreground"
-              viewBox={[0, 0, dimensions.width, dimensions.height]}
+              viewBox={[0, 0, ...dimensions]}
               onPointerDown={(e, coords) => {
-                const [x, y] = coords;
-                brush.current = +!grid[y][x];
-                setGrid(
-                  produce((draft) => {
-                    draft[y][x] = brush.current;
-                  })
-                );
+                paint([coords], { brush: 1 });
+                moveCursorTo(...coords);
                 e.currentTarget.setPointerCapture(e.pointerId);
-                cursor.current = coords;
               }}
               onPointerMove={(e, coords) => {
                 if (!e.buttons) return;
-                if (isEqual(coords, cursor.current)) return;
                 coords = coords.map((c, i) =>
-                  clamp(c, 0, [dimensions.width, dimensions.height][i] - 1)
+                  clamp(c, 0, dimensions[i] - 1)
                 ) as Point;
-                setGrid(
-                  produce(grid, (draft) => {
-                    plotLine(cursor.current, coords, ([x, y]) => {
-                      draft[y][x] = brush.current;
-                    });
-                  })
-                );
-                cursor.current = coords;
+                if (isEqual(coords, cursor)) return;
+                paint([cursor, coords], { toggle: false });
+                moveCursorTo(...coords);
               }}
             >
               {(canvas) => {
@@ -87,19 +77,29 @@ export default function Editor() {
             <div className="h-screen w-screen"></div>
           </div>
         </div>
-        <div className="grid w-64 grid-cols-2 gap-2 rounded-xl bg-background-alt py-4 px-8 shadow-md shadow-black/25">
-          {(Object.entries(dimensions) as EntriesOf<typeof dimensions>).map(
-            ([k, v], i) => (
-              <div key={i}>
-                <label htmlFor={k}>{k}</label>
-                <NumberInput
-                  className="!bg-background"
-                  value={v}
-                  onChange={(v) => setDimensions({ ...dimensions, [k]: v })}
-                />
-              </div>
-            )
-          )}
+        <div className="flex flex-col items-center gap-2 rounded-xl bg-background-alt py-4 px-8 shadow-md shadow-black/25">
+          <div className="flex gap-2">
+            <Button
+              className="flex h-8 w-8 items-center justify-center bg-background"
+              onClick={() => clear()}
+            >
+              <RotateCcw />
+            </Button>
+            <Button
+              className="flex h-8 w-8 items-center justify-center bg-background"
+              onClick={() => undo()}
+              disabled={!canUndo}
+            >
+              <Undo2 />
+            </Button>
+            <Button
+              className="flex h-8 w-8 items-center justify-center bg-background"
+              onClick={() => redo()}
+              disabled={!canRedo}
+            >
+              <Redo2 />
+            </Button>
+          </div>
         </div>
       </div>
     </main>
