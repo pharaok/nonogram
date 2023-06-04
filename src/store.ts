@@ -1,6 +1,7 @@
 import { gridClues, gridToBase64, markedGridClues } from "helpers";
 import { plotLine } from "helpers/line";
 import { history, HistorySlice } from "history";
+import produce from "immer";
 import { clamp, isEqual } from "lodash-es";
 import { createContext, useContext } from "react";
 import { NonogramGrid, Point } from "types";
@@ -17,6 +18,7 @@ export interface GridSlice {
     options?: { color?: number; brush?: number; toggle?: boolean }
   ) => void;
   clear: () => void;
+  setGrid: (grid: NonogramGrid) => void;
   setBrushes: (brushes: number[]) => void;
   moveCursorTo: (x: number, y: number) => void;
   moveCursorRelative: (x: number, y: number) => void;
@@ -56,6 +58,10 @@ export const createGridSlice = (grid: number[][], colors?: string[]) =>
     clear: () =>
       set((draft) => {
         draft.grid = Array.from(draft.grid, (row) => Array.from(row, () => 0));
+      }, true),
+    setGrid: (grid) =>
+      set((draft) => {
+        draft.grid = grid;
       }, true),
     setBrushes: (brushes) =>
       set((draft) => {
