@@ -8,20 +8,19 @@ type CanvasPointerEvent = (
   point: Point
 ) => void;
 
-export default forwardRef<
-  HTMLCanvasElement,
-  Write<
-    React.ComponentPropsWithoutRef<"canvas">,
-    {
-      viewBox?: Vector4D;
-      padding?: Vector4D;
-      children: (canvas: Canvas2D) => any;
-      onPointerDown?: CanvasPointerEvent;
-      onPointerMove?: CanvasPointerEvent;
-      onPointerUp?: CanvasPointerEvent;
-    }
-  >
->(function Canvas(
+export type CanvasProps = Write<
+  React.ComponentPropsWithoutRef<"canvas">,
+  {
+    viewBox?: Vector4D;
+    padding?: Vector4D;
+    children: (canvas: Canvas2D) => any;
+    onPointerDown?: CanvasPointerEvent;
+    onPointerMove?: CanvasPointerEvent;
+    onPointerUp?: CanvasPointerEvent;
+  }
+>;
+
+export default forwardRef<HTMLCanvasElement, CanvasProps>(function Canvas(
   {
     viewBox,
     padding,

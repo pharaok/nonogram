@@ -1,7 +1,6 @@
 import { gridClues, gridToBase64, markedGridClues } from "helpers";
 import { plotLine } from "helpers/line";
 import { history, HistorySlice } from "history";
-import produce from "immer";
 import { clamp, isEqual } from "lodash-es";
 import { createContext, useContext } from "react";
 import { NonogramGrid, Point } from "types";

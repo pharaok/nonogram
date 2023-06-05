@@ -110,7 +110,6 @@ export default function Nonogram() {
         className="absolute touch-none"
         style={{ width: dimensions[0], height: dimensions[1] }}
         viewBox={[0, 0, totalWidth, totalHeight]}
-        padding={[0, 0, 1, 1]}
         onContextMenu={(e) => e.preventDefault()}
         onPointerDown={(e, coords) => {
           coords = coords.map(
@@ -195,6 +194,9 @@ export default function Nonogram() {
         style={{ width: dimensions[0], height: dimensions[1] }}
         x={clueWidth}
         y={clueHeight}
+        width={width}
+        height={height}
+        cursor={cursor}
       />
       <div className="h-screen w-screen"></div>
     </div>

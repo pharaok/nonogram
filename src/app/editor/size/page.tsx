@@ -33,7 +33,7 @@ export default function SizeModal() {
             pathname: "/editor",
             query: { w: dimensions.width, h: dimensions.height },
           }}
-          className="bg-primary px-2 py-1"
+          className="bg-primary px-2 py-1 !text-background"
           variant="button"
         >
           Confirm

@@ -2,17 +2,22 @@
 
 import Button from "components/button";
 import Canvas from "components/canvas";
+import GridLines from "components/gridLines";
 import { Rect } from "helpers/canvas";
 import { selectCanRedo, selectCanUndo } from "history";
+import { useDimensions } from "hooks";
 import { clamp, isEqual } from "lodash-es";
-import { Redo2, RotateCcw, Scaling, Undo2 } from "lucide-react";
+import { Grid, Redo2, RotateCcw, Scaling, Square, Undo2 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createGridSlice, selectDimensions } from "store";
 import { Point } from "types";
 import { createStore, useStore } from "zustand";
 
 export default function Editor({ children }: { children: React.ReactNode }) {
+  const editorEl = useRef<HTMLDivElement>(null);
+  const dimensions = useDimensions(editorEl);
+
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -21,7 +26,7 @@ export default function Editor({ children }: { children: React.ReactNode }) {
   );
   const grid = useStore(gridStore, (state) => state.grid);
   const setGrid = useStore(gridStore, (state) => state.setGrid);
-  const dimensions = useStore(gridStore, selectDimensions);
+  const [width, height] = useStore(gridStore, selectDimensions);
   const paint = useStore(gridStore, (state) => state.paint);
   const cursor = useStore(gridStore, (state) => state.cursor);
   const moveCursorTo = useStore(gridStore, (state) => state.moveCursorTo);
@@ -32,15 +37,16 @@ export default function Editor({ children }: { children: React.ReactNode }) {
   const canUndo = useStore(gridStore, selectCanUndo);
   const canRedo = useStore(gridStore, selectCanRedo);
 
+  const [gridLinesVisible, setGridLinesVisibility] = useState(true);
+
   useEffect(() => {
     if (!searchParams.has("w") || !searchParams.has("h")) return;
-    const [currWidth, currHeight] = dimensions;
-    const width = +searchParams.get("w")!;
-    const height = +searchParams.get("h")!;
-    if (width !== currWidth || height !== currHeight)
+    const newWidth = +searchParams.get("w")!;
+    const newHeight = +searchParams.get("h")!;
+    if (newWidth !== width || newHeight !== height)
       setGrid(
-        [...Array(height)].map((_, y) =>
-          Array(width)
+        [...Array(newHeight)].map((_, y) =>
+          Array(newWidth)
             .fill(0)
             .map((v, x) => grid?.[y]?.[x] ?? v)
         )
@@ -49,8 +55,8 @@ export default function Editor({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (pathname === "/editor") {
-      const w = searchParams.get("w") ?? dimensions[0],
-        h = searchParams.get("h") ?? dimensions[1];
+      const w = searchParams.get("w") ?? [width, height][0],
+        h = searchParams.get("h") ?? [width, height][1];
       router.replace(`${pathname}?w=${w}&h=${h}`);
     }
   }, [pathname, searchParams]);
@@ -62,12 +68,14 @@ export default function Editor({ children }: { children: React.ReactNode }) {
           <div
             className="relative max-h-full max-w-full overflow-hidden"
             style={{
-              aspectRatio: dimensions.join("/"),
+              aspectRatio: [width, height].join("/"),
             }}
+            ref={editorEl}
           >
             <Canvas
-              className="absolute h-full w-full touch-none border border-foreground"
-              viewBox={[0, 0, ...dimensions]}
+              className="absolute touch-none border border-foreground"
+              style={{ width: dimensions[0], height: dimensions[1] }}
+              viewBox={[0, 0, width, height]}
               onPointerDown={(e, coords) => {
                 paint([coords], { brush: 1 });
                 moveCursorTo(...coords);
@@ -76,7 +84,7 @@ export default function Editor({ children }: { children: React.ReactNode }) {
               onPointerMove={(e, coords) => {
                 if (!e.buttons) return;
                 coords = coords.map((c, i) =>
-                  clamp(c, 0, dimensions[i] - 1)
+                  clamp(c, 0, [width, height][i] - 1)
                 ) as Point;
                 if (isEqual(coords, cursor)) return;
                 paint([cursor, coords], { toggle: false });
@@ -100,38 +108,55 @@ export default function Editor({ children }: { children: React.ReactNode }) {
                 });
               }}
             </Canvas>
+            <GridLines
+              style={{
+                width: dimensions[0],
+                height: dimensions[1],
+                visibility: gridLinesVisible ? "visible" : "hidden",
+              }}
+              width={width}
+              height={height}
+            />
             <div className="h-screen w-screen"></div>
           </div>
         </div>
-        <div className="flex flex-col items-center gap-2 rounded-xl bg-background-alt py-4 px-8 shadow-md shadow-black/25">
-          <div className="flex gap-2">
-            <Button
-              className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
-              onClick={() => router.push("/editor/size")}
-            >
-              <Scaling />
-            </Button>
-            <Button
-              className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
-              onClick={() => clear()}
-            >
-              <RotateCcw />
-            </Button>
-            <Button
-              className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
-              onClick={() => undo()}
-              disabled={!canUndo}
-            >
-              <Undo2 />
-            </Button>
-            <Button
-              className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
-              onClick={() => redo()}
-              disabled={!canRedo}
-            >
-              <Redo2 />
-            </Button>
-          </div>
+        <div className="grid grid-cols-3 gap-2 rounded-xl bg-background-alt py-4 px-8 shadow-md shadow-black/25">
+          <Button
+            className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
+            onClick={() => clear()}
+          >
+            <RotateCcw />
+          </Button>
+          <Button
+            className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
+            onClick={() => undo()}
+            disabled={!canUndo}
+          >
+            <Undo2 />
+          </Button>
+          <Button
+            className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
+            onClick={() => redo()}
+            disabled={!canRedo}
+          >
+            <Redo2 />
+          </Button>
+          <Button
+            className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
+            onClick={() => router.push("/editor/size")}
+          >
+            <Scaling />
+          </Button>
+          <Button
+            className={`flex h-8 w-8 items-center justify-center ${
+              gridLinesVisible
+                ? "!bg-primary !text-background"
+                : "!bg-background"
+            } enabled:hover:!bg-foreground`}
+            onClick={() => setGridLinesVisibility((v) => !v)}
+          >
+            {gridLinesVisible ? <Grid /> : <Square />}
+          </Button>
         </div>
       </div>
       {children}
