@@ -36,10 +36,13 @@ export class Rect extends CanvasElement {
 
   draw(canvas: Canvas2D) {
     canvas.ctx.save();
-    const ratio = canvas.getPixelRatio();
+    const [ratioX, ratioY] = canvas.getPixelRatio();
     const [x, y] = canvas.toPixel(this.x, this.y);
-    const w = this.width * ratio,
-      h = this.height * ratio;
+    let w = this.width * ratioX,
+      h = this.height * ratioY;
+    if (w === Infinity) w = canvas.ctx.canvas.width;
+    if (h === Infinity) h = canvas.ctx.canvas.height;
+
     if (this.fill) {
       let fill = this.fill;
       if (typeof fill === "string") fill = canvas.resolveCSSVariables(fill);

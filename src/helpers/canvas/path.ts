@@ -30,7 +30,8 @@ export class Path extends CanvasElement {
     let stroke = this.stroke;
     if (typeof stroke === "string") stroke = canvas.resolveCSSVariables(stroke);
     canvas.ctx.strokeStyle = stroke;
-    canvas.ctx.lineWidth = this.width * canvas.getPixelRatio();
+    canvas.ctx.lineWidth =
+      (this.width * canvas.getPixelRatio().reduce((acc, v) => acc + v)) / 2;
     canvas.ctx.lineCap = this.lineCap;
 
     const commandRegex = /^\s*([A-Za-z])/;

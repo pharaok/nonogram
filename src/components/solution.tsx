@@ -20,7 +20,6 @@ const Solution = forwardRef<
       style={{ aspectRatio: `${width} / ${height}` }}
     >
       {(canvas) => {
-        canvas.clear();
         const grad = canvas.ctx.createLinearGradient(
           0,
           0,
@@ -39,7 +38,6 @@ const Solution = forwardRef<
               canvas.add(new Rect({ x, y, width: 1, height: 1, fill: grad }));
           });
         });
-        canvas.draw();
       }}
     </Canvas>
   );

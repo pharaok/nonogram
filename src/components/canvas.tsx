@@ -40,10 +40,14 @@ export default forwardRef<
     canvasRef.current = new Canvas2D(canvasEl.current!, viewBox, padding);
   }, [viewBox, padding]);
   useEffect(() => {
-    if (canvasRef.current) children(canvasRef.current);
+    if (canvasRef.current) {
+      canvasRef.current.clear();
+      children(canvasRef.current);
+      canvasRef.current.draw();
+    }
   }, [children]);
   useEffect(() => {
-    canvasRef.current!.setScale();
+    canvasRef.current!.setTransform();
     canvasRef.current!.draw();
   }, [canvasDim]);
   return (

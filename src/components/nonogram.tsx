@@ -1,6 +1,6 @@
 import { crossPath } from "helpers";
-import { Path, Rect, Text } from "helpers/canvas";
-import { isMod, useMods } from "hooks";
+import { Group, Path, Rect, Text } from "helpers/canvas";
+import { isMod, useDimensions, useMods } from "hooks";
 import { clamp, isEqual } from "lodash-es";
 import { useRef } from "react";
 import { useSettings } from "settings";
@@ -39,6 +39,7 @@ export default function Nonogram() {
   ];
   const paint = useNonogramStore((state) => state.paint);
   const [totalWidth, totalHeight] = [width + clueWidth, height + clueHeight];
+  const dimensions = useDimensions(nonogramEl);
 
   return (
     <div
@@ -106,7 +107,8 @@ export default function Nonogram() {
       }}
     >
       <Canvas
-        className="absolute h-full w-full touch-none"
+        className="absolute touch-none"
+        style={{ width: dimensions[0], height: dimensions[1] }}
         viewBox={[0, 0, totalWidth, totalHeight]}
         padding={[0, 0, 1, 1]}
         onContextMenu={(e) => e.preventDefault()}
@@ -136,7 +138,6 @@ export default function Nonogram() {
         }}
       >
         {(canvas) => {
-          canvas.clear();
           gridClues.forEach((clues, a) => {
             clues.forEach((clue, i) => {
               clue.forEach((n, j) => {
@@ -157,22 +158,29 @@ export default function Nonogram() {
               });
             });
           });
+          const gridGroup = new Group({
+            x: clueWidth,
+            y: clueHeight,
+            width,
+            height,
+            viewBox: [0, 0, width, height],
+          });
           grid.forEach((row, y) => {
             row.forEach((cell, x) => {
               if (cell === 1)
-                canvas.add(
+                gridGroup.add(
                   new Rect({
-                    x: clueWidth + x,
-                    y: clueHeight + y,
+                    x,
+                    y,
                     width: 1,
                     height: 1,
                     fill: colors[1],
                   })
                 );
               else if (cell === 2)
-                canvas.add(
+                gridGroup.add(
                   new Path({
-                    path: crossPath(clueWidth + x, clueHeight + y),
+                    path: crossPath(x, y),
                     width: 0.1,
                     stroke: colors[1],
                     lineCap: "round",
@@ -180,10 +188,14 @@ export default function Nonogram() {
                 );
             });
           });
-          canvas.draw();
+          canvas.add(gridGroup);
         }}
       </Canvas>
-      <GridLines />
+      <GridLines
+        style={{ width: dimensions[0], height: dimensions[1] }}
+        x={clueWidth}
+        y={clueHeight}
+      />
       <div className="h-screen w-screen"></div>
     </div>
   );

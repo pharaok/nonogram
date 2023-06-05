@@ -1,7 +1,7 @@
 import { clamp } from "lodash-es";
 import { PointerEvent } from "react";
 import { Point, Vector4D } from "types";
-import { CanvasElement, FillStyle } from "./types";
+import { CanvasElement } from "./types";
 
 export default class Canvas2D {
   readonly ctx: CanvasRenderingContext2D;
@@ -15,33 +15,19 @@ export default class Canvas2D {
   constructor(
     canvasEl: HTMLCanvasElement,
     viewBox?: Vector4D,
-    extra?: Vector4D
+    extra: Vector4D = [0, 0, 0, 0]
   ) {
     this.ctx = canvasEl.getContext("2d")!;
     this.viewBox = viewBox ?? [0, 0, canvasEl.width, canvasEl.height];
-    this.extra = extra ?? [0, 0, 0, 0];
+    this.extra = extra;
     this.elements = [];
-
-    this.setScale();
   }
 
-  setScale() {
-    const transform = this.ctx.getTransform();
-
-    const [viewBoxWidth, viewBoxHeight] = [
-      this.viewBox[2] - this.viewBox[0],
-      this.viewBox[3] - this.viewBox[1],
-    ];
-    const { width, height } = this.ctx.canvas;
-    const [ratioX, ratioY] = [
-      (width - this.extra[0] - this.extra[2]) / viewBoxWidth,
-      (height - this.extra[1] - this.extra[3]) / viewBoxHeight,
-    ];
-
-    const min = Math.abs(ratioX) < Math.abs(ratioY) ? ratioX : ratioY;
-    transform.a = window.devicePixelRatio * (ratioX / min);
-    transform.d = window.devicePixelRatio * (ratioY / min);
-    this.ctx.setTransform(transform);
+  setTransform() {
+    this.ctx.setTransform({
+      a: window.devicePixelRatio,
+      d: window.devicePixelRatio,
+    });
   }
 
   add(...elements: CanvasElement[]) {
@@ -56,25 +42,28 @@ export default class Canvas2D {
   }
 
   toPixel(x: number, y: number): Point {
-    const ratio = this.getPixelRatio();
+    const ratios = this.getPixelRatio();
     const { width, height } = this.ctx.canvas;
-    const dimensions = [width, height];
     return [x, y].map((a, i) =>
       Math.round(
         clamp(
-          (a - this.viewBox[i]) * ratio,
+          (a - this.viewBox[i]) * ratios[i],
           -this.extra[i],
-          dimensions[i] + this.extra[i + 2]
+          [width, height][i] + this.extra[i + 2]
         ) + this.extra[i]
       )
     ) as Point;
   }
 
-  getPixelRatio(): number {
+  getPixelRatio(): [number, number] {
     const viewBoxWidth = this.viewBox[2] - this.viewBox[0];
-    const { a: scaleX } = this.ctx.getTransform();
-    const { width } = this.ctx.canvas;
-    return (width - this.extra[0] - this.extra[2]) / scaleX / viewBoxWidth;
+    const viewBoxHeight = this.viewBox[3] - this.viewBox[1];
+    const { width, height } = this.ctx.canvas;
+    const { a, d } = this.ctx.getTransform();
+    return [
+      (width - this.extra[0] - this.extra[2]) / a / viewBoxWidth,
+      (height - this.extra[1] - this.extra[3]) / d / viewBoxHeight,
+    ];
   }
 
   clear() {
@@ -83,11 +72,11 @@ export default class Canvas2D {
   }
 
   eventToCoords(e: PointerEvent<HTMLCanvasElement>): Point {
-    const ratio = this.getPixelRatio();
+    const [ratioX, ratioY] = this.getPixelRatio();
     const { top, left } = e.currentTarget.getBoundingClientRect();
     const [cx, cy] = [
-      (e.clientX - left - this.extra[0]) / ratio,
-      (e.clientY - top - this.extra[1]) / ratio,
+      (e.clientX - left - this.extra[0]) / ratioX,
+      (e.clientY - top - this.extra[1]) / ratioY,
     ].map(Math.floor);
     return [cx, cy];
   }
@@ -106,7 +95,8 @@ export default class Canvas2D {
   }
 }
 
-export { Rect } from "./rect";
 export { Line } from "./line";
-export { Text } from "./text";
 export { Path } from "./path";
+export { Rect } from "./rect";
+export { Text } from "./text";
+export { Group } from "./group";

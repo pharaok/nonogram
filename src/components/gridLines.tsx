@@ -1,18 +1,20 @@
 import { Line, Rect } from "helpers/canvas";
 import { useCallback } from "react";
-import useNonogramStore, { selectClues, selectDimensions } from "store";
+import useNonogramStore, { selectDimensions } from "store";
 import { Point } from "types";
 import Canvas from "./canvas";
 
-export default function GridLines() {
+export default function GridLines({
+  style,
+  x = 0,
+  y = 0,
+}: {
+style: React.CSSProperties; 
+  x?: number;
+  y?: number;
+}) {
   const cursor = useNonogramStore((state) => state.cursor);
   const [width, height] = useNonogramStore(selectDimensions);
-
-  const clues = useNonogramStore(selectClues);
-  const [clueWidth, clueHeight] = [
-    Math.max(...clues[0].map((c) => c.length)),
-    Math.max(...clues[1].map((c) => c.length)),
-  ];
 
   const getLineWidth = useCallback(
     (a: number, i: number) => {
@@ -25,20 +27,20 @@ export default function GridLines() {
 
   return (
     <Canvas
-      className="pointer-events-none absolute h-full w-full touch-none"
-      viewBox={[0, 0, width + clueWidth, height + clueHeight]}
+      className="pointer-events-none absolute touch-none"
+      style={style}
+      viewBox={[-x, -y, height, width]}
       padding={[0, 0, 1, 1]}
     >
       {(canvas) => {
-        canvas.clear();
         for (let a = 0; a < 2; a++) {
           for (let i = 0; i <= [width, height][a]; i++) {
             let points: Point[] = [
               [-Infinity, -Infinity],
               [Infinity, Infinity],
             ];
-            points[0][a] = [clueWidth, clueHeight][a] + i;
-            points[1][a] = [clueWidth, clueHeight][a] + i;
+            points[0][a] = i;
+            points[1][a] = i;
             if (i === cursor[a] || i === cursor[a] + 1) continue;
             canvas.add(
               new Line({
@@ -50,11 +52,11 @@ export default function GridLines() {
           }
         }
         for (let a = 0; a < 2; a++) {
-          let p = [0, 0];
-          p[a] = [clueWidth, clueHeight][a] + cursor[a];
+          let p = [-Infinity, -Infinity];
+          p[a] = cursor[a];
           const [x, y] = p;
-          let d = [1, 1];
-          d[+!a] = [clueWidth, clueHeight][+!a] + [width, height][+!a];
+          let d = [Infinity, Infinity];
+          d[a] = 1;
           canvas.add(
             new Rect({
               x,
@@ -71,8 +73,8 @@ export default function GridLines() {
               [-Infinity, -Infinity],
               [Infinity, Infinity],
             ];
-            points[0][a] = [clueWidth, clueHeight][a] + i;
-            points[1][a] = [clueWidth, clueHeight][a] + i;
+            points[0][a] = i;
+            points[1][a] = i;
             canvas.add(
               new Line({
                 points,
@@ -82,7 +84,6 @@ export default function GridLines() {
             );
           }
         }
-        canvas.draw();
       }}
     </Canvas>
   );

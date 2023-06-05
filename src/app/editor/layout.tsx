@@ -6,7 +6,6 @@ import { Rect } from "helpers/canvas";
 import { selectCanRedo, selectCanUndo } from "history";
 import { clamp, isEqual } from "lodash-es";
 import { Redo2, RotateCcw, Scaling, Undo2 } from "lucide-react";
-import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createGridSlice, selectDimensions } from "store";
@@ -85,7 +84,6 @@ export default function Editor({ children }: { children: React.ReactNode }) {
               }}
             >
               {(canvas) => {
-                canvas.clear();
                 grid.forEach((row, y) => {
                   row.forEach((cell, x) => {
                     if (cell)
@@ -100,7 +98,6 @@ export default function Editor({ children }: { children: React.ReactNode }) {
                       );
                   });
                 });
-                canvas.draw();
               }}
             </Canvas>
             <div className="h-screen w-screen"></div>

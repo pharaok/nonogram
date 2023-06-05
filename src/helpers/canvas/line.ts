@@ -3,7 +3,7 @@ import StrokeStyle, { CanvasElement, LineCap } from "./types";
 import Canvas2D from ".";
 
 export class Line extends CanvasElement {
-  width: number;
+  strokeWidth: number;
   points: Point[];
   stroke: StrokeStyle;
   lineCap: LineCap;
@@ -20,7 +20,7 @@ export class Line extends CanvasElement {
     lineCap?: LineCap;
   }) {
     super(...points[0]);
-    this.width = width;
+    this.strokeWidth = width;
     this.points = points;
     this.stroke = stroke;
     this.lineCap = lineCap;
@@ -32,16 +32,18 @@ export class Line extends CanvasElement {
     let stroke = this.stroke;
     if (typeof stroke === "string") stroke = canvas.resolveCSSVariables(stroke);
     if (this.points.length < 2) return;
-    if (!this.width) return;
-    canvas.ctx.lineWidth = this.width;
+    if (!this.strokeWidth) return;
+    canvas.ctx.lineWidth = this.strokeWidth;
     canvas.ctx.strokeStyle = stroke;
     canvas.ctx.lineCap = this.lineCap;
 
-    const getCenter = (p: Point) =>
-      canvas.toPixel(...p).map((pp) => pp + (this.width % 2) / 2) as Point;
-
     canvas.ctx.beginPath();
-    const points = this.points.map(getCenter);
+    const points = this.points.map(
+      (p) =>
+        canvas
+          .toPixel(...p)
+          .map((pp) => pp + (this.strokeWidth % 2) / 2) as Point
+    );
 
     canvas.ctx.moveTo(...points[0]);
     for (let i = 1; i < points.length; i++) {
