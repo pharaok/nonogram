@@ -8,7 +8,7 @@ const Input = forwardRef<
     <input
       ref={ref}
       {...props}
-      className={`rounded-md bg-background-alt p-1 ${className}`}
+      className={`rounded-md bg-primary/10 p-1 ${className}`}
     />
   );
 });

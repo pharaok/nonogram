@@ -2,10 +2,10 @@
 
 import * as Tabs from "@radix-ui/react-tabs";
 import Key from "components/key";
+import Link from "components/link";
 import { Mod } from "hooks";
 import { isEqual, startCase } from "lodash-es";
 import { Plus, X } from "lucide-react";
-import Link from "next/link";
 import { useSearchParams, useSelectedLayoutSegment } from "next/navigation";
 import { Fragment, useContext, useEffect } from "react";
 import { SettingsContext, Key as KeyT } from "settings";
@@ -37,7 +37,7 @@ export default function Controls({ children }: { children: React.ReactNode }) {
         {(Object.keys(keys) as KeyT[]).map((key, i) => (
           <Fragment key={i}>
             <span>{startCase(key)}</span>
-            <div className="col-span-2 flex h-full flex-wrap items-center gap-2 rounded-lg bg-background-alt p-1 md:col-span-1">
+            <div className="col-span-2 flex h-full flex-wrap items-center gap-2 rounded-lg bg-primary/10 p-1 md:col-span-1">
               {keys[key].map((kc, i) => (
                 <button
                   key={i}
@@ -57,7 +57,8 @@ export default function Controls({ children }: { children: React.ReactNode }) {
               ))}
               <Link
                 href={`/settings/controls/${key}/add`}
-                className="flex h-10 w-10 items-center justify-center rounded-md bg-primary text-background"
+                className="flex h-8 w-8 items-center justify-center bg-primary !text-background"
+                variant="button"
               >
                 <Plus />
               </Link>

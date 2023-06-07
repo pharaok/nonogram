@@ -110,6 +110,7 @@ export default function Nonogram() {
         className="absolute touch-none"
         style={{ width: dimensions[0], height: dimensions[1] }}
         viewBox={[0, 0, totalWidth, totalHeight]}
+        padding={[1, 1, 1, 1]}
         onContextMenu={(e) => e.preventDefault()}
         onPointerDown={(e, coords) => {
           coords = coords.map(

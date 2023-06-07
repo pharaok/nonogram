@@ -3,6 +3,7 @@
 import Button from "components/button";
 import Canvas from "components/canvas";
 import GridLines from "components/gridLines";
+import Panel from "components/panel";
 import { Rect } from "helpers/canvas";
 import { selectCanRedo, selectCanUndo } from "history";
 import { useDimensions } from "hooks";
@@ -120,44 +121,42 @@ export default function Editor({ children }: { children: React.ReactNode }) {
             <div className="h-screen w-screen"></div>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-2 rounded-xl bg-background-alt py-4 px-8 shadow-md shadow-black/25">
+        <Panel className="grid grid-cols-3 gap-2">
           <Button
-            className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
+            className="flex h-8 w-8 items-center justify-center"
             onClick={() => clear()}
           >
             <RotateCcw />
           </Button>
           <Button
-            className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
+            className="flex h-8 w-8 items-center justify-center"
             onClick={() => undo()}
             disabled={!canUndo}
           >
             <Undo2 />
           </Button>
           <Button
-            className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
+            className="flex h-8 w-8 items-center justify-center"
             onClick={() => redo()}
             disabled={!canRedo}
           >
             <Redo2 />
           </Button>
           <Button
-            className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
+            className="flex h-8 w-8 items-center justify-center"
             onClick={() => router.push("/editor/size")}
           >
             <Scaling />
           </Button>
           <Button
             className={`flex h-8 w-8 items-center justify-center ${
-              gridLinesVisible
-                ? "!bg-primary !text-background"
-                : "!bg-background"
+              gridLinesVisible ? "!bg-primary !text-background" : ""
             } enabled:hover:!bg-foreground`}
             onClick={() => setGridLinesVisibility((v) => !v)}
           >
             {gridLinesVisible ? <Grid /> : <Square />}
           </Button>
-        </div>
+        </Panel>
       </div>
       {children}
     </main>

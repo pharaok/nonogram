@@ -11,7 +11,7 @@ export default function BrushToggleGroup() {
   return (
     <ToggleGroup.Root
       type="multiple"
-      className="inline-flex items-stretch whitespace-nowrap rounded-md bg-background"
+      className="inline-flex items-stretch whitespace-nowrap rounded-md bg-primary/10"
       value={brushes.map((b) => b.toString())}
     >
       {[...Array(colors.length + 1)].map((_, i) => (
@@ -21,7 +21,7 @@ export default function BrushToggleGroup() {
           }
           key={i}
           value={i.toString()}
-          className="inline-flex w-8 items-center justify-center border-2 p-1 first:rounded-l-md last:rounded-r-md"
+          className="inline-flex w-10 items-center justify-center border-2 p-1 first:w-9 first:rounded-l-md last:w-9 last:rounded-r-md"
           style={{
             borderColor:
               brushes[0] === i
@@ -63,7 +63,7 @@ export default function BrushToggleGroup() {
               />
             </svg>
           ) : (
-            <span className="mix-blend-difference invert">{i}</span>
+            <span className="text-foreground invert">{i}</span>
           )}
         </ToggleGroup.Item>
       ))}

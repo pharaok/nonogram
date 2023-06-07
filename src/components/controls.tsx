@@ -5,6 +5,7 @@ import BrushToggleGroup from "./brushToggleGroup";
 import Button from "./button";
 import { Redo2, RotateCcw, Undo2 } from "lucide-react";
 import { selectCanRedo, selectCanUndo } from "history";
+import Panel from "./panel";
 
 export default function Controls() {
   const solution = useNonogramStore((state) => state.solution);
@@ -34,26 +35,26 @@ export default function Controls() {
   });
 
   return (
-    <div className="flex flex-col items-center gap-2 rounded-xl bg-background-alt py-4 px-12 shadow-md shadow-black/25">
+    <Panel className="flex flex-col items-center gap-2">
       <span className="text-2xl">
         {formatDuration(Math.max(0, currTime - startTime))}
       </span>
       <div className="flex gap-2">
         <Button
-          className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
+          className="flex h-8 w-8 items-center justify-center"
           onClick={() => clear()}
         >
           <RotateCcw />
         </Button>
         <Button
-          className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
+          className="flex h-8 w-8 items-center justify-center"
           onClick={() => undo()}
           disabled={!canUndo}
         >
           <Undo2 />
         </Button>
         <Button
-          className="flex h-8 w-8 items-center justify-center !bg-background enabled:hover:!bg-foreground"
+          className="flex h-8 w-8 items-center justify-center"
           onClick={() => redo()}
           disabled={!canRedo}
         >
@@ -61,6 +62,6 @@ export default function Controls() {
         </Button>
       </div>
       <BrushToggleGroup />
-    </div>
+    </Panel>
   );
 }

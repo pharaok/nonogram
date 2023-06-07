@@ -22,7 +22,7 @@ const themes = {
   },
   "catpuccin-mocha": {
     background: "#1e1e2e",
-    backgroundAlt: "#11111b",
+    backgroundAlt: "#181825",
     foreground: "#cdd6f4",
     primary: "#cba6f7",
     secondary: "#89b4fa",
@@ -46,7 +46,7 @@ const themes = {
   },
   "gruvbox-dark": {
     background: "#282828",
-    backgroundAlt: "#1d2021",
+    backgroundAlt: "#3c3836",
     foreground: "#ebdbb2",
     primary: "#d65d0e",
     secondary: "#98971a",
@@ -54,15 +54,15 @@ const themes = {
   },
   "gruvbox-light": {
     background: "#fbf1c7",
-    backgroundAlt: "#f9f5d7",
+    backgroundAlt: "#ebdbb2",
     foreground: "#3c3836",
     primary: "#d65d0e",
     secondary: "#98971a",
     error: "#cc241d",
   },
   nord: {
-    background: "#3b4252",
-    backgroundAlt: "#2e3440",
+    background: "#2e3440",
+    backgroundAlt: "#3b4252",
     foreground: "#eceff4",
     primary: "#88c0d0",
     secondary: "#5e81ac",
@@ -78,8 +78,8 @@ const themes = {
   },
   "tokyonight-storm": {
     background: "#24283b",
-    backgroundAlt: "#1a1b26",
-    foreground: "#a9b1d6",
+    backgroundAlt: "#1f2335",
+    foreground: "#c0caf5",
     primary: "#bb9af7",
     secondary: "#7aa2f7",
     error: "#f7768e",

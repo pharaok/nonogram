@@ -35,7 +35,7 @@ export default function ColorInput({
         onBlur={() => {
           if (isColor(color)) onChange(color);
         }}
-        className="w-full rounded-r-none"
+        className="mr-px w-full rounded-r-none"
       />
       <Button
         onClick={() => {

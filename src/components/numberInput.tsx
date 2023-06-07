@@ -24,10 +24,10 @@ export default function NumberInput({
   }, [strValue]);
 
   return (
-    <div className={`flex rounded-md bg-background-alt ${className}`}>
+    <div className={`flex rounded-md ${className}`}>
       <Input
         type="number"
-        className="appearance-textfield mr-px w-full rounded-r-none bg-inherit"
+        className="appearance-textfield w-full rounded-r-none bg-inherit"
         value={strValue}
         onChange={(e) => setStrValue(e.target.value)}
         {...props}
