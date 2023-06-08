@@ -1,18 +1,22 @@
 "use client";
 
 import Button from "components/button";
-import Canvas from "components/canvas";
+import Grid from "components/grid";
 import GridLines from "components/gridLines";
 import Panel from "components/panel";
-import { Rect } from "helpers/canvas";
 import { selectCanRedo, selectCanUndo } from "history";
 import { useDimensions } from "hooks";
-import { clamp, isEqual } from "lodash-es";
-import { Grid, Redo2, RotateCcw, Scaling, Square, Undo2 } from "lucide-react";
+import {
+  Redo2,
+  RotateCcw,
+  Scaling,
+  Square,
+  Undo2,
+  Grid as GridIcon,
+} from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { createGridSlice, selectDimensions } from "store";
-import { Point } from "types";
+import { GridContext, createGridSlice, selectDimensions } from "store";
 import { createStore, useStore } from "zustand";
 
 export default function Editor({ children }: { children: React.ReactNode }) {
@@ -28,9 +32,6 @@ export default function Editor({ children }: { children: React.ReactNode }) {
   const grid = useStore(gridStore, (state) => state.grid);
   const setGrid = useStore(gridStore, (state) => state.setGrid);
   const [width, height] = useStore(gridStore, selectDimensions);
-  const paint = useStore(gridStore, (state) => state.paint);
-  const cursor = useStore(gridStore, (state) => state.cursor);
-  const moveCursorTo = useStore(gridStore, (state) => state.moveCursorTo);
 
   const undo = useStore(gridStore, (state) => state.undo);
   const redo = useStore(gridStore, (state) => state.redo);
@@ -73,51 +74,21 @@ export default function Editor({ children }: { children: React.ReactNode }) {
             }}
             ref={editorEl}
           >
-            <Canvas
-              className="absolute touch-none border border-foreground"
-              style={{ width: dimensions[0], height: dimensions[1] }}
-              viewBox={[0, 0, width, height]}
-              onPointerDown={(e, coords) => {
-                paint([coords], { brush: 1 });
-                moveCursorTo(...coords);
-                e.currentTarget.setPointerCapture(e.pointerId);
-              }}
-              onPointerMove={(e, coords) => {
-                if (!e.buttons) return;
-                coords = coords.map((c, i) =>
-                  clamp(c, 0, [width, height][i] - 1)
-                ) as Point;
-                if (isEqual(coords, cursor)) return;
-                paint([cursor, coords], { toggle: false });
-                moveCursorTo(...coords);
-              }}
-            >
-              {(canvas) => {
-                grid.forEach((row, y) => {
-                  row.forEach((cell, x) => {
-                    if (cell)
-                      canvas.add(
-                        new Rect({
-                          x,
-                          y,
-                          width: 1,
-                          height: 1,
-                          fill: "rgb(var(--color-foreground))",
-                        })
-                      );
-                  });
-                });
-              }}
-            </Canvas>
-            <GridLines
-              style={{
-                width: dimensions[0],
-                height: dimensions[1],
-                visibility: gridLinesVisible ? "visible" : "hidden",
-              }}
-              width={width}
-              height={height}
-            />
+            <GridContext.Provider value={gridStore}>
+              <Grid
+                className="absolute touch-none border border-foreground"
+                style={{ width: dimensions[0], height: dimensions[1] }}
+              ></Grid>
+              <GridLines
+                style={{
+                  width: dimensions[0],
+                  height: dimensions[1],
+                  visibility: gridLinesVisible ? "visible" : "hidden",
+                }}
+                width={width}
+                height={height}
+              />
+            </GridContext.Provider>
             <div className="h-screen w-screen"></div>
           </div>
         </div>
@@ -154,7 +125,7 @@ export default function Editor({ children }: { children: React.ReactNode }) {
             } enabled:hover:!bg-foreground`}
             onClick={() => setGridLinesVisibility((v) => !v)}
           >
-            {gridLinesVisible ? <Grid /> : <Square />}
+            {gridLinesVisible ? <GridIcon /> : <Square />}
           </Button>
         </Panel>
       </div>

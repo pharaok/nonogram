@@ -13,7 +13,7 @@ export type CanvasProps = Write<
   {
     viewBox?: Vector4D;
     padding?: Vector4D;
-    children: (canvas: Canvas2D) => any;
+    children?: ((canvas: Canvas2D) => any) | ((canvas: Canvas2D) => any)[];
     onPointerDown?: CanvasPointerEvent;
     onPointerMove?: CanvasPointerEvent;
     onPointerUp?: CanvasPointerEvent;
@@ -41,7 +41,11 @@ export default forwardRef<HTMLCanvasElement, CanvasProps>(function Canvas(
   useEffect(() => {
     if (canvasRef.current) {
       canvasRef.current.clear();
-      children(canvasRef.current);
+      if (children) {
+        if (Array.isArray(children))
+          children.forEach((c) => c(canvasRef.current!));
+        else children(canvasRef.current);
+      }
       canvasRef.current.draw();
     }
   }, [children]);
@@ -52,7 +56,10 @@ export default forwardRef<HTMLCanvasElement, CanvasProps>(function Canvas(
   return (
     <canvas
       ref={(el) => {
-        if (ref && typeof ref !== "function") ref.current = el;
+        if (ref) {
+          if (typeof ref === "function") ref(el);
+          else ref.current = el;
+        }
         canvasEl.current = el;
       }}
       width={canvasDim[0] * window.devicePixelRatio}

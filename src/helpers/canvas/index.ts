@@ -61,8 +61,8 @@ export default class Canvas2D {
     const { width, height } = this.ctx.canvas;
     const { a, d } = this.ctx.getTransform();
     return [
-      (width - this.extra[0] - this.extra[2]) / a / viewBoxWidth,
-      (height - this.extra[1] - this.extra[3]) / d / viewBoxHeight,
+      (width / a - this.extra[0] - this.extra[2]) / viewBoxWidth,
+      (height / d - this.extra[1] - this.extra[3]) / viewBoxHeight,
     ];
   }
 
@@ -78,7 +78,7 @@ export default class Canvas2D {
       (e.clientX - left - this.extra[0]) / ratioX,
       (e.clientY - top - this.extra[1]) / ratioY,
     ].map(Math.floor);
-    return [cx, cy];
+    return [cx + this.viewBox[0], cy + this.viewBox[1]];
   }
 
   resolveCSSVariables(s: string) {

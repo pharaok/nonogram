@@ -16,8 +16,8 @@ const Solution = forwardRef<
     <Canvas
       ref={ref}
       viewBox={[0, 0, width, height]}
+      style={{ aspectRatio: `${width} / ${height}`, ...style }}
       {...props}
-      style={{ aspectRatio: `${width} / ${height}` }}
     >
       {(canvas) => {
         const grad = canvas.ctx.createLinearGradient(
