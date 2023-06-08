@@ -70,6 +70,7 @@ export default function Editor({ children }: { children: React.ReactNode }) {
   }, [grid]);
 
   return (
+            <GridContext.Provider value={gridStore}>
     <main className="relative flex-1">
       <div className="items center absolute inset-0 flex flex-col items-center justify-evenly gap-8 p-4 md:flex-row md:p-8">
         <div className="flex aspect-square max-h-full max-w-full items-center justify-center overflow-hidden">
@@ -80,7 +81,6 @@ export default function Editor({ children }: { children: React.ReactNode }) {
             }}
             ref={editorEl}
           >
-            <GridContext.Provider value={gridStore}>
               <Grid
                 className="absolute touch-none border border-foreground"
                 style={{ width: dimensions[0], height: dimensions[1] }}
@@ -94,7 +94,6 @@ export default function Editor({ children }: { children: React.ReactNode }) {
                 width={width}
                 height={height}
               />
-            </GridContext.Provider>
             <div className="h-screen w-screen"></div>
           </div>
         </div>
@@ -156,5 +155,6 @@ export default function Editor({ children }: { children: React.ReactNode }) {
       </div>
       {children}
     </main>
+            </GridContext.Provider>
   );
 }

@@ -3,6 +3,7 @@ import { Write } from "types";
 import Input from "./input";
 import Button from "./button";
 import { useEffect, useState } from "react";
+import { clamp } from "lodash-es";
 
 export default function NumberInput({
   className,
@@ -20,8 +21,8 @@ export default function NumberInput({
 >) {
   const [strValue, setStrValue] = useState(value.toString());
   useEffect(() => {
-    if (Number.isInteger(+strValue)) onChange(+strValue);
-  }, [strValue]);
+    setStrValue(value.toString());
+  }, [value]);
 
   return (
     <div className={`flex rounded-md ${className}`}>
@@ -29,17 +30,21 @@ export default function NumberInput({
         type="number"
         className="appearance-textfield w-full rounded-r-none bg-inherit"
         value={strValue}
-        onChange={(e) => setStrValue(e.target.value)}
+        onChange={(e) => {
+          if (Number.isInteger(+e.target.value)) onChange(+e.target.value);
+          else setStrValue(e.target.value);
+        }}
         {...props}
       />
       <div className="flex flex-col justify-evenly rounded-r-[inherit] bg-inherit">
         <Button
           className="!rounded-none !rounded-tr-[inherit]"
           onClick={() => {
-            if (Number.isInteger(+value))
-              setStrValue(
-                Math.min(+value + 1, props.max ?? Infinity).toString()
+            if (Number.isInteger(+value)) {
+              onChange(
+                clamp(+value + 1, props.min ?? -Infinity, props.max ?? Infinity)
               );
+            }
           }}
           tabIndex={-1}
         >
@@ -49,8 +54,8 @@ export default function NumberInput({
           className="!rounded-none !rounded-br-[inherit]"
           onClick={() => {
             if (Number.isInteger(+value))
-              setStrValue(
-                Math.max(+value - 1, props.min ?? -Infinity).toString()
+              onChange(
+                clamp(+value - 1, props.min ?? -Infinity, props.max ?? Infinity)
               );
           }}
           tabIndex={-1}

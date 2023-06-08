@@ -2,38 +2,34 @@
 
 import Link from "components/link";
 import Modal from "components/modal";
-import NumberInput from "components/numberInput";
+import SizeInput from "components/sizeInput";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { EntriesOf } from "types";
+import { useContext, useState } from "react";
+import { GridContext, selectDimensions } from "store";
+import { useStore } from "zustand";
 
 export default function SizeModal() {
+  const gridStore = useContext(GridContext)!;
+  const [currWidth, currHeight] = useStore(gridStore, selectDimensions);
   const router = useRouter();
-  const [dimensions, setDimensions] = useState({ width: 10, height: 10 });
+  const [width, setWidth] = useState(currWidth);
+  const [height, setHeight] = useState(currHeight);
+
   return (
     <Modal open={true} onOpenChange={() => router.back()} title="Resize canvas">
       <div className="flex flex-col items-center gap-4">
-        <div className="grid grid-cols-2 gap-2">
-          {(Object.entries(dimensions) as EntriesOf<typeof dimensions>).map(
-            ([k, v], i) => (
-              <div key={i}>
-                <label htmlFor={k}>{k}</label>
-                <NumberInput
-                  value={v}
-                  onChange={(v) => setDimensions({ ...dimensions, [k]: v })}
-                  min={1}
-                  max={50}
-                />
-              </div>
-            )
-          )}
-        </div>
+        <SizeInput
+          width={width}
+          height={height}
+          onWidthChange={setWidth}
+          onHeightChange={setHeight}
+        />
         <Link
           href={{
             pathname: "/editor",
-            query: { w: dimensions.width, h: dimensions.height },
+            query: { w: width, h: height },
           }}
-          className="bg-primary px-2 py-1 !text-background"
+          className="!bg-primary px-2 !text-background hover:!bg-foreground"
           variant="button"
         >
           Confirm

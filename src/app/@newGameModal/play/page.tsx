@@ -3,21 +3,19 @@
 import Input from "components/input";
 import Link from "components/link";
 import Modal from "components/modal";
-import NumberInput from "components/numberInput";
+import SizeInput from "components/sizeInput";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Play() {
   const router = useRouter();
-  let { width, height } = JSON.parse(
+  let { width: prevWidth, height: prevHeight } = JSON.parse(
     localStorage.getItem("lastDimensions") ?? "{}"
   );
-  if (typeof width !== "number") width = 10;
-  if (typeof height !== "number") height = 10;
-  const [dimensions, setDimensions] = useState({ width, height } as {
-    width: number;
-    height: number;
-  });
+  if (typeof prevWidth !== "number") prevWidth = 10;
+  if (typeof prevHeight !== "number") prevHeight = 10;
+  const [width, setWidth] = useState(prevWidth);
+  const [height, setHeight] = useState(prevWidth);
   const [seed, setSeed] = useState("");
   return (
     <Modal
@@ -29,24 +27,12 @@ export default function Play() {
       forceMount
     >
       <div className="mx-8 flex flex-col items-center gap-4">
-        <div className="grid w-full grid-cols-2 gap-4">
-          {(Object.keys(dimensions) as (keyof typeof dimensions)[]).map(
-            (d, i) => (
-              <div key={i}>
-                <label htmlFor={d}>{d}</label>
-                <NumberInput
-                  name={d}
-                  value={dimensions[d]}
-                  onChange={(value) => {
-                    setDimensions({ ...dimensions, [d]: value });
-                  }}
-                  min={1}
-                  max={50}
-                />
-              </div>
-            )
-          )}
-        </div>
+        <SizeInput
+          width={width}
+          height={height}
+          onWidthChange={setWidth}
+          onHeightChange={setHeight}
+        />
         <div className="w-full">
           <label htmlFor="seed">seed</label>
           <Input
@@ -62,8 +48,8 @@ export default function Play() {
           href={{
             pathname: "/",
             query: {
-              w: dimensions.width,
-              h: dimensions.height,
+              w: width,
+              h: height,
               s: seed || null,
             },
           }}
