@@ -2,21 +2,24 @@
 
 import * as Tabs from "@radix-ui/react-tabs";
 import Button from "components/button";
-import { setDocumentColor } from "helpers";
+import SettingsProvider from "components/settingsProvider";
 import { isEqual } from "lodash-es";
 import Link from "next/link";
 import { useRouter, useSelectedLayoutSegment } from "next/navigation";
 import { useEffect, useState } from "react";
-import { createSettingsStore, SettingsContext, useSettings } from "settings";
-import { EntriesOf } from "types";
-import { useStore } from "zustand";
+import { settingsSlice, useSettings } from "settings";
+import { createStore, useStore } from "zustand";
 
 export default function Settings({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   const settings = useSettings((state) => state.settings);
   const setSettings = useSettings((state) => state.set);
-  const [settingsDraftStore] = useState(createSettingsStore());
+  const [settingsDraftStore] = useState(() => {
+    const store = createStore(settingsSlice);
+    store.setState({ settings });
+    return store;
+  });
   const settingsDraft = useStore(settingsDraftStore, (state) => state.settings);
   const setSettingsDraft = useStore(settingsDraftStore, (state) => state.set);
 
@@ -24,16 +27,10 @@ export default function Settings({ children }: { children: React.ReactNode }) {
   const tab = useSelectedLayoutSegment();
   useEffect(() => {
     if (tab === null) router.replace(`settings/${defaultTab}`);
-  }, [tab]);
-
-  useEffect(() => {
-    setSettingsDraft((draft) => {
-      draft.settings = settings;
-    });
-  }, []);
+  }, [tab, router]);
 
   return (
-    <SettingsContext.Provider value={settingsDraftStore}>
+    <SettingsProvider value={settingsDraftStore}>
       <main className="relative flex-1">
         <Tabs.Root
           className="absolute inset-0 mx-8 mb-8 flex flex-col md:mx-[20%] lg:mx-[25%]"
@@ -62,28 +59,24 @@ export default function Settings({ children }: { children: React.ReactNode }) {
             </div>
             <div className="grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-6">
               <Button
-                className="border-2 border-error !bg-background !text-error enabled:hover:!bg-error enabled:hover:!text-background md:col-start-3 lg:col-start-5"
+                variant="error"
+                className="md:col-start-3 lg:col-start-5"
                 disabled={isEqual(settings, settingsDraft)}
-                onClick={() => {
-                  (
-                    Object.entries(settings.colors) as EntriesOf<
-                      typeof settings.colors
-                    >
-                  ).forEach(([k, v]) => setDocumentColor(k, v));
+                onClick={() =>
                   setSettingsDraft((draft) => {
                     draft.settings = settings;
-                  });
-                }}
+                  })
+                }
               >
                 Reset
               </Button>
               <Button
                 variant="primary"
-                onClick={() => {
+                onClick={() =>
                   setSettings((draft) => {
                     draft.settings = settingsDraft;
-                  });
-                }}
+                  })
+                }
               >
                 Apply
               </Button>
@@ -91,6 +84,6 @@ export default function Settings({ children }: { children: React.ReactNode }) {
           </div>
         </Tabs.Root>
       </main>
-    </SettingsContext.Provider>
+    </SettingsProvider>
   );
 }

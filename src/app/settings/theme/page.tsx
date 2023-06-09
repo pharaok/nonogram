@@ -6,10 +6,9 @@ import ColorInput from "components/colorInput";
 import Heading from "components/heading";
 import { setDocumentColor, toHex } from "helpers";
 import { startCase } from "lodash-es";
-import { Fragment, useContext } from "react";
-import { Color, SettingsContext } from "settings";
+import { Fragment } from "react";
+import { Color, useSettings } from "settings";
 import { EntriesOf } from "types";
-import { useStore } from "zustand";
 
 const themes = {
   light: {
@@ -95,9 +94,8 @@ const themes = {
 };
 
 export default function Theme() {
-  const settingsDraftStore = useContext(SettingsContext)!;
-  const colors = useStore(settingsDraftStore, (state) => state.settings.colors);
-  const setSettingsDraft = useStore(settingsDraftStore, (state) => state.set);
+  const colors = useSettings((state) => state.settings.colors);
+  const setSettingsDraft = useSettings((state) => state.set);
 
   return (
     <Tabs.Content value="theme" className="flex flex-col gap-8">
@@ -110,7 +108,7 @@ export default function Theme() {
             ([name, theme], i) => (
               <Button
                 key={i}
-                className="rounded-md border-2 py-1 px-2"
+                className="rounded-md border-2 px-2 py-1"
                 style={{
                   backgroundColor: toHex(theme.background),
                   color: toHex(theme.foreground),

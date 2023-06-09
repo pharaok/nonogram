@@ -70,17 +70,17 @@ export default function Editor({ children }: { children: React.ReactNode }) {
   }, [grid]);
 
   return (
-            <GridContext.Provider value={gridStore}>
-    <main className="relative flex-1">
-      <div className="items center absolute inset-0 flex flex-col items-center justify-evenly gap-8 p-4 md:flex-row md:p-8">
-        <div className="flex aspect-square max-h-full max-w-full items-center justify-center overflow-hidden">
-          <div
-            className="relative max-h-full max-w-full overflow-hidden"
-            style={{
-              aspectRatio: [width, height].join("/"),
-            }}
-            ref={editorEl}
-          >
+    <GridContext.Provider value={gridStore}>
+      <main className="relative flex-1">
+        <div className="items center absolute inset-0 flex flex-col items-center justify-evenly gap-8 p-4 md:flex-row md:p-8">
+          <div className="flex aspect-square max-h-full max-w-full items-center justify-center overflow-hidden">
+            <div
+              className="relative max-h-full max-w-full overflow-hidden"
+              style={{
+                aspectRatio: [width, height].join("/"),
+              }}
+              ref={editorEl}
+            >
               <Grid
                 className="absolute touch-none border border-foreground"
                 style={{ width: dimensions[0], height: dimensions[1] }}
@@ -94,67 +94,67 @@ export default function Editor({ children }: { children: React.ReactNode }) {
                 width={width}
                 height={height}
               />
-            <div className="h-screen w-screen"></div>
+              <div className="h-screen w-screen"></div>
+            </div>
           </div>
+          <Panel className="grid grid-cols-3 gap-2">
+            <Button
+              className="flex h-8 w-8 items-center justify-center"
+              onClick={() => clear()}
+            >
+              <RotateCcw />
+            </Button>
+            <Button
+              className="flex h-8 w-8 items-center justify-center"
+              onClick={() => undo()}
+              disabled={!canUndo}
+            >
+              <Undo2 />
+            </Button>
+            <Button
+              className="flex h-8 w-8 items-center justify-center"
+              onClick={() => redo()}
+              disabled={!canRedo}
+            >
+              <Redo2 />
+            </Button>
+            <Button
+              className="flex h-8 w-8 items-center justify-center"
+              onClick={() => router.push("/editor/size")}
+            >
+              <Scaling />
+            </Button>
+            <Button
+              className={`flex h-8 w-8 items-center justify-center ${
+                gridLinesVisible ? "!bg-primary !text-background" : ""
+              } enabled:hover:!bg-foreground`}
+              onClick={() => setGridLinesVisibility((v) => !v)}
+            >
+              {gridLinesVisible ? <GridIcon /> : <Square />}
+            </Button>
+            <div></div>
+            <Link
+              href={{
+                pathname: "/",
+                query: {
+                  w: width,
+                  h: height,
+                  s: seed,
+                },
+              }}
+              variant="button"
+              className="col-span-3 h-8 !bg-primary text-center !text-background hover:!bg-foreground"
+              onClick={(e) => {
+                e.preventDefault();
+                router.push(`/?w=${width}&h=${height}&s=${gridToBase64(grid)}`);
+              }}
+            >
+              Play
+            </Link>
+          </Panel>
         </div>
-        <Panel className="grid grid-cols-3 gap-2">
-          <Button
-            className="flex h-8 w-8 items-center justify-center"
-            onClick={() => clear()}
-          >
-            <RotateCcw />
-          </Button>
-          <Button
-            className="flex h-8 w-8 items-center justify-center"
-            onClick={() => undo()}
-            disabled={!canUndo}
-          >
-            <Undo2 />
-          </Button>
-          <Button
-            className="flex h-8 w-8 items-center justify-center"
-            onClick={() => redo()}
-            disabled={!canRedo}
-          >
-            <Redo2 />
-          </Button>
-          <Button
-            className="flex h-8 w-8 items-center justify-center"
-            onClick={() => router.push("/editor/size")}
-          >
-            <Scaling />
-          </Button>
-          <Button
-            className={`flex h-8 w-8 items-center justify-center ${
-              gridLinesVisible ? "!bg-primary !text-background" : ""
-            } enabled:hover:!bg-foreground`}
-            onClick={() => setGridLinesVisibility((v) => !v)}
-          >
-            {gridLinesVisible ? <GridIcon /> : <Square />}
-          </Button>
-          <div></div>
-          <Link
-            href={{
-              pathname: "/",
-              query: {
-                w: width,
-                h: height,
-                s: seed,
-              },
-            }}
-            variant="button"
-            className="col-span-3 h-8 !bg-primary text-center !text-background hover:!bg-foreground"
-            onClick={(e) => {
-              e.preventDefault();
-              router.push(`/?w=${width}&h=${height}&s=${gridToBase64(grid)}`);
-            }}
-          >
-            Play
-          </Link>
-        </Panel>
-      </div>
-      {children}
-    </main>
-            </GridContext.Provider>
+        {children}
+      </main>
+    </GridContext.Provider>
   );
 }

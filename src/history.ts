@@ -13,6 +13,9 @@ import {
   StoreMutatorIdentifier,
 } from "zustand";
 
+// HACK: https://github.com/pmndrs/zustand/discussions/1851#discussioncomment-6130207
+import { persist } from "zustand/middleware";
+
 enablePatches();
 
 type SetState<T> = (

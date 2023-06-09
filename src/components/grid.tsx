@@ -62,7 +62,7 @@ export default forwardRef<
   useEffect(() => {
     if (painting.current === PaintingState.Keyboard)
       paint([cursor], { toggle: false });
-  }, [cursor]);
+  }, [paint, cursor]);
 
   // HACK: putting this inside the jsx while also passing
   // the rest of the children causes a type error

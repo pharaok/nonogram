@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import useNonogramStore, { selectDimensions, selectSeed } from "store";
 import Modal from "./modal";
 import Solution from "./solution";
+import NextLink from "next/link";
 import Link from "./link";
 
 const Content = () => {
@@ -17,11 +18,11 @@ const Content = () => {
 
   useEffect(() => {
     setDownloadLink(solutionEl.current!.toDataURL("image/png"));
-  }, [solutionEl.current]);
+  }, []);
 
   return (
     <>
-      <div className="m-4 flex w-full flex-col items-center justify-center bg-background-alt p-4 shadow-xl shadow-black/50">
+      <div className="m-4 flex w-full flex-col items-center justify-center bg-background-alt p-4 shadow-xl shadow-black/25">
         <Solution
           ref={solutionEl}
           className="mb-4 w-full border border-black"
@@ -37,14 +38,14 @@ const Content = () => {
         </button>
       </div>
       <div className="m-2 flex items-center gap-4">
-        <Link
+        <NextLink
           className="stroke rounded-full border-2 border-blue-700 p-2 text-blue-700 hover:bg-blue-700 hover:text-foreground"
           download={`${seed}.png`}
           href={downloadLink}
           target="_blank"
         >
           <Download size={24} strokeWidth={2} />
-        </Link>
+        </NextLink>
       </div>
       <Dialog.Close asChild>
         <Link

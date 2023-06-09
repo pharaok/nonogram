@@ -7,16 +7,14 @@ import { Mod } from "hooks";
 import { isEqual, startCase } from "lodash-es";
 import { Plus, X } from "lucide-react";
 import { useSearchParams, useSelectedLayoutSegment } from "next/navigation";
-import { Fragment, useContext, useEffect } from "react";
-import { SettingsContext, Key as KeyT } from "settings";
-import { useStore } from "zustand";
+import { Fragment, useEffect } from "react";
+import { Key as KeyT, useSettings } from "settings";
 
 export default function Controls({ children }: { children: React.ReactNode }) {
   const segment = useSelectedLayoutSegment();
   const searchParams = useSearchParams();
-  const settingsDraftStore = useContext(SettingsContext)!;
-  const keys = useStore(settingsDraftStore, (state) => state.settings.keys);
-  const setSettingsDraft = useStore(settingsDraftStore, (state) => state.set);
+  const keys = useSettings((state) => state.settings.keys);
+  const setSettingsDraft = useSettings((state) => state.set);
 
   useEffect(() => {
     const k = searchParams.get("k");
@@ -29,7 +27,7 @@ export default function Controls({ children }: { children: React.ReactNode }) {
         draft.settings.keys[segment as KeyT].push([mods, key]);
       });
     }
-  }, [segment, searchParams]);
+  }, [segment, searchParams, keys, setSettingsDraft]);
 
   return (
     <Tabs.Content value="controls">
@@ -52,12 +50,12 @@ export default function Controls({ children }: { children: React.ReactNode }) {
                     <Key name={m} key={j} />
                   ))}
                   <Key name={kc[1]!} />
-                  <X className="absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 opacity-0 transition group-hover:opacity-100" />
+                  <X className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 opacity-0 transition group-hover:opacity-100" />
                 </button>
               ))}
               <Link
                 href={`/settings/controls/${key}/add`}
-                className="flex h-8 w-8 items-center justify-center bg-primary !text-background"
+                className="flex h-8 w-8 items-center justify-center !bg-primary !text-background hover:!bg-foreground"
                 variant="button"
               >
                 <Plus />

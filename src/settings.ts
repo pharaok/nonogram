@@ -1,12 +1,14 @@
+"use client";
+
 import produce from "immer";
 import { WritableDraft } from "immer/dist/internal";
-import { merge, isEqual } from "lodash-es";
-import { createContext } from "react";
+import { isEqual, merge } from "lodash-es";
+import { createContext, useContext } from "react";
 import { KeyCombo } from "types";
-import { create, createStore, StateCreator, StoreApi } from "zustand";
+import { StateCreator, StoreApi, createStore, useStore } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface Settings {
+export interface SettingsSlice {
   settings: {
     colors: {
       background: string;
@@ -28,13 +30,13 @@ interface Settings {
       redo: KeyCombo[];
     };
   };
-  set: (recipe: (initalState: WritableDraft<Settings>) => void) => void;
+  set: (recipe: (initalState: WritableDraft<SettingsSlice>) => void) => void;
   matchKeys: (keys: KeyCombo) => Key | null;
 }
-export type Key = keyof Settings["settings"]["keys"];
-export type Color = keyof Settings["settings"]["colors"];
+export type Key = keyof SettingsSlice["settings"]["keys"];
+export type Color = keyof SettingsSlice["settings"]["colors"];
 
-const settingsSlice: StateCreator<Settings> = (set, get) => ({
+export const settingsSlice: StateCreator<SettingsSlice> = (set, get) => ({
   settings: {
     colors: {
       background: "255 255 255",
@@ -91,13 +93,21 @@ const settingsSlice: StateCreator<Settings> = (set, get) => ({
   },
 });
 
-export const useSettings = create(
-  persist<Settings>(settingsSlice, {
+export const useSettings = <U>(selector: (settings: SettingsSlice) => U) => {
+  const settings = useContext(SettingsContext);
+  if (!settings) throw new Error("SettingsContext not found");
+  return useStore(settings, selector);
+};
+
+export const SettingsContext = createContext<StoreApi<SettingsSlice> | null>(
+  null
+);
+
+const settings = createStore(
+  persist(settingsSlice, {
     name: "settings-storage",
     merge: (persisted, current) => merge(current, persisted),
   })
 );
 
-export const SettingsContext = createContext<StoreApi<Settings> | null>(null);
-
-export const createSettingsStore = () => createStore(settingsSlice);
+export default settings;

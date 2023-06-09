@@ -128,7 +128,9 @@ export const selectIsSolved = (state: NonogramSlice) =>
 export const selectSeed = (state: NonogramSlice) =>
   gridToBase64(state.solution);
 
-export const GridContext = createContext<StoreApi<GridSlice & HistorySlice> | null>(null);
+export const GridContext = createContext<StoreApi<
+  GridSlice & HistorySlice
+> | null>(null);
 export const NonogramContext = createContext(createNonogramStore([[0]]));
 
 const useNonogramStore = <U>(
