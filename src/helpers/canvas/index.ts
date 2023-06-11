@@ -1,5 +1,3 @@
-import { clamp } from "lodash-es";
-import { PointerEvent } from "react";
 import { Point, Vector4D } from "types";
 import { CanvasElement } from "./types";
 
@@ -7,19 +5,23 @@ export default class Canvas2D {
   readonly ctx: CanvasRenderingContext2D;
 
   viewBox: Vector4D;
-  // extra "padding" pixels outside viewBox
+  // padding pixels outside viewBox
   // [left, top, right, bottom]
-  extra: Vector4D;
+  padding: Vector4D;
   elements: CanvasElement[];
 
-  constructor(
-    canvasEl: HTMLCanvasElement,
-    viewBox?: Vector4D,
-    extra: Vector4D = [0, 0, 0, 0]
-  ) {
+  constructor({
+    canvasEl,
+    viewBox,
+    padding = [0, 0, 0, 0],
+  }: {
+    canvasEl: HTMLCanvasElement;
+    viewBox?: Vector4D;
+    padding?: Vector4D;
+  }) {
     this.ctx = canvasEl.getContext("2d")!;
     this.viewBox = viewBox ?? [0, 0, canvasEl.width, canvasEl.height];
-    this.extra = extra;
+    this.padding = padding;
     this.elements = [];
   }
 
@@ -44,15 +46,11 @@ export default class Canvas2D {
   toPixel(x: number, y: number): Point {
     const ratios = this.getPixelRatio();
     const { width, height } = this.ctx.canvas;
-    return [x, y].map((a, i) =>
-      Math.round(
-        clamp(
-          (a - this.viewBox[i]) * ratios[i],
-          -this.extra[i],
-          [width, height][i] + this.extra[i + 2]
-        ) + this.extra[i]
-      )
-    ) as Point;
+    return [x, y].map((a, i) => {
+      if (a === -Infinity) return 0;
+      else if (a === Infinity) return [width, height][i];
+      return Math.round((a - this.viewBox[i]) * ratios[i] + this.padding[i]);
+    }) as Point;
   }
 
   getPixelRatio(): [number, number] {
@@ -61,8 +59,8 @@ export default class Canvas2D {
     const { width, height } = this.ctx.canvas;
     const { a, d } = this.ctx.getTransform();
     return [
-      (width / a - this.extra[0] - this.extra[2]) / viewBoxWidth,
-      (height / d - this.extra[1] - this.extra[3]) / viewBoxHeight,
+      (width / a - this.padding[0] - this.padding[2]) / viewBoxWidth,
+      (height / d - this.padding[1] - this.padding[3]) / viewBoxHeight,
     ];
   }
 
@@ -71,13 +69,13 @@ export default class Canvas2D {
     this.draw();
   }
 
-  eventToCoords(e: PointerEvent<HTMLCanvasElement>): Point {
+  toViewBox(x: number, y: number): Point {
     const [ratioX, ratioY] = this.getPixelRatio();
-    const { top, left } = e.currentTarget.getBoundingClientRect();
+    const { top, left } = this.ctx.canvas.getBoundingClientRect();
     const [cx, cy] = [
-      (e.clientX - left - this.extra[0]) / ratioX,
-      (e.clientY - top - this.extra[1]) / ratioY,
-    ].map(Math.floor);
+      (x - left - this.padding[0]) / ratioX,
+      (y - top - this.padding[1]) / ratioY,
+    ];
     return [cx + this.viewBox[0], cy + this.viewBox[1]];
   }
 

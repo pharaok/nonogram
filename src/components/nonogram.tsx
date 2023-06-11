@@ -4,6 +4,8 @@ import { useRef } from "react";
 import useNonogramStore, { selectClues, selectDimensions } from "store";
 import Grid from "./grid";
 import GridLines from "./gridLines";
+import Canvas from "./canvas";
+import Layer from "./canvas/layer";
 
 export default function Nonogram() {
   const nonogramEl = useRef<HTMLDivElement>(null);
@@ -23,42 +25,44 @@ export default function Nonogram() {
       className="relative max-h-full max-w-full overflow-hidden outline-none"
       style={{ aspectRatio: `${width + clueWidth} / ${height + clueHeight}` }}
     >
-      <Grid
-        style={{ width: dimensions[0], height: dimensions[1] }}
+      <Canvas
         viewBox={[-clueWidth, -clueHeight, width, height]}
         padding={[1, 1, 1, 1]}
+        style={{ width: dimensions[0], height: dimensions[1] }}
       >
-        {(canvas) => {
-          gridClues.forEach((clues, a) => {
-            clues.forEach((clue, i) => {
-              clue.forEach((n, j) => {
-                const point = [i + 0.5, i + 0.5];
-                point[a] = -(clue.length - j) + 0.5;
-                const [x, y] = point;
-                canvas.add(
-                  new Text({
-                    x,
-                    y,
-                    text: n.length.toString(),
-                    fontSize: 0.5,
-                    fill: n.isMarked
-                      ? "rgb(var(--color-foreground) / 0.5)"
-                      : "rgb(var(--color-foreground))",
-                  })
-                );
+        <Layer>
+          {(canvas) => {
+            gridClues.forEach((clues, a) => {
+              clues.forEach((clue, i) => {
+                clue.forEach((n, j) => {
+                  const point = [i + 0.5, i + 0.5];
+                  point[a] = -(clue.length - j) + 0.5;
+                  const [x, y] = point;
+                  canvas.add(
+                    new Text({
+                      x,
+                      y,
+                      text: n.length.toString(),
+                      fontSize: 0.5,
+                      fill: n.isMarked
+                        ? "rgb(var(--color-foreground) / 0.5)"
+                        : "rgb(var(--color-foreground))",
+                    })
+                  );
+                });
               });
             });
-          });
-        }}
-      </Grid>
-      <GridLines
-        style={{ width: dimensions[0], height: dimensions[1] }}
-        x={clueWidth}
-        y={clueHeight}
-        width={width}
-        height={height}
-        cursor={cursor}
-      />
+          }}
+        </Layer>
+        <Grid />
+        <GridLines
+          x={clueWidth}
+          y={clueHeight}
+          width={width}
+          height={height}
+          cursor={cursor}
+        />
+      </Canvas>
       <div className="h-screen w-screen"></div>
     </div>
   );

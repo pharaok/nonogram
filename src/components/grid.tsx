@@ -1,9 +1,9 @@
 import { crossPath } from "helpers";
-import { Path, Rect } from "helpers/canvas";
+import Canvas2D, { Path, Rect } from "helpers/canvas";
 import { HistorySlice } from "history";
 import { isMod, useMods } from "hooks";
 import { clamp, isEqual } from "lodash-es";
-import { forwardRef, useContext, useEffect, useRef } from "react";
+import { forwardRef, useCallback, useContext, useEffect, useRef } from "react";
 import { useSettings } from "settings";
 import {
   GridContext,
@@ -14,7 +14,7 @@ import {
 } from "store";
 import { Point, Write } from "types";
 import { useStore } from "zustand";
-import Canvas, { CanvasProps } from "./canvas";
+import Layer, { CanvasProps } from "./canvas/layer";
 
 const enum PaintingState {
   None,
@@ -64,37 +64,42 @@ export default forwardRef<
       paint([cursor], { toggle: false });
   }, [paint, cursor]);
 
+  const draw = useCallback(
+    (canvas: Canvas2D) => {
+      grid.forEach((row, y) => {
+        row.forEach((cell, x) => {
+          if (cell === 1)
+            canvas.add(
+              new Rect({
+                x,
+                y,
+                width: 1,
+                height: 1,
+                fill: colors[1],
+              })
+            );
+          else if (cell === 2)
+            canvas.add(
+              new Path({
+                path: crossPath(x, y),
+                width: 0.1,
+                stroke: colors[1],
+                lineCap: "round",
+              })
+            );
+        });
+      });
+    },
+    [grid]
+  );
+
   // HACK: putting this inside the jsx while also passing
   // the rest of the children causes a type error
   if (!Array.isArray(children)) children = [children];
-  children.splice(0, 0, (canvas) => {
-    grid.forEach((row, y) => {
-      row.forEach((cell, x) => {
-        if (cell === 1)
-          canvas.add(
-            new Rect({
-              x,
-              y,
-              width: 1,
-              height: 1,
-              fill: colors[1],
-            })
-          );
-        else if (cell === 2)
-          canvas.add(
-            new Path({
-              path: crossPath(x, y),
-              width: 0.1,
-              stroke: colors[1],
-              lineCap: "round",
-            })
-          );
-      });
-    });
-  });
+  children.splice(0, 0, draw);
 
   return (
-    <Canvas
+    <Layer
       ref={(el) => {
         if (ref) {
           if (typeof ref === "function") ref(el);
@@ -104,20 +109,21 @@ export default forwardRef<
       }}
       className="absolute touch-none"
       tabIndex={-1}
-      viewBox={[0, 0, width, height]}
       {...(!readonly && {
         onContextMenu: (e) => e.preventDefault(),
         onPointerDown: (e, coords) => {
+          coords = coords.map(Math.floor) as Point;
           if (coords.some((d) => d < 0)) return;
 
           e.currentTarget.setPointerCapture(e.pointerId);
-          paint([coords], { brush: +(e.button === 2) });
-          moveCursorTo(...coords);
+          if (e.button === 0) paint([coords], { brush: 0 });
+          else if (e.button === 2) paint([coords], { brush: 1 });
+          else return;
           painting.current = PaintingState.Mouse;
         },
         onPointerMove: (_, coords) => {
           coords = coords.map((c, i) =>
-            clamp(c, 0, [width, height][i] - 1)
+            clamp(Math.floor(c), 0, [width, height][i] - 1)
           ) as Point;
           if (isEqual(coords, cursor)) return;
           moveCursorTo(...coords);
@@ -188,7 +194,7 @@ export default forwardRef<
       })}
       {...props}
     >
-      {...children}
-    </Canvas>
+      {draw}
+    </Layer>
   );
 });
