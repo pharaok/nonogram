@@ -112,13 +112,16 @@ export default forwardRef<
       {...(!readonly && {
         onContextMenu: (e) => e.preventDefault(),
         onPointerDown: (e, coords) => {
-          coords = coords.map(Math.floor) as Point;
+          coords = coords.map((c, i) =>
+            clamp(Math.floor(c), 0, [width, height][i] - 1)
+          ) as Point;
           if (coords.some((d) => d < 0)) return;
 
           e.currentTarget.setPointerCapture(e.pointerId);
           if (e.button === 0) paint([coords], { brush: 0 });
           else if (e.button === 2) paint([coords], { brush: 1 });
           else return;
+          moveCursorTo(...coords);
           painting.current = PaintingState.Mouse;
         },
         onPointerMove: (_, coords) => {
