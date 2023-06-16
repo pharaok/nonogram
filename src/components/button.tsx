@@ -14,7 +14,7 @@ export default function Button({
   {
     touchRepeat?: boolean;
     variant?: "secondary" | "primary" | "error";
-    onClick: React.MouseEventHandler<HTMLButtonElement> &
+    onClick?: React.MouseEventHandler<HTMLButtonElement> &
       React.TouchEventHandler<HTMLButtonElement>;
   }
 >) {
@@ -48,7 +48,7 @@ export default function Button({
         timeoutRef.current = setTimeout(() => {
           if (touchRepeat)
             intervalRef.current = setInterval(() => {
-              onClick(e);
+              if (onClick) onClick(e);
             }, 50);
         }, 300);
       }}
