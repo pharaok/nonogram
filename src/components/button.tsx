@@ -1,12 +1,22 @@
+"use client";
+import { useEffect, useRef } from "react";
 import { Write } from "types";
 
 export default function Button({
-  className,
   variant = "secondary",
+  touchRepeat = false,
+  className,
+  onClick,
+  disabled,
   ...props
 }: Write<
   React.ComponentPropsWithoutRef<"button">,
-  { variant?: "secondary" | "primary" | "error" }
+  {
+    touchRepeat?: boolean;
+    variant?: "secondary" | "primary" | "error";
+    onClick: React.MouseEventHandler<HTMLButtonElement> &
+      React.TouchEventHandler<HTMLButtonElement>;
+  }
 >) {
   className = `box-border rounded-md text-lg font-bold transition disabled:cursor-not-allowed enabled:hover:text-background ${className}`;
   switch (variant) {
@@ -19,5 +29,37 @@ export default function Button({
     case "error":
       className = `bg-background border-2 border-error text-error disabled:text-error/50 disabled:border-error/50 enabled:hover:bg-error ${className}`;
   }
-  return <button {...props} className={className}></button>;
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const intervalRef = useRef<NodeJS.Timer | undefined>(undefined);
+  useEffect(() => {
+    if (disabled) {
+      clearTimeout(timeoutRef.current);
+      clearInterval(intervalRef.current);
+      timeoutRef.current = undefined;
+      intervalRef.current = undefined;
+    }
+  }, [disabled]);
+
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      onTouchStart={(e) => {
+        timeoutRef.current = setTimeout(() => {
+          if (touchRepeat)
+            intervalRef.current = setInterval(() => {
+              onClick(e);
+            }, 50);
+        }, 300);
+      }}
+      onTouchEnd={() => {
+        clearTimeout(timeoutRef.current);
+        clearInterval(intervalRef.current);
+        timeoutRef.current = undefined;
+        intervalRef.current = undefined;
+      }}
+      className={className}
+      {...props}
+    ></button>
+  );
 }

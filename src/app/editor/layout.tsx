@@ -86,7 +86,7 @@ export default function Editor({ children }: { children: React.ReactNode }) {
                 <Grid
                   className="absolute touch-none border border-foreground"
                   style={{ width: dimensions[0], height: dimensions[1] }}
-                 />
+                />
                 <GridLines
                   style={{
                     width: dimensions[0],
@@ -111,6 +111,7 @@ export default function Editor({ children }: { children: React.ReactNode }) {
               className="flex h-8 w-8 items-center justify-center"
               onClick={() => undo()}
               disabled={!canUndo}
+              touchRepeat
             >
               <Undo2 />
             </Button>
@@ -118,6 +119,7 @@ export default function Editor({ children }: { children: React.ReactNode }) {
               className="flex h-8 w-8 items-center justify-center"
               onClick={() => redo()}
               disabled={!canRedo}
+              touchRepeat
             >
               <Redo2 />
             </Button>

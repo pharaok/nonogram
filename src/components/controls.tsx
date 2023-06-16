@@ -50,6 +50,7 @@ export default function Controls() {
           className="flex h-8 w-8 items-center justify-center"
           onClick={() => undo()}
           disabled={!canUndo}
+          touchRepeat
         >
           <Undo2 />
         </Button>
@@ -57,6 +58,7 @@ export default function Controls() {
           className="flex h-8 w-8 items-center justify-center"
           onClick={() => redo()}
           disabled={!canRedo}
+          touchRepeat
         >
           <Redo2 />
         </Button>
