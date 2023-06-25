@@ -33,7 +33,7 @@ const useGridStore = <U extends unknown>(
 };
 
 export default forwardRef<
-  HTMLCanvasElement,
+  Canvas2D | null,
   Write<
     CanvasProps,
     {
@@ -105,7 +105,7 @@ export default forwardRef<
           if (typeof ref === "function") ref(el);
           else ref.current = el;
         }
-        gridEl.current = el;
+        if (el) gridEl.current = el.ctx.canvas;
       }}
       className="absolute touch-none"
       tabIndex={-1}
@@ -137,6 +137,7 @@ export default forwardRef<
           painting.current = PaintingState.None;
         },
         onKeyDown: (e) => {
+          console.log(e);
           const key = e.key[0].toUpperCase() + e.key.slice(1);
           if (isMod(e.key)) return;
           const action = matchKeys([mods, key]);
@@ -171,6 +172,7 @@ export default forwardRef<
               paint([cursor], { brush: 1 });
               break;
             case "undo":
+              console.log("undoin");
               undo();
               break;
             case "redo":

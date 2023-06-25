@@ -32,7 +32,10 @@ export default forwardRef<Canvas2D | null, CanvasProps>(function Layer(
       viewBox,
       padding,
     });
-    if (ref && typeof ref !== "function") ref.current = canvasRef.current;
+    if (ref) {
+      if (typeof ref === "function") ref(canvasRef.current);
+      else ref.current = canvasRef.current;
+    }
   }, []);
   useEffect(() => {
     if (canvasRef.current) {
