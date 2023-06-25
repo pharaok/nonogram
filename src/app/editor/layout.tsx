@@ -82,9 +82,13 @@ export default function Editor({ children }: { children: React.ReactNode }) {
               }}
               ref={editorEl}
             >
-              <Canvas viewBox={[0, 0, width, height]} padding={[1, 1, 1, 1]}>
+              <Canvas
+                viewBox={[0, 0, width, height]}
+                padding={[1, 1, 1, 1]}
+                className="h-full w-full"
+              >
                 <Grid
-                  className="absolute touch-none border border-foreground"
+                  className="touch-none border border-foreground"
                   style={{ width: dimensions[0], height: dimensions[1] }}
                 />
                 <GridLines

@@ -10,15 +10,16 @@ export default class Canvas2D {
   padding: Vector4D;
   elements: CanvasElement[];
 
-  constructor({
-    canvasEl,
-    viewBox,
-    padding = [0, 0, 0, 0],
-  }: {
-    canvasEl: HTMLCanvasElement;
-    viewBox?: Vector4D;
-    padding?: Vector4D;
-  }) {
+  constructor(
+    canvasEl: HTMLCanvasElement,
+    {
+      viewBox,
+      padding = [0, 0, 0, 0],
+    }: {
+      viewBox?: Vector4D;
+      padding?: Vector4D;
+    }
+  ) {
     this.ctx = canvasEl.getContext("2d")!;
     this.viewBox = viewBox ?? [0, 0, canvasEl.width, canvasEl.height];
     this.padding = padding;

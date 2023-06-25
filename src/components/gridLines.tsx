@@ -54,11 +54,11 @@ export default function GridLines({
 
   return (
     <>
-      <Layer className="pointer-events-none absolute touch-none" {...props}>
+      <Layer className="pointer-events-none touch-none" {...props}>
         {drawGridLines}
       </Layer>
       {cursor && (
-        <Layer className="pointer-events-none absolute touch-none" {...props}>
+        <Layer className="pointer-events-none touch-none" {...props}>
           {(canvas) => {
             for (let a = 0; a < 2; a++) {
               let p = [-Infinity, -Infinity];

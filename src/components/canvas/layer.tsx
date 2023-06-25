@@ -19,7 +19,7 @@ export type CanvasProps = Write<
   }
 >;
 
-export default forwardRef<HTMLCanvasElement, CanvasProps>(function Layer(
+export default forwardRef<Canvas2D | null, CanvasProps>(function Layer(
   { children, onPointerDown, onPointerMove, onPointerUp, className, ...props },
   ref
 ) {
@@ -28,11 +28,11 @@ export default forwardRef<HTMLCanvasElement, CanvasProps>(function Layer(
   const canvasRef = useRef<Canvas2D | null>(null);
   const canvasDim = useDimensions(canvasEl);
   useEffect(() => {
-    canvasRef.current = new Canvas2D({
-      canvasEl: canvasEl.current!,
+    canvasRef.current = new Canvas2D(canvasEl.current!, {
       viewBox,
       padding,
     });
+    if (ref && typeof ref !== "function") ref.current = canvasRef.current;
   }, []);
   useEffect(() => {
     if (canvasRef.current) {
@@ -57,13 +57,7 @@ export default forwardRef<HTMLCanvasElement, CanvasProps>(function Layer(
 
   return (
     <canvas
-      ref={(el) => {
-        if (ref) {
-          if (typeof ref === "function") ref(el);
-          else ref.current = el;
-        }
-        canvasEl.current = el;
-      }}
+      ref={canvasEl}
       className={`absolute h-full w-full ${className}`}
       width={canvasDim[0] * window.devicePixelRatio}
       height={canvasDim[1] * window.devicePixelRatio}
