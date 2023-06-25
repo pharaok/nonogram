@@ -1,7 +1,7 @@
 import Canvas2D from "helpers/canvas";
 import { clamp, isEqual } from "lodash-es";
-import { createContext, useCallback, useEffect, useRef, useState } from "react";
-import { Point, Vector4D } from "types";
+import { createContext, useCallback, useRef, useState } from "react";
+import { Point, Vector4D, Write } from "types";
 import Layer from "./layer";
 
 export const CanvasContext = createContext<{
@@ -10,15 +10,20 @@ export const CanvasContext = createContext<{
 } | null>(null);
 
 export default function Canvas({
+  disablePanZoom,
   viewBox,
   padding,
   className,
   children,
   ...props
-}: React.ComponentPropsWithoutRef<"div"> & {
-  viewBox: Vector4D;
-  padding?: Vector4D;
-}) {
+}: Write<
+  React.ComponentPropsWithoutRef<"div">,
+  {
+    disablePanZoom?: boolean;
+    viewBox: Vector4D;
+    padding?: Vector4D;
+  }
+>) {
   const [scale, setScale] = useState(1);
   const [offset, _setOffset] = useState([0, 0]);
   const prevPan = useRef([0, 0]);
@@ -54,45 +59,47 @@ export default function Canvas({
     >
       <div
         className={`relative ${className}`}
-        onMouseDown={(e) => {
-          if (e.button === 1) {
-            prevPan.current = offset;
-            panStart.current = canvas
-              .current!.toViewBox(e.clientX, e.clientY)
-              .map((v, i) => v - offset[i]);
-          }
-        }}
-        onMouseMove={(e) => {
-          if (e.buttons === 4) {
+        {...(!disablePanZoom && {
+          onMouseDown: (e) => {
+            if (e.button === 1) {
+              prevPan.current = offset;
+              panStart.current = canvas
+                .current!.toViewBox(e.clientX, e.clientY)
+                .map((v, i) => v - offset[i]);
+            }
+          },
+          onMouseMove: (e) => {
+            if (e.buttons === 4) {
+              setOffset(
+                offset.map(
+                  (v, i) =>
+                    prevPan.current[i] +
+                    (panStart.current[i] -
+                      canvas.current!.toViewBox(e.clientX, e.clientY)[i] +
+                      v)
+                )
+              );
+            }
+          },
+          onWheel: (e) => {
+            let dZoom = 1 - e.deltaY / 1000;
+            const nextScale = clamp(scale * dZoom, 1, 1000);
+            const actualDZoom = nextScale / scale;
+
+            let [oldX, oldY] = canvas.current!.toViewBox(e.clientX, e.clientY);
+            oldX -= x1 + offset[0];
+            oldY -= y1 + offset[1];
+
+            setScale(nextScale);
             setOffset(
-              offset.map(
-                (v, i) =>
-                  prevPan.current[i] +
-                  (panStart.current[i] -
-                    canvas.current!.toViewBox(e.clientX, e.clientY)[i] +
-                    v)
-              )
+              [
+                offset[0] + oldX - oldX / actualDZoom,
+                offset[1] + oldY - oldY / actualDZoom,
+              ],
+              nextScale
             );
-          }
-        }}
-        onWheel={(e) => {
-          let dZoom = 1 - e.deltaY / 1000;
-          const nextScale = clamp(scale * dZoom, 1, 1000);
-          const actualDZoom = nextScale / scale;
-
-          let [oldX, oldY] = canvas.current!.toViewBox(e.clientX, e.clientY);
-          oldX -= x1 + offset[0];
-          oldY -= y1 + offset[1];
-
-          setScale(nextScale);
-          setOffset(
-            [
-              offset[0] + oldX - oldX / actualDZoom,
-              offset[1] + oldY - oldY / actualDZoom,
-            ],
-            nextScale
-          );
-        }}
+          },
+        })}
         {...props}
       >
         <Layer ref={canvas}></Layer>

@@ -21,6 +21,7 @@ const Solution = forwardRef<
     <Canvas
       viewBox={[0, 0, width, height]}
       style={{ aspectRatio: `${width} / ${height}`, ...style }}
+      disablePanZoom
       {...props}
     >
       <Layer ref={ref}>
