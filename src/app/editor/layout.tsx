@@ -6,7 +6,7 @@ import Grid from "components/grid";
 import GridLines from "components/gridLines";
 import Link from "components/link";
 import Panel from "components/panel";
-import { gridToBase64 } from "helpers";
+import { base64ToGrid, gridToBase64 } from "helpers";
 import { selectCanRedo, selectCanUndo } from "history";
 import { useDimensions } from "hooks";
 import {
@@ -29,8 +29,17 @@ export default function Editor({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [seed, setSeed] = useState(searchParams.get("s") ?? "A");
   const [gridStore] = useState(
-    createStore(createGridSlice([...Array(10)].map(() => Array(10).fill(0))))
+    createStore(
+      createGridSlice(
+        base64ToGrid(
+          seed,
+          +(searchParams.get("w") ?? "10"),
+          +(searchParams.get("h") ?? "10")
+        )
+      )
+    )
   );
   const grid = useStore(gridStore, (state) => state.grid);
   const setGrid = useStore(gridStore, (state) => state.setGrid);
@@ -42,8 +51,7 @@ export default function Editor({ children }: { children: React.ReactNode }) {
   const canUndo = useStore(gridStore, selectCanUndo);
   const canRedo = useStore(gridStore, selectCanRedo);
 
-  const [isPending, startTransition] = useTransition();
-  const [seed, setSeed] = useState(gridToBase64(grid));
+  const [_, startTransition] = useTransition();
 
   const [gridLinesVisible, setGridLinesVisibility] = useState(true);
 
